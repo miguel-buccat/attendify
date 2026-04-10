@@ -3,13 +3,12 @@
 namespace App\Providers;
 
 use App\Support\SiteSettings;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\View as BladeView;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         $this->app->singleton(SiteSettings::class, function () {
@@ -17,11 +16,16 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        //
+        View::composer('*', function (BladeView $view): void {
+            $settings = app(SiteSettings::class);
+
+            $view->with([
+                'institutionName' => $settings->get('institution_name', 'Attendify'),
+                'institutionLogo' => $settings->get('institution_logo') ?: asset('assets/attendify.png'),
+                'landingBanner' => $settings->get('landing_banner'),
+            ]);
+        });
     }
 }

@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Support\SiteSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
@@ -89,4 +90,54 @@ test('setup step 2 stores site settings and redirects to landing', function () {
 
     Storage::disk('public')->assertExists($logoRelativePath);
     Storage::disk('public')->assertExists($bannerRelativePath);
+});
+
+test('admin account password is hashed and not stored in plain text', function () {
+    $this->post(route('new.setup.admin'), [
+        'name' => 'Setup Admin',
+        'email' => 'setup-admin@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ]);
+
+    $admin = User::query()->where('email', 'setup-admin@example.com')->firstOrFail();
+
+    expect($admin->password)->not->toBe('password')
+        ->and(Hash::check('password', $admin->password))->toBeTrue();
+});
+
+test('setup step 2 rejects non-image files', function () {
+    Storage::fake('public');
+
+    User::query()->create([
+        'name' => 'System Admin',
+        'email' => 'admin@example.com',
+        'password' => 'password',
+        'email_verified_at' => now(),
+        'role' => UserRole::Admin->value,
+    ]);
+
+    $this->post(route('new.setup.settings'), [
+        'institution_name' => 'Test School',
+        'institution_logo' => UploadedFile::fake()->create('malicious.pdf', 100, 'application/pdf'),
+        'landing_banner' => UploadedFile::fake()->image('banner.png'),
+    ])->assertInvalid(['institution_logo']);
+});
+
+test('setup step 2 rejects svg files to prevent xss', function () {
+    Storage::fake('public');
+
+    User::query()->create([
+        'name' => 'System Admin',
+        'email' => 'admin@example.com',
+        'password' => 'password',
+        'email_verified_at' => now(),
+        'role' => UserRole::Admin->value,
+    ]);
+
+    $this->post(route('new.setup.settings'), [
+        'institution_name' => 'Test School',
+        'institution_logo' => UploadedFile::fake()->create('logo.svg', 10, 'image/svg+xml'),
+        'landing_banner' => UploadedFile::fake()->image('banner.png'),
+    ])->assertInvalid(['institution_logo']);
 });
