@@ -35,3 +35,15 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function (): void {
+    Route::get('/dashboard', fn () => redirect()->route('dashboard'))->name('dashboard');
+});
+
+Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function (): void {
+    Route::get('/dashboard', fn () => redirect()->route('dashboard'))->name('dashboard');
+});
+
+Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function (): void {
+    Route::get('/dashboard', fn () => redirect()->route('dashboard'))->name('dashboard');
+});

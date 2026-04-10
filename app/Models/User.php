@@ -9,11 +9,13 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['name', 'email', 'password', 'role', 'email_verified_at'])]
+#[Fillable(['name', 'email', 'password', 'role', 'email_verified_at', 'avatar_path', 'banner_path', 'about_me'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -37,6 +39,24 @@ class User extends Authenticatable
     public function scopeAdmin(Builder $query): void
     {
         $query->where('role', UserRole::Admin);
+    }
+
+    protected function avatarUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->avatar_path
+                ? Storage::disk('public')->url($this->avatar_path)
+                : null,
+        );
+    }
+
+    protected function bannerUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->banner_path
+                ? Storage::disk('public')->url($this->banner_path)
+                : null,
+        );
     }
 
     public function sendPasswordResetNotification($token): void

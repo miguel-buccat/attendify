@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Enums\UserRole;
+use App\Models\User;
 use App\Support\SiteSettings;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View as BladeView;
@@ -18,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Gate::define('admin', fn (User $user) => $user->role === UserRole::Admin);
+        Gate::define('teacher', fn (User $user) => $user->role === UserRole::Teacher);
+        Gate::define('student', fn (User $user) => $user->role === UserRole::Student);
+
         View::composer('*', function (BladeView $view): void {
             $settings = app(SiteSettings::class);
 
