@@ -145,6 +145,9 @@ docker compose logs -f app
 
 # Run artisan command
 docker compose exec app php artisan <command>
+
+# Reset Attendify system
+docker compose exec app php artisan app:dev-reset-site
 ```
 
 
