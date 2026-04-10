@@ -17,6 +17,7 @@ class SiteSettings
     private const FIELDS = [
         'institution_name' => 'Attendify',
         'institution_logo' => null,
+        'landing_banner' => null,
     ];
 
     /**
