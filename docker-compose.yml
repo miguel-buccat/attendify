@@ -105,6 +105,17 @@ services:
       - '${FORWARD_MAILPIT_PORT_SMTP:-1025}:1025'
       - '${FORWARD_MAILPIT_PORT_HTTP:-8025}:8025'
 
+  adminer:
+    image: adminer:latest
+    container_name: attendify-adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    ports:
+      - '${FORWARD_ADMINER_PORT:-8080}:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   pgsql-data:
   redis-data:
