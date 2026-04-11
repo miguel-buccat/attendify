@@ -7,8 +7,11 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\SiteAssetController;
+use App\Http\Controllers\Teacher\ClassController;
+use App\Http\Controllers\Student\ClassEnrollmentController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -41,6 +44,10 @@ Route::middleware('guest')->group(function (): void {
 Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function (): void {
@@ -52,8 +59,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function (): void {
     Route::get('/dashboard', fn () => redirect()->route('dashboard'))->name('dashboard');
+    Route::get('/classes', [ClassController::class, 'index'])->name('classes.index');
+    Route::get('/classes/create', [ClassController::class, 'create'])->name('classes.create');
+    Route::post('/classes', [ClassController::class, 'store'])->name('classes.store');
+    Route::get('/classes/{class}', [ClassController::class, 'show'])->name('classes.show');
+    Route::patch('/classes/{class}', [ClassController::class, 'update'])->name('classes.update');
+    Route::post('/classes/{class}/archive', [ClassController::class, 'archive'])->name('classes.archive');
+    Route::get('/classes/{class}/students/search', [ClassController::class, 'searchStudents'])->name('classes.students.search');
+    Route::post('/classes/{class}/enroll', [ClassController::class, 'enroll'])->name('classes.enroll');
+    Route::delete('/classes/{class}/students/{student}', [ClassController::class, 'unenroll'])->name('classes.unenroll');
 });
 
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function (): void {
     Route::get('/dashboard', fn () => redirect()->route('dashboard'))->name('dashboard');
+    Route::get('/classes', [ClassEnrollmentController::class, 'index'])->name('classes.index');
 });
