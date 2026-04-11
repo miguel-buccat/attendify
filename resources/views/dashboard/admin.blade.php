@@ -77,64 +77,6 @@
                         canvas-id="admin-line-chart"
                     />
                 </div>
-
-                {{-- Recent Users + User Distribution --}}
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div class="rounded-2xl border border-base-300/60 bg-base-100 p-5">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-semibold">Recent Users</h3>
-                            <a href="{{ route('admin.users.index') }}" class="text-xs text-primary hover:underline">View all</a>
-                        </div>
-                        @if ($recentUsers->isEmpty())
-                            <p class="text-sm text-base-content/50">No users yet.</p>
-                        @else
-                            <div class="space-y-3">
-                                @foreach ($recentUsers as $recentUser)
-                                    <div class="flex items-center gap-3">
-                                        @if ($recentUser->avatar_url)
-                                            <img src="{{ $recentUser->avatar_url }}" alt="" class="size-9 rounded-xl object-cover">
-                                        @else
-                                            <span class="inline-flex items-center justify-center size-9 rounded-xl bg-primary/10 text-primary text-xs font-bold">
-                                                {{ mb_strtoupper(mb_substr($recentUser->name, 0, 1)) }}
-                                            </span>
-                                        @endif
-                                        <div class="min-w-0 flex-1">
-                                            <p class="text-sm font-medium truncate">{{ $recentUser->name }}</p>
-                                            <p class="text-xs text-base-content/50">{{ $recentUser->email }}</p>
-                                        </div>
-                                        <span class="badge badge-ghost badge-sm">{{ $recentUser->role->value ?? $recentUser->role }}</span>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
-
-                    <div class="rounded-2xl border border-base-300/60 bg-base-100 p-5">
-                        <h3 class="font-semibold mb-4">Users by Role</h3>
-                        <div class="space-y-3">
-                            @foreach ($usersByRole as $role => $count)
-                                @php
-                                    $pct = $totalUsers > 0 ? round(($count / $totalUsers) * 100) : 0;
-                                    $roleColor = match ($role) {
-                                        'Admin' => 'bg-primary',
-                                        'Teacher' => 'bg-secondary',
-                                        'Student' => 'bg-accent',
-                                        default => 'bg-base-content/30',
-                                    };
-                                @endphp
-                                <div>
-                                    <div class="flex items-center justify-between text-sm mb-1">
-                                        <span class="font-medium">{{ $role }}</span>
-                                        <span class="text-base-content/60">{{ $count }} ({{ $pct }}%)</span>
-                                    </div>
-                                    <div class="h-2 rounded-full bg-base-200 overflow-hidden">
-                                        <div class="h-full rounded-full {{ $roleColor }} transition-all" style="width: {{ $pct }}%;"></div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
             </div>
         </main>
     </div>
