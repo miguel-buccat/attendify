@@ -252,40 +252,40 @@
 
         {{-- ══════ PAGE 4: ABOUT ══════ --}}
         <div class="page bg-base-100 bg-grid" id="page-3" data-index="3">
-            <div class="relative max-w-5xl mx-auto px-6 py-10 z-10 w-full">
-                <div class="text-center space-y-5">
+            <div class="relative max-w-5xl mx-auto px-6 z-10 w-full">
+                <div class="text-center space-y-3 md:space-y-5">
                     <div class="page-content">
-                        <img src="{{ asset('assets/attendify.png') }}" alt="Attendify" class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-4 object-contain drop-shadow-lg">
+                        <img src="{{ asset('assets/attendify.png') }}" alt="Attendify" class="w-14 h-14 md:w-24 md:h-24 mx-auto mb-2 md:mb-4 object-contain drop-shadow-lg">
                     </div>
                     <div class="page-content">
-                        <h2 class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight">About Attendify</h2>
-                        <div class="mt-3 mx-auto w-16 h-1 rounded-full bg-accent/40"></div>
+                        <h2 class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight">About Attendify</h2>
+                        <div class="mt-2 md:mt-3 mx-auto w-16 h-1 rounded-full bg-accent/40"></div>
                     </div>
-                    <p class="page-content text-lg md:text-xl text-base-content/55 leading-relaxed max-w-2xl mx-auto">
+                    <p class="page-content text-sm md:text-xl text-base-content/55 leading-relaxed max-w-2xl mx-auto">
                         A modern, QR-based attendance management system designed to make tracking student attendance seamless and efficient — so educators can focus on what matters most.
                     </p>
                 </div>
-                <div class="page-content mt-14 grid sm:grid-cols-3 gap-5">
-                    <div class="feature-card p-7 rounded-3xl bg-base-100 border border-base-300/50 text-center">
-                        <div class="inline-flex items-center justify-center size-14 rounded-2xl bg-primary/10 text-primary mb-5">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-7"><path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M3 17v2a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 12h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <div class="page-content mt-6 md:mt-14 grid grid-cols-3 gap-3 md:gap-5">
+                    <div class="feature-card p-4 md:p-7 rounded-2xl md:rounded-3xl bg-base-100 border border-base-300/50 text-center">
+                        <div class="inline-flex items-center justify-center size-10 md:size-14 rounded-xl md:rounded-2xl bg-primary/10 text-primary mb-3 md:mb-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 md:size-7"><path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M3 17v2a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 12h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                         </div>
-                        <h3 class="font-bold text-lg">QR Scanning</h3>
-                        <p class="mt-2 text-sm text-base-content/50 leading-relaxed">Instant attendance capture via mobile QR. No manual roll calls.</p>
+                        <h3 class="font-bold text-xs md:text-lg">QR Scanning</h3>
+                        <p class="mt-1 md:mt-2 text-xs text-base-content/50 leading-relaxed hidden md:block">Instant attendance capture via mobile QR. No manual roll calls.</p>
                     </div>
-                    <div class="feature-card p-7 rounded-3xl bg-base-100 border border-base-300/50 text-center">
-                        <div class="inline-flex items-center justify-center size-14 rounded-2xl bg-secondary/10 text-secondary mb-5">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-7"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="feature-card p-4 md:p-7 rounded-2xl md:rounded-3xl bg-base-100 border border-base-300/50 text-center">
+                        <div class="inline-flex items-center justify-center size-10 md:size-14 rounded-xl md:rounded-2xl bg-secondary/10 text-secondary mb-3 md:mb-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 md:size-7"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </div>
-                        <h3 class="font-bold text-lg">Live Tracking</h3>
-                        <p class="mt-2 text-sm text-base-content/50 leading-relaxed">Real-time session monitoring with auto-updating attendance lists.</p>
+                        <h3 class="font-bold text-xs md:text-lg">Live Tracking</h3>
+                        <p class="mt-1 md:mt-2 text-xs text-base-content/50 leading-relaxed hidden md:block">Real-time session monitoring with auto-updating attendance lists.</p>
                     </div>
-                    <div class="feature-card p-7 rounded-3xl bg-base-100 border border-base-300/50 text-center">
-                        <div class="inline-flex items-center justify-center size-14 rounded-2xl bg-accent/10 text-accent mb-5">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-7"><path d="M12 2 2 7l10 5 10-5-10-5ZM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="feature-card p-4 md:p-7 rounded-2xl md:rounded-3xl bg-base-100 border border-base-300/50 text-center">
+                        <div class="inline-flex items-center justify-center size-10 md:size-14 rounded-xl md:rounded-2xl bg-accent/10 text-accent mb-3 md:mb-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 md:size-7"><path d="M12 2 2 7l10 5 10-5-10-5ZM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </div>
-                        <h3 class="font-bold text-lg">Smart Dashboards</h3>
-                        <p class="mt-2 text-sm text-base-content/50 leading-relaxed">Role-based analytics and insights for every user type.</p>
+                        <h3 class="font-bold text-xs md:text-lg">Smart Dashboards</h3>
+                        <p class="mt-1 md:mt-2 text-xs text-base-content/50 leading-relaxed hidden md:block">Role-based analytics and insights for every user type.</p>
                     </div>
                 </div>
             </div>
