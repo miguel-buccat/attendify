@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: attendify-app:staging
     restart: unless-stopped
     environment:
       APP_NAME: '${APP_NAME:-Attendify}'
@@ -62,9 +63,7 @@ services:
       start_period: 30s
 
   queue:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: attendify-app:staging
     restart: unless-stopped
     command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
     environment:
@@ -105,9 +104,7 @@ services:
         condition: service_healthy
 
   scheduler:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: attendify-app:staging
     restart: unless-stopped
     command: php artisan schedule:work
     environment:
