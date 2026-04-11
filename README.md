@@ -26,65 +26,101 @@
 
 ## Deployment
 
+Both staging and production use the same multi-stage `Dockerfile` (PHP-FPM + Nginx + Supervisor) and differ only in compose-level environment values. They are designed for deployment via **Coolify** (or any Docker Compose-based host).
+
+### Architecture
+
+Each environment runs **5 containers** from two compose files:
+
+| Container | Image | Role |
+|-----------|-------|------|
+| `app` | Custom (Dockerfile) | PHP-FPM + Nginx serving the application on port **8080** |
+| `queue` | Custom (Dockerfile) | Laravel queue worker |
+| `scheduler` | Custom (Dockerfile) | Laravel task scheduler (`schedule:work`) |
+| `postgres` | postgres:17-alpine | PostgreSQL database |
+| `redis` | redis:7-alpine | Cache store |
+
+A shared **`app-storage`** Docker volume is mounted at `/var/www/html/storage` across `app`, `queue`, and `scheduler` so uploaded files (avatars, banners, site settings) persist and are accessible by all services.
+
+### Environment Variables
+
+Set these through the **Coolify UI** (or a `.env` file next to the compose file). Variables marked **required** have no default and must be provided.
+
+#### Required
+
+| Variable | Description |
+|----------|-------------|
+| `APP_KEY` | Laravel encryption key. Generate with `php artisan key:generate --show` |
+| `APP_URL` | Full public URL (e.g. `https://attendify.example.com`) |
+| `DB_PASSWORD` | PostgreSQL password |
+| `MAIL_HOST` | SMTP server hostname |
+| `MAIL_USERNAME` | SMTP username |
+| `MAIL_PASSWORD` | SMTP password |
+| `MAIL_FROM_ADDRESS` | Sender email address (e.g. `noreply@attendify.example.com`) |
+
+#### Optional (have defaults)
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `APP_NAME` | `Attendify` | Application display name |
+| `APP_PORT` | `8080` | Host port mapped to the app container |
+| `DB_DATABASE` | `attendify` | PostgreSQL database name |
+| `DB_USERNAME` | `attendify` | PostgreSQL username |
+| `BCRYPT_ROUNDS` | `12` | Password hashing cost |
+| `LOG_LEVEL` | `warning` | Log verbosity (`debug`, `info`, `warning`, `error`) |
+| `SESSION_DOMAIN` | `null` | Cookie domain for sessions |
+| `REDIS_PASSWORD` | `null` | Redis authentication password (omit or set to `null` to disable) |
+| `MAIL_MAILER` | `smtp` | Mail driver |
+| `MAIL_PORT` | `587` | SMTP port |
+| `MAIL_ENCRYPTION` | `tls` | SMTP encryption (`tls`, `ssl`, or `null`) |
+| `MAIL_FROM_NAME` | `Attendify` | Sender display name |
+
+### Staging
+
+Uses `docker-compose.staging.yml`. Identical to production except `APP_DEBUG` is `true` for easier troubleshooting.
+
+```bash
+docker compose -f docker-compose.staging.yml up -d --build
+```
+
 ### Production
 
-#### Prerequisites
-
-Before deploying to production, make sure the target server has:
-
-- PHP 8.4+ with required extensions for Laravel and PostgreSQL
-- Composer 2+
-- Node.js 22+ and npm
-- PostgreSQL 17+
-- Redis 7+
-- Web server (Nginx or Apache)
-- A process manager for workers (Supervisor or systemd)
-- SSL certificate and domain configured
-
-#### Deployment Steps
-
-1. Clone the repository on your server.
-2. Install PHP dependencies:
+Uses `docker-compose.prod.yml`. Debug is disabled, sessions are encrypted, and caches are optimized on startup.
 
 ```bash
-composer install --no-dev --optimize-autoloader
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-3. Install frontend dependencies and build assets:
+### What Happens on Startup
 
-```bash
-npm ci
-npm run build
-```
+The entrypoint script (`docker/production/entrypoint.sh`) runs automatically on every deploy:
 
-4. Configure environment:
+1. Creates storage directories for uploads (`avatars/`, `banners/`, `site-settings/`, `site-assets/`)
+2. Sets correct permissions (`www-data`, `775`)
+3. Creates the `public/storage` symlink
+4. Caches config, routes, views, and events
+5. Runs `php artisan migrate --force`
 
-```bash
-cp .env.example .env
-php artisan key:generate
-```
+### Coolify Setup
 
-5. Update `.env` with production values (database, cache, mail, app URL, etc.).
-6. Run database migrations:
+1. Create a new **Docker Compose** resource in Coolify
+2. Point it to the repository and select the appropriate compose file:
+   - Staging: `docker-compose.staging.yml`
+   - Production: `docker-compose.prod.yml`
+3. Add the required environment variables in the Coolify UI
+4. Set the exposed port to **8080** (or match your `APP_PORT` value)
+5. Configure Coolify's reverse proxy to route your domain to the app container on port 8080
+6. Deploy
 
-```bash
-php artisan migrate --force
-```
+### Persistent Volumes
 
-7. Optimize Laravel caches:
+| Volume | Mount Point | Purpose |
+|--------|-------------|---------|
+| `app-storage` | `/var/www/html/storage` | User uploads, logs, framework cache |
+| `pgsql-data` | `/var/lib/postgresql/data` | PostgreSQL data |
+| `redis-data` | `/data` | Redis persistence |
 
-```bash
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-```
-
-8. Start and monitor queue workers using your process manager.
-9. Configure scheduled tasks to run every minute:
-
-```cron
-* * * * * cd /path/to/attendify && php artisan schedule:run >> /dev/null 2>&1
-```
+> **Backup note:** Back up the `app-storage` and `pgsql-data` volumes regularly. User-uploaded avatars, banners, and site assets live in `app-storage`.
 
 ### Development
 
