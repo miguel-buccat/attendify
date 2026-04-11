@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: attendify-app:production
     restart: unless-stopped
     environment:
       APP_NAME: '${APP_NAME:-Attendify}'
@@ -62,9 +63,7 @@ services:
       start_period: 30s
 
   queue:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: attendify-app:production
     restart: unless-stopped
     command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
     environment:
@@ -105,9 +104,7 @@ services:
         condition: service_healthy
 
   scheduler:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: attendify-app:production
     restart: unless-stopped
     command: php artisan schedule:work
     environment:
@@ -156,19 +153,25 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: >
-      sh -c "if [ '${REDIS_PASSWORD:-null}' != 'null' ]; then
-        redis-server --requirepass '${REDIS_PASSWORD}';
-      else
-        redis-server;
-      fi"
+    command:
+      - sh
+      - -c
+      - |
+        if [ -n "$$REDIS_PASSWORD" ] && [ "$$REDIS_PASSWORD" != "null" ]; then
+          exec redis-server --requirepass "$$REDIS_PASSWORD"
+        else
+          exec redis-server
+        fi
+    environment:
+      REDIS_PASSWORD: '${REDIS_PASSWORD:-}'
     volumes:
       - redis-data:/data
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ['CMD-SHELL', 'redis-cli ping 2>&1 | grep -qE "PONG|NOAUTH"']
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
 
 volumes:
   app-storage:

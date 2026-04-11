@@ -29,35 +29,21 @@ RUN npm run build
 # ───────────────────────────────────────────
 FROM php:8.4-fpm-alpine
 
-RUN apk add --no-cache \
-        nginx \
-        supervisor \
-        libpq \
-        libzip \
-        libpng \
-        libjpeg-turbo \
-        libwebp \
-        icu-libs \
-    && apk add --no-cache --virtual .build-deps \
-        postgresql-dev \
-        libzip-dev \
-        libpng-dev \
-        libjpeg-turbo-dev \
-        libwebp-dev \
-        icu-dev \
-    && docker-php-ext-configure gd --with-jpeg --with-webp \
-    && docker-php-ext-install -j"$(nproc)" \
+# install-php-extensions handles deps, retries, and cleanup automatically
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN install-php-extensions \
         bcmath \
         gd \
+        intl \
+        opcache \
         pcntl \
         pdo_pgsql \
         pgsql \
-        zip \
-        intl \
-    && pecl install redis \
-    && docker-php-ext-enable redis opcache \
-    && apk del .build-deps \
-    && rm -rf /tmp/* /var/cache/apk/*
+        redis \
+        zip
+
+RUN apk add --no-cache nginx supervisor
 
 # PHP production settings
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
