@@ -21,13 +21,17 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Apply system timezone from site settings
+        $settings = app(SiteSettings::class);
+        $timezone = $settings->get('timezone', 'Asia/Manila');
+        date_default_timezone_set($timezone);
+        config(['app.timezone' => $timezone]);
+
         Gate::define('admin', fn (User $user) => $user->role === UserRole::Admin);
         Gate::define('teacher', fn (User $user) => $user->role === UserRole::Teacher);
         Gate::define('student', fn (User $user) => $user->role === UserRole::Student);
 
-        View::composer('*', function (BladeView $view): void {
-            $settings = app(SiteSettings::class);
-
+        View::composer('*', function (BladeView $view) use ($settings): void {
             $view->with([
                 'institutionName' => $settings->get('institution_name', 'Attendify'),
                 'institutionLogo' => $settings->get('institution_logo') ?: asset('assets/attendify.png'),

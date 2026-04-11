@@ -76,6 +76,7 @@ class SetupController extends Controller
 
         $validated = $request->validate([
             'institution_name' => ['required', 'string', 'max:255'],
+            'timezone' => ['required', 'string', 'timezone:all'],
             'institution_logo' => ['required', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:2048'],
             'landing_banner' => ['required', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:4096'],
         ]);
@@ -88,6 +89,7 @@ class SetupController extends Controller
         }
 
         $siteSettings->set('institution_name', $validated['institution_name']);
+        $siteSettings->set('timezone', $validated['timezone']);
         $siteSettings->set('institution_logo', url(Storage::disk('public')->url($logoPath)));
         $siteSettings->set('landing_banner', url(Storage::disk('public')->url($bannerPath)));
 

@@ -48,5 +48,5 @@ it('rejects unknown keys', function () {
     $settings = app(SiteSettings::class);
 
     expect(fn () => $settings->set('unknown_key', 'value'))
-        ->toThrow(\InvalidArgumentException::class);
+        ->toThrow(InvalidArgumentException::class);
 });

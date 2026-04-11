@@ -70,6 +70,7 @@ test('setup step 2 stores site settings and redirects to landing', function () {
 
     $response = $this->post(route('new.setup.settings'), [
         'institution_name' => 'Erovoutika Robotics and Automation Solutions',
+        'timezone' => 'Asia/Manila',
         'institution_logo' => UploadedFile::fake()->image('logo.png'),
         'landing_banner' => UploadedFile::fake()->image('banner.png'),
     ]);
@@ -82,6 +83,7 @@ test('setup step 2 stores site settings and redirects to landing', function () {
     $bannerPath = $settings->get('landing_banner');
 
     expect($settings->get('institution_name'))->toBe('Erovoutika Robotics and Automation Solutions');
+    expect($settings->get('timezone'))->toBe('Asia/Manila');
     expect($logoPath)->toStartWith(rtrim(config('app.url'), '/').'/storage/site-settings/');
     expect($bannerPath)->toStartWith(rtrim(config('app.url'), '/').'/storage/site-settings/');
 

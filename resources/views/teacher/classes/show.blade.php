@@ -131,8 +131,8 @@
                                 <thead>
                                     <tr>
                                         <th>Student</th>
-                                        <th>Email</th>
-                                        <th>Enrolled</th>
+                                        <th class="hidden sm:table-cell">Email</th>
+                                        <th class="hidden md:table-cell">Enrolled</th>
                                         @if ($class->isActive())
                                             <th class="w-12"></th>
                                         @endif
@@ -150,11 +150,14 @@
                                                             {{ mb_strtoupper(mb_substr($student->name, 0, 1)) }}
                                                         </span>
                                                     @endif
-                                                    <span class="font-medium group-hover:text-primary transition-colors">{{ $student->name }}</span>
+                                                    <div class="min-w-0">
+                                                        <span class="font-medium group-hover:text-primary transition-colors block truncate">{{ $student->name }}</span>
+                                                        <span class="text-xs text-base-content/50 sm:hidden block truncate">{{ $student->email }}</span>
+                                                    </div>
                                                 </a>
                                             </td>
-                                            <td class="text-base-content/60">{{ $student->email }}</td>
-                                            <td class="text-base-content/60">{{ $student->pivot->enrolled_at ? \Carbon\Carbon::parse($student->pivot->enrolled_at)->format('M d, Y') : '-' }}</td>
+                                            <td class="text-base-content/60 hidden sm:table-cell">{{ $student->email }}</td>
+                                            <td class="text-base-content/60 hidden md:table-cell">{{ $student->pivot->enrolled_at ? \Carbon\Carbon::parse($student->pivot->enrolled_at)->format('M d, Y') : '-' }}</td>
                                             @if ($class->isActive())
                                                 <td>
                                                     <form method="POST" action="{{ route('teacher.classes.unenroll', [$class, $student]) }}" onsubmit="return confirm('Remove {{ $student->name }} from this class?')">
@@ -176,12 +179,152 @@
                     @endif
                 </div>
 
+                {{-- Sessions section --}}
+                <div class="card bg-base-100 rounded-xl border border-base-300">
+                    <div class="card-body gap-4">
+                        <div class="flex items-center justify-between">
+                            <h2 class="card-title text-lg">Sessions</h2>
+                            @if ($class->isActive())
+                                <button type="button" onclick="document.getElementById('create-session-modal').showModal()" class="btn btn-primary btn-sm rounded-lg">
+                                    New Session
+                                </button>
+                            @endif
+                        </div>
+
+                        @if ($class->sessions->isEmpty())
+                            <p class="text-base-content/50 text-sm">No sessions yet.</p>
+                        @else
+                            {{-- Mobile: card layout --}}
+                            <div class="space-y-3 sm:hidden">
+                                @foreach ($class->sessions->sortByDesc('start_time') as $session)
+                                    <a href="{{ route('teacher.sessions.show', $session) }}" class="block rounded-xl border border-base-300 bg-base-200/40 p-4 space-y-2 active:bg-base-200 transition-colors">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="font-medium">{{ $session->start_time->format('M d, Y') }}</span>
+                                            @php
+                                                $sBadge = match ($session->status->value) {
+                                                    'Active' => 'badge-success',
+                                                    'Scheduled' => 'badge-info',
+                                                    'Completed' => 'badge-ghost',
+                                                    'Cancelled' => 'badge-error',
+                                                    default => 'badge-ghost',
+                                                };
+                                            @endphp
+                                            <span class="badge {{ $sBadge }} badge-sm">{{ $session->status->value }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-3 text-sm text-base-content/60">
+                                            <span>{{ $session->start_time->format('g:i A') }} – {{ $session->end_time->format('g:i A') }}</span>
+                                            <span class="text-base-content/30">·</span>
+                                            <span>{{ $session->modality->value }}</span>
+                                        </div>
+                                    </a>
+                                @endforeach
+                            </div>
+
+                            {{-- Desktop: table layout --}}
+                            <div class="hidden sm:block overflow-x-auto">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Time</th>
+                                            <th>Modality</th>
+                                            <th>Status</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($class->sessions->sortByDesc('start_time') as $session)
+                                            <tr>
+                                                <td class="font-medium">{{ $session->start_time->format('M d, Y') }}</td>
+                                                <td class="text-base-content/60">{{ $session->start_time->format('g:i A') }} – {{ $session->end_time->format('g:i A') }}</td>
+                                                <td>{{ $session->modality->value }}</td>
+                                                <td>
+                                                    @php
+                                                        $sBadge = match ($session->status->value) {
+                                                            'Active' => 'badge-success',
+                                                            'Scheduled' => 'badge-info',
+                                                            'Completed' => 'badge-ghost',
+                                                            'Cancelled' => 'badge-error',
+                                                            default => 'badge-ghost',
+                                                        };
+                                                    @endphp
+                                                    <span class="badge {{ $sBadge }} badge-sm">{{ $session->status->value }}</span>
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('teacher.sessions.show', $session) }}" class="btn btn-ghost btn-xs rounded-lg">View</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
 
+    {{-- Create Session Modal --}}
+    @if ($class->isActive())
+    <dialog id="create-session-modal" class="modal">
+        <div class="modal-box rounded-2xl">
+            <h3 class="text-lg font-semibold mb-4">Schedule New Session</h3>
+
+            @if ($errors->any())
+                <div class="alert alert-error text-sm mb-2">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('teacher.sessions.store', $class) }}" class="space-y-4">
+                @csrf
+                <div class="form-control">
+                    <label class="label"><span class="label-text font-medium">Modality</span></label>
+                    <select name="modality" class="select select-bordered rounded-lg w-full" required>
+                        <option value="Onsite">Onsite</option>
+                        <option value="Online">Online</option>
+                    </select>
+                </div>
+                <div class="form-control">
+                    <label class="label"><span class="label-text font-medium">Location</span></label>
+                    <input type="text" name="location" class="input input-bordered rounded-lg w-full" placeholder="Room or platform URL">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-medium">Start Time</span></label>
+                        <input type="datetime-local" name="start_time" class="input input-bordered rounded-lg w-full" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-medium">End Time</span></label>
+                        <input type="datetime-local" name="end_time" class="input input-bordered rounded-lg w-full" required>
+                    </div>
+                </div>
+                <div class="form-control">
+                    <label class="label"><span class="label-text font-medium">Grace Period (minutes)</span></label>
+                    <input type="number" name="grace_period_minutes" class="input input-bordered rounded-lg w-full" value="15" min="1" max="60">
+                </div>
+                <div class="modal-action">
+                    <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost rounded-lg">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-lg">Schedule</button>
+                </div>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
+    @endif
+
     @if ($class->isActive())
     <script>
+        @if ($errors->any())
+            document.getElementById('create-session-modal')?.showModal();
+        @endif
+
         const searchInput = document.getElementById('student-search');
         const searchResults = document.getElementById('search-results');
         const selectedContainer = document.getElementById('selected-students');

@@ -10,8 +10,10 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\SiteAssetController;
-use App\Http\Controllers\Teacher\ClassController;
+use App\Http\Controllers\Student\AttendanceScanController;
 use App\Http\Controllers\Student\ClassEnrollmentController;
+use App\Http\Controllers\Teacher\ClassController;
+use App\Http\Controllers\Teacher\ClassSessionController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -68,9 +70,18 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
     Route::get('/classes/{class}/students/search', [ClassController::class, 'searchStudents'])->name('classes.students.search');
     Route::post('/classes/{class}/enroll', [ClassController::class, 'enroll'])->name('classes.enroll');
     Route::delete('/classes/{class}/students/{student}', [ClassController::class, 'unenroll'])->name('classes.unenroll');
+    Route::post('/classes/{class}/sessions', [ClassSessionController::class, 'store'])->name('sessions.store');
+    Route::get('/sessions/{session}', [ClassSessionController::class, 'show'])->name('sessions.show');
+    Route::post('/sessions/{session}/start', [ClassSessionController::class, 'start'])->name('sessions.start');
+    Route::post('/sessions/{session}/complete', [ClassSessionController::class, 'complete'])->name('sessions.complete');
+    Route::post('/sessions/{session}/cancel', [ClassSessionController::class, 'cancel'])->name('sessions.cancel');
+    Route::get('/sessions/{session}/attendance', [ClassSessionController::class, 'attendanceData'])->name('sessions.attendance');
 });
 
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function (): void {
     Route::get('/dashboard', fn () => redirect()->route('dashboard'))->name('dashboard');
     Route::get('/classes', [ClassEnrollmentController::class, 'index'])->name('classes.index');
+    Route::get('/scan', [AttendanceScanController::class, 'index'])->name('scan.index');
+    Route::post('/scan', [AttendanceScanController::class, 'store'])->name('scan.store');
+    Route::get('/attendance', [AttendanceScanController::class, 'history'])->name('attendance.index');
 });

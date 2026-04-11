@@ -10,12 +10,12 @@
                     <x-alert type="success" :message="session('success')" />
                 @endif
 
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
-                        <h1 class="text-2xl md:text-3xl font-semibold">Manage Users</h1>
-                        <p class="mt-1 text-base-content/60">All registered users and pending invitations</p>
+                        <h1 class="text-xl sm:text-2xl md:text-3xl font-semibold">Manage Users</h1>
+                        <p class="mt-1 text-sm text-base-content/60">All registered users and pending invitations</p>
                     </div>
-                    <a href="{{ route('admin.users.invite') }}" class="btn btn-primary rounded-xl gap-2 normal-case">
+                    <a href="{{ route('admin.users.invite') }}" class="btn btn-primary btn-sm sm:btn-md rounded-xl gap-2 normal-case self-start sm:self-auto shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4" aria-hidden="true">
                             <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
                         </svg>
@@ -32,7 +32,36 @@
                         <h2 class="font-semibold text-sm">Registered Users</h2>
                         <span class="badge badge-ghost badge-sm ml-auto">{{ $users->count() }}</span>
                     </div>
-                    <div class="overflow-x-auto">
+
+                    {{-- Mobile: card layout --}}
+                    <div class="sm:hidden divide-y divide-base-200">
+                        @forelse ($users as $registeredUser)
+                            <div class="flex items-center justify-between gap-3 px-4 py-3">
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-medium truncate">{{ $registeredUser->name }}</p>
+                                    <p class="text-xs text-base-content/50 truncate mt-0.5">{{ $registeredUser->email }}</p>
+                                </div>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <span @class([
+                                        'badge badge-sm',
+                                        'badge-primary' => $registeredUser->role->value === 'Admin',
+                                        'badge-secondary' => $registeredUser->role->value === 'Teacher',
+                                        'badge-accent' => $registeredUser->role->value === 'Student',
+                                    ])>{{ $registeredUser->role->value }}</span>
+                                    @if ($registeredUser->email_verified_at)
+                                        <span class="badge badge-success badge-sm badge-outline">Verified</span>
+                                    @else
+                                        <span class="badge badge-warning badge-sm badge-outline">Unverified</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-center text-base-content/50 py-6">No users registered yet.</p>
+                        @endforelse
+                    </div>
+
+                    {{-- Desktop: table layout --}}
+                    <div class="hidden sm:block overflow-x-auto">
                         <table class="table table-sm">
                             <thead>
                                 <tr>
@@ -84,7 +113,28 @@
                         <h2 class="font-semibold text-sm">Pending Invitations</h2>
                         <span class="badge badge-ghost badge-sm ml-auto">{{ $invitations->count() }}</span>
                     </div>
-                    <div class="overflow-x-auto">
+
+                    {{-- Mobile: card layout --}}
+                    <div class="sm:hidden divide-y divide-base-200">
+                        @forelse ($invitations as $invitation)
+                            <div class="flex items-center justify-between gap-3 px-4 py-3">
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-medium truncate">{{ $invitation->email }}</p>
+                                    <p class="text-xs text-base-content/50 mt-0.5">Invited by {{ $invitation->inviter->name }}</p>
+                                </div>
+                                <span @class([
+                                    'badge badge-sm shrink-0',
+                                    'badge-secondary' => $invitation->role->value === 'Teacher',
+                                    'badge-accent' => $invitation->role->value === 'Student',
+                                ])>{{ $invitation->role->value }}</span>
+                            </div>
+                        @empty
+                            <p class="text-center text-base-content/50 py-6">No pending invitations.</p>
+                        @endforelse
+                    </div>
+
+                    {{-- Desktop: table layout --}}
+                    <div class="hidden sm:block overflow-x-auto">
                         <table class="table table-sm">
                             <thead>
                                 <tr>

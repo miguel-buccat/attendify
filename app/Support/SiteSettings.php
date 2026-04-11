@@ -18,6 +18,7 @@ class SiteSettings
         'institution_name' => 'Attendify',
         'institution_logo' => null,
         'landing_banner' => null,
+        'timezone' => 'Asia/Manila',
     ];
 
     /**

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Teacher;
 
-use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EnrollStudentsRequest extends FormRequest

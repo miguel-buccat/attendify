@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['teacher_id', 'name', 'description', 'section', 'status'])]
 class SchoolClass extends Model
@@ -34,6 +35,11 @@ class SchoolClass extends Model
     {
         return $this->belongsToMany(User::class, 'class_student', 'class_id', 'student_id')
             ->withPivot('enrolled_at');
+    }
+
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(ClassSession::class, 'class_id');
     }
 
     public function scopeActive(Builder $query): void

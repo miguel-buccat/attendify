@@ -45,6 +45,18 @@
                                 :value="$siteSettings->get('institution_name')"
                             />
 
+                            <label class="form-control w-full">
+                                <span class="label-text mb-2">Timezone</span>
+                                <select name="timezone" class="select select-bordered w-full @error('timezone') select-error @enderror" required>
+                                    @foreach (timezone_identifiers_list() as $tz)
+                                        <option value="{{ $tz }}" @selected(old('timezone', $siteSettings->get('timezone', 'Asia/Manila')) === $tz)>
+                                            {{ $tz }} (UTC{{ (new DateTimeZone($tz))->getOffset(new DateTime) >= 0 ? '+' : '' }}{{ gmdate('H:i', abs((new DateTimeZone($tz))->getOffset(new DateTime))) }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('timezone') <p class="mt-1 text-xs text-error">{{ $message }}</p> @enderror
+                            </label>
+
                             <x-form.field
                                 label="Institution Logo"
                                 name="institution_logo"

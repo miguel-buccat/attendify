@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\ClassStatus;
-use App\Enums\UserRole;
 use App\Models\SchoolClass;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -157,7 +156,7 @@ test('teacher can search students for enrollment', function () {
     $class = SchoolClass::factory()->create(['teacher_id' => $teacher->id]);
 
     $this->actingAs($teacher)
-        ->getJson(route('teacher.classes.students.search', $class) . '?q=alice')
+        ->getJson(route('teacher.classes.students.search', $class).'?q=alice')
         ->assertOk()
         ->assertJsonCount(1)
         ->assertJsonFragment(['name' => 'Alice Wonderland', 'email' => 'alice@example.com']);
@@ -171,7 +170,7 @@ test('student search excludes already enrolled students', function () {
     $class->students()->attach($enrolled->id, ['enrolled_at' => now()]);
 
     $response = $this->actingAs($teacher)
-        ->getJson(route('teacher.classes.students.search', $class) . '?q=bob')
+        ->getJson(route('teacher.classes.students.search', $class).'?q=bob')
         ->assertOk();
 
     $ids = collect($response->json())->pluck('id');
@@ -186,7 +185,7 @@ test('student search excludes non-student users', function () {
     $class = SchoolClass::factory()->create(['teacher_id' => $teacher->id]);
 
     $response = $this->actingAs($teacher)
-        ->getJson(route('teacher.classes.students.search', $class) . '?q=test')
+        ->getJson(route('teacher.classes.students.search', $class).'?q=test')
         ->assertOk();
 
     $ids = collect($response->json())->pluck('id');

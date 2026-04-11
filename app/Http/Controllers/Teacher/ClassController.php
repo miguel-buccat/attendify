@@ -48,7 +48,7 @@ class ClassController extends Controller
     {
         Gate::authorize('view', $class);
 
-        $class->load(['students' => fn ($q) => $q->orderBy('name')]);
+        $class->load(['students' => fn ($q) => $q->orderBy('name'), 'sessions']);
 
         return view('teacher.classes.show', compact('class'));
     }
@@ -89,7 +89,7 @@ class ClassController extends Controller
             ->whereNotIn('id', $enrolledIds)
             ->where(function ($q) use ($query) {
                 $q->where('email', 'ilike', "%{$query}%")
-                  ->orWhere('name', 'ilike', "%{$query}%");
+                    ->orWhere('name', 'ilike', "%{$query}%");
             })
             ->select('id', 'name', 'email', 'avatar_path')
             ->limit(10)
