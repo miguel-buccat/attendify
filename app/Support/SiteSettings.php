@@ -19,6 +19,8 @@ class SiteSettings
         'institution_logo' => null,
         'landing_banner' => null,
         'timezone' => 'Asia/Manila',
+        'mission' => null,
+        'vision' => null,
     ];
 
     /**

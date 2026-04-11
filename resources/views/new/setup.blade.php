@@ -74,6 +74,18 @@
                                 accept="image/*"
                             />
 
+                            <x-form.field
+                                label="Mission Statement (optional)"
+                                name="mission"
+                                :value="$siteSettings->get('mission')"
+                            />
+
+                            <x-form.field
+                                label="Vision Statement (optional)"
+                                name="vision"
+                                :value="$siteSettings->get('vision')"
+                            />
+
                             <button type="submit" class="btn btn-primary rounded-md w-full md:w-auto">Finish Setup</button>
                         </form>
                     </div>

@@ -49,4 +49,9 @@ class ClassSession extends Model
     {
         return $this->status === SessionStatus::Scheduled;
     }
+
+    public function isCompleted(): bool
+    {
+        return $this->status === SessionStatus::Completed;
+    }
 }

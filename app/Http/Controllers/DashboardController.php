@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Student\StudentDashboardController;
+use App\Http\Controllers\Teacher\TeacherDashboardController;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -11,12 +14,10 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        $view = match ($user->role) {
-            UserRole::Admin => 'dashboard.admin',
-            UserRole::Teacher => 'dashboard.teacher',
-            UserRole::Student => 'dashboard.student',
+        return match ($user->role) {
+            UserRole::Admin => app(AdminDashboardController::class)->index(),
+            UserRole::Teacher => app(TeacherDashboardController::class)->index(),
+            UserRole::Student => app(StudentDashboardController::class)->index(),
         };
-
-        return view($view, ['user' => $user]);
     }
 }

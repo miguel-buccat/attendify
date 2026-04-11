@@ -86,4 +86,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(AttendanceRecord::class, 'student_id');
     }
+
+    public function excuseRequests(): HasMany
+    {
+        return $this->hasMany(ExcuseRequest::class, 'student_id');
+    }
 }

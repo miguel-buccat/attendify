@@ -29,7 +29,7 @@
                                 default => 'badge-ghost',
                             };
                         @endphp
-                        <span class="badge {{ $badgeClass }} badge-lg shrink-0 self-start">{{ $session->status->value }}</span>
+                        <span id="session-status-badge" class="badge {{ $badgeClass }} badge-lg shrink-0 self-start">{{ $session->status->value }}</span>
                     </div>
                 </div>
 
@@ -59,7 +59,7 @@
                         </div>
 
                         {{-- Action buttons --}}
-                        <div class="flex flex-wrap gap-2 mt-2">
+                        <div id="session-actions" class="flex flex-wrap gap-2 mt-2">
                             @if ($session->isScheduled())
                                 <form method="POST" action="{{ route('teacher.sessions.start', $session) }}">
                                     @csrf
@@ -79,13 +79,19 @@
                                     <button type="submit" class="btn btn-ghost btn-sm rounded-lg text-error">Cancel</button>
                                 </form>
                             @endif
+                            <a href="{{ route('teacher.attendance.index', $session) }}" class="btn btn-ghost btn-sm rounded-lg gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4" aria-hidden="true">
+                                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2m-6 9 2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Manage Attendance
+                            </a>
                         </div>
                     </div>
                 </div>
 
                 {{-- QR Code display (only when active) --}}
                 @if ($session->isActive())
-                    <div class="card bg-base-100 rounded-xl border border-base-300">
+                    <div id="qr-section" class="card bg-base-100 rounded-xl border border-base-300">
                         <div class="card-body items-center text-center gap-4 px-4 sm:px-6">
                             <h2 class="card-title text-lg">QR Code — Scan to Attend</h2>
                             <x-qr-display
@@ -185,6 +191,121 @@
             const url = @json(route('teacher.sessions.attendance', $session));
             const enrolledCount = @json($enrolledCount);
             let polling = null;
+            let settled = false;
+
+            function badgeClass(status) {
+                const map = { Present: 'badge-success', Late: 'badge-warning', Absent: 'badge-error', Excused: 'badge-info' };
+                return map[status] || 'badge-ghost';
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function buildMobileHtml(records) {
+                if (!records.length) return '';
+                return records.map(r => `
+                    <div class="flex items-center justify-between gap-3 rounded-xl bg-base-200/40 px-4 py-3">
+                        <div class="min-w-0">
+                            <p class="font-medium truncate">${escapeHtml(r.student_name)}</p>
+                            <p class="text-xs text-base-content/50 mt-0.5">${escapeHtml(r.scanned_at || '—')}</p>
+                        </div>
+                        <span class="badge ${badgeClass(r.status)} badge-sm shrink-0">${escapeHtml(r.status)}</span>
+                    </div>
+                `).join('');
+            }
+
+            function buildDesktopHtml(records) {
+                if (!records.length) return '';
+                const rows = records.map(r => `
+                    <tr>
+                        <td class="font-medium">${escapeHtml(r.student_name)}</td>
+                        <td><span class="badge ${badgeClass(r.status)} badge-sm">${escapeHtml(r.status)}</span></td>
+                        <td class="text-base-content/60">${escapeHtml(r.scanned_at || '—')}</td>
+                    </tr>
+                `).join('');
+                return `<table class="table table-sm"><thead><tr><th>Student</th><th>Status</th><th>Scanned At</th></tr></thead><tbody>${rows}</tbody></table>`;
+            }
+
+            function updateStatusBadge(status) {
+                const badge = document.getElementById('session-status-badge');
+                if (!badge) return;
+                badge.textContent = status;
+                const cls = { Active: 'badge-success', Completed: 'badge-ghost', Cancelled: 'badge-error', Scheduled: 'badge-info' };
+                badge.className = 'badge badge-lg shrink-0 self-start ' + (cls[status] || 'badge-ghost');
+            }
+
+            function updateAttendance(data) {
+                document.getElementById('scanned-count').textContent = data.scanned_count + ' / ' + enrolledCount;
+
+                const section = document.getElementById('attendance-section');
+                if (data.records.length) {
+                    section.innerHTML = `
+                        <div class="card bg-base-100 rounded-xl border border-base-300">
+                            <div class="card-body gap-4">
+                                <h2 class="card-title text-lg">Attendance Progress</h2>
+                                <div class="space-y-2 sm:hidden">${buildMobileHtml(data.records)}</div>
+                                <div class="hidden sm:block overflow-x-auto">${buildDesktopHtml(data.records)}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    section.innerHTML = `
+                        <div class="card bg-base-100 rounded-xl border border-base-300">
+                            <div class="card-body items-center text-center py-8">
+                                <p class="text-base-content/50">No attendance records yet.</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            function hideSessionActions() {
+                const el = document.getElementById('session-actions');
+                if (el) el.remove();
+                const qr = document.getElementById('qr-section');
+                if (qr) qr.remove();
+            }
+
+            function refresh() {
+                fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(res => res.json())
+                    .then(data => {
+                        updateAttendance(data);
+
+                        if (data.session_status !== 'Active' && !settled) {
+                            settled = true;
+                            updateStatusBadge(data.session_status);
+                            hideSessionActions();
+                            // Keep polling briefly for the job to finish marking absentees
+                            setTimeout(() => {
+                                fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+                                    .then(res => res.json())
+                                    .then(final => {
+                                        updateAttendance(final);
+                                        clearInterval(polling);
+                                    })
+                                    .catch(() => clearInterval(polling));
+                            }, 3000);
+                        }
+                    })
+                    .catch(() => {});
+            }
+
+            polling = setInterval(refresh, 5000);
+        })();
+    </script>
+    @elseif ($session->isCompleted())
+    {{-- Brief polling after session completion to catch queued absentee-marking job --}}
+    <script>
+        (function () {
+            const url = @json(route('teacher.sessions.attendance', $session));
+            const enrolledCount = @json($enrolledCount);
+            let lastCount = @json($scannedCount);
+            let attempts = 0;
+            const maxAttempts = 6;
 
             function badgeClass(status) {
                 const map = { Present: 'badge-success', Late: 'badge-warning', Absent: 'badge-error', Excused: 'badge-info' };
@@ -223,6 +344,7 @@
             }
 
             function refresh() {
+                attempts++;
                 fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
                     .then(res => res.json())
                     .then(data => {
@@ -239,25 +361,17 @@
                                     </div>
                                 </div>
                             `;
-                        } else {
-                            section.innerHTML = `
-                                <div class="card bg-base-100 rounded-xl border border-base-300">
-                                    <div class="card-body items-center text-center py-8">
-                                        <p class="text-base-content/50">No attendance records yet.</p>
-                                    </div>
-                                </div>
-                            `;
                         }
 
-                        if (data.session_status !== 'Active') {
+                        // Stop polling once records updated or max attempts reached
+                        if (data.scanned_count !== lastCount || attempts >= maxAttempts) {
                             clearInterval(polling);
-                            location.reload();
                         }
                     })
-                    .catch(() => {});
+                    .catch(() => { if (attempts >= maxAttempts) clearInterval(polling); });
             }
 
-            polling = setInterval(refresh, 5000);
+            const polling = setInterval(refresh, 2000);
         })();
     </script>
     @endif

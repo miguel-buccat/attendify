@@ -36,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
                 'institutionName' => $settings->get('institution_name', 'Attendify'),
                 'institutionLogo' => $settings->get('institution_logo') ?: asset('assets/attendify.png'),
                 'landingBanner' => $settings->get('landing_banner'),
+                'institutionMission' => $settings->get('mission'),
+                'institutionVision' => $settings->get('vision'),
             ]);
         });
     }

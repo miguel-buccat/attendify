@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\SiteSettingsController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -12,8 +13,11 @@ use App\Http\Controllers\SetupController;
 use App\Http\Controllers\SiteAssetController;
 use App\Http\Controllers\Student\AttendanceScanController;
 use App\Http\Controllers\Student\ClassEnrollmentController;
+use App\Http\Controllers\Student\ExcuseRequestController as StudentExcuseRequestController;
+use App\Http\Controllers\Teacher\AttendanceController;
 use App\Http\Controllers\Teacher\ClassController;
 use App\Http\Controllers\Teacher\ClassSessionController;
+use App\Http\Controllers\Teacher\ExcuseRequestController as TeacherExcuseRequestController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -57,6 +61,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
     Route::get('/users/invite', [UserManagementController::class, 'invite'])->name('users.invite');
     Route::post('/users/invite', [UserManagementController::class, 'sendInvitation'])->name('users.invite.send');
+    Route::get('/settings', [SiteSettingsController::class, 'edit'])->name('settings.edit');
+    Route::patch('/settings', [SiteSettingsController::class, 'update'])->name('settings.update');
 });
 
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function (): void {
@@ -76,12 +82,23 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
     Route::post('/sessions/{session}/complete', [ClassSessionController::class, 'complete'])->name('sessions.complete');
     Route::post('/sessions/{session}/cancel', [ClassSessionController::class, 'cancel'])->name('sessions.cancel');
     Route::get('/sessions/{session}/attendance', [ClassSessionController::class, 'attendanceData'])->name('sessions.attendance');
+    Route::get('/sessions/{session}/attendance/manage', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::patch('/attendance/{record}', [AttendanceController::class, 'update'])->name('attendance.update');
+    Route::get('/sessions/{session}/attendance/export', [AttendanceController::class, 'export'])->name('attendance.export');
+    Route::get('/excuses', [TeacherExcuseRequestController::class, 'index'])->name('excuses.index');
+    Route::patch('/excuses/{excuseRequest}', [TeacherExcuseRequestController::class, 'review'])->name('excuses.review');
+    Route::get('/excuses/{excuseRequest}/download', [TeacherExcuseRequestController::class, 'download'])->name('excuses.download');
 });
 
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function (): void {
     Route::get('/dashboard', fn () => redirect()->route('dashboard'))->name('dashboard');
     Route::get('/classes', [ClassEnrollmentController::class, 'index'])->name('classes.index');
+    Route::get('/classes/{class}', [ClassEnrollmentController::class, 'show'])->name('classes.show');
     Route::get('/scan', [AttendanceScanController::class, 'index'])->name('scan.index');
     Route::post('/scan', [AttendanceScanController::class, 'store'])->name('scan.store');
     Route::get('/attendance', [AttendanceScanController::class, 'history'])->name('attendance.index');
+    Route::get('/excuses', [StudentExcuseRequestController::class, 'index'])->name('excuses.index');
+    Route::get('/excuses/create', [StudentExcuseRequestController::class, 'create'])->name('excuses.create');
+    Route::post('/excuses', [StudentExcuseRequestController::class, 'store'])->name('excuses.store');
+    Route::get('/excuses/{excuseRequest}/download', [StudentExcuseRequestController::class, 'download'])->name('excuses.download');
 });

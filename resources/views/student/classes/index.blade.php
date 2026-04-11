@@ -21,7 +21,7 @@
                 @else
                     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                         @foreach ($classes as $class)
-                            <article class="rounded-xl border border-base-300 bg-base-100 p-5 flex flex-col gap-3">
+                            <a href="{{ route('student.classes.show', $class) }}" class="rounded-xl border border-base-300 bg-base-100 p-5 flex flex-col gap-3 hover:border-primary/30 hover:shadow-sm transition-all">
                                 <div class="flex items-start justify-between gap-2">
                                     <div class="min-w-0">
                                         <p class="font-semibold truncate">{{ $class->name }}</p>
@@ -43,7 +43,7 @@
                                 <div class="text-sm text-base-content/60 border-t border-base-200 pt-3 mt-auto">
                                     <span>{{ $class->students_count }} {{ Str::plural('student', $class->students_count) }}</span>
                                 </div>
-                            </article>
+                            </a>
                         @endforeach
                     </div>
                 @endif
