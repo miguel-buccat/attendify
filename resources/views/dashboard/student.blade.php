@@ -50,15 +50,12 @@
                         <p class="text-xs text-base-content/60">Student</p>
                     </div>
                 </div>
-                <form method="POST" action="{{ route('logout') }}" class="mt-1">
-                    @csrf
-                    <button type="submit" class="btn btn-ghost btn-sm w-full justify-start gap-2 rounded-xl text-base-content/70 normal-case font-normal">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4" aria-hidden="true">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        Logout
-                    </button>
-                </form>
+                <button type="button" onclick="document.getElementById('logout-modal').showModal()" class="btn btn-ghost btn-sm w-full justify-start gap-2 rounded-xl text-base-content/70 normal-case font-normal mt-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4" aria-hidden="true">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Logout
+                </button>
             </div>
         </aside>
 
@@ -72,10 +69,7 @@
             </div>
             <div class="flex items-center gap-2">
                 <span class="badge badge-accent badge-sm">Student</span>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-ghost btn-xs rounded-lg">Logout</button>
-                </form>
+                <button type="button" onclick="document.getElementById('logout-modal').showModal()" class="btn btn-ghost btn-xs rounded-lg">Logout</button>
             </div>
         </div>
 
@@ -111,4 +105,24 @@
             </div>
         </main>
     </div>
+
+    {{-- Logout confirmation modal --}}
+    <dialog id="logout-modal" class="modal">
+        <div class="modal-box rounded-2xl">
+            <h3 class="text-lg font-semibold">Confirm Logout</h3>
+            <p class="mt-2 text-base-content/70">Are you sure you want to log out?</p>
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn btn-ghost rounded-xl">Cancel</button>
+                </form>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-error rounded-xl">Logout</button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
 </x-layouts.app>
