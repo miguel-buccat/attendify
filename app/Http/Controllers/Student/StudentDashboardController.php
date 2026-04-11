@@ -51,6 +51,13 @@ class StudentDashboardController extends Controller
             'values' => [$presentCount, $lateCount, $absentCount, $excusedCount],
         ];
 
+        // Recent attendance records
+        $recentRecords = $user->attendanceRecords()
+            ->with('classSession.schoolClass')
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('dashboard.student', compact(
             'user',
             'myClasses',
@@ -61,6 +68,7 @@ class StudentDashboardController extends Controller
             'attendanceRate',
             'lineData',
             'pieData',
+            'recentRecords',
         ));
     }
 }

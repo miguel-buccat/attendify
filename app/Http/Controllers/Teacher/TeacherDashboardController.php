@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Enums\AttendanceStatus;
 use App\Enums\ClassStatus;
+use App\Enums\ExcuseRequestStatus;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceRecord;
+use App\Models\ExcuseRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -63,6 +65,20 @@ class TeacherDashboardController extends Controller
             'values' => $distribution->values()->toArray(),
         ];
 
+        // Pending excuse requests for teacher's classes
+        $pendingExcuses = ExcuseRequest::whereIn('class_id', $classIds)
+            ->where('status', ExcuseRequestStatus::Pending)
+            ->count();
+
+        // Recent sessions
+        $recentSessions = DB::table('class_sessions')
+            ->join('school_classes', 'class_sessions.class_id', '=', 'school_classes.id')
+            ->whereIn('class_sessions.class_id', $classIds)
+            ->select('class_sessions.*', 'school_classes.name as class_name')
+            ->orderByDesc('class_sessions.created_at')
+            ->take(5)
+            ->get();
+
         return view('dashboard.teacher', compact(
             'user',
             'myClasses',
@@ -71,6 +87,8 @@ class TeacherDashboardController extends Controller
             'avgAttendanceRate',
             'barData',
             'pieData',
+            'pendingExcuses',
+            'recentSessions',
         ));
     }
 }

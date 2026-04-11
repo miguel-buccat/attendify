@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\SiteSettingsController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -60,6 +61,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
     Route::get('/users/invite', [UserManagementController::class, 'invite'])->name('users.invite');
     Route::post('/users/invite', [UserManagementController::class, 'sendInvitation'])->name('users.invite.send');
+    Route::get('/settings', [SiteSettingsController::class, 'edit'])->name('settings.edit');
+    Route::patch('/settings', [SiteSettingsController::class, 'update'])->name('settings.update');
 });
 
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function (): void {

@@ -1,4 +1,4 @@
-@props(['icon' => null, 'label', 'value', 'color' => 'primary'])
+@props(['icon' => null, 'label', 'value', 'color' => 'primary', 'href' => null])
 
 @php
     $colorClass = match ($color) {
@@ -20,18 +20,20 @@
         'accent' => 'bg-accent/10',
         default => 'bg-primary/10',
     };
+
+    $tag = $href ? 'a' : 'article';
 @endphp
 
-<article class="rounded-xl border border-base-300 bg-base-100 p-4 flex items-start gap-3">
+<{{ $tag }} @if($href) href="{{ $href }}" @endif class="rounded-2xl border border-base-300/60 bg-base-100 p-4 sm:p-5 flex items-start gap-3 transition-all duration-200 hover:shadow-md hover:border-base-300">
     @if ($icon)
-        <div class="shrink-0 flex items-center justify-center size-10 rounded-lg {{ $bgClass }}">
+        <div class="shrink-0 flex items-center justify-center size-11 rounded-xl {{ $bgClass }}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 {{ $colorClass }}" aria-hidden="true">
                 {!! $icon !!}
             </svg>
         </div>
     @endif
     <div class="min-w-0">
-        <p class="text-xs uppercase tracking-wider text-base-content/60">{{ $label }}</p>
+        <p class="text-xs uppercase tracking-wider text-base-content/50 font-medium">{{ $label }}</p>
         <p class="mt-1 text-2xl sm:text-3xl font-bold {{ $colorClass }}">{{ $value }}</p>
     </div>
-</article>
+</{{ $tag }}>

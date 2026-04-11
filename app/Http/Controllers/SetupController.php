@@ -79,6 +79,8 @@ class SetupController extends Controller
             'timezone' => ['required', 'string', 'timezone:all'],
             'institution_logo' => ['required', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:2048'],
             'landing_banner' => ['required', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:4096'],
+            'mission' => ['nullable', 'string', 'max:1000'],
+            'vision' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $logoPath = $request->file('institution_logo')->store('site-settings', 'public');
@@ -92,6 +94,8 @@ class SetupController extends Controller
         $siteSettings->set('timezone', $validated['timezone']);
         $siteSettings->set('institution_logo', url(Storage::disk('public')->url($logoPath)));
         $siteSettings->set('landing_banner', url(Storage::disk('public')->url($bannerPath)));
+        $siteSettings->set('mission', $validated['mission'] ?? null);
+        $siteSettings->set('vision', $validated['vision'] ?? null);
 
         return redirect()->route('landing');
     }

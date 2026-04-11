@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\AttendanceStatus;
 use App\Enums\ClassStatus;
+use App\Enums\ExcuseRequestStatus;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceRecord;
 use App\Models\ClassSession;
+use App\Models\ExcuseRequest;
 use App\Models\SchoolClass;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -58,6 +60,12 @@ class AdminDashboardController extends Controller
             'label' => 'Attendance Rate %',
         ];
 
+        // Recent users
+        $recentUsers = User::latest()->take(5)->get();
+
+        // Pending excuse requests
+        $pendingExcuses = ExcuseRequest::where('status', ExcuseRequestStatus::Pending)->count();
+
         return view('dashboard.admin', compact(
             'user',
             'totalUsers',
@@ -66,6 +74,9 @@ class AdminDashboardController extends Controller
             'avgAttendanceRate',
             'pieData',
             'lineData',
+            'usersByRole',
+            'recentUsers',
+            'pendingExcuses',
         ));
     }
 }
