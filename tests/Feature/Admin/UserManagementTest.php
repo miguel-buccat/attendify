@@ -52,8 +52,9 @@ test('admin can send an invitation', function () {
 
     $this->actingAs($admin)
         ->post(route('admin.users.invite.send'), [
-            'email' => 'newteacher@example.com',
-            'role' => UserRole::Teacher->value,
+            'invitees' => [
+                ['email' => 'newteacher@example.com', 'role' => UserRole::Teacher->value],
+            ],
         ])
         ->assertRedirect(route('admin.users.index'));
 
@@ -74,8 +75,9 @@ test('invitation email is dispatched (queued)', function () {
     $admin = User::factory()->admin()->create();
 
     $this->actingAs($admin)->post(route('admin.users.invite.send'), [
-        'email' => 'queued@example.com',
-        'role' => UserRole::Student->value,
+        'invitees' => [
+            ['email' => 'queued@example.com', 'role' => UserRole::Student->value],
+        ],
     ]);
 
     Notification::assertSentOnDemand(InvitationNotification::class);
@@ -87,10 +89,11 @@ test('invitation fails validation for duplicate user email', function () {
 
     $this->actingAs($admin)
         ->post(route('admin.users.invite.send'), [
-            'email' => $existing->email,
-            'role' => UserRole::Student->value,
+            'invitees' => [
+                ['email' => $existing->email, 'role' => UserRole::Student->value],
+            ],
         ])
-        ->assertInvalid(['email']);
+        ->assertInvalid(['invitees.0.email']);
 });
 
 test('invitation fails validation for already invited email', function () {
@@ -99,10 +102,11 @@ test('invitation fails validation for already invited email', function () {
 
     $this->actingAs($admin)
         ->post(route('admin.users.invite.send'), [
-            'email' => 'pending@example.com',
-            'role' => UserRole::Student->value,
+            'invitees' => [
+                ['email' => 'pending@example.com', 'role' => UserRole::Student->value],
+            ],
         ])
-        ->assertInvalid(['email']);
+        ->assertInvalid(['invitees.0.email']);
 });
 
 test('invitation fails validation for invalid role', function () {
@@ -110,10 +114,11 @@ test('invitation fails validation for invalid role', function () {
 
     $this->actingAs($admin)
         ->post(route('admin.users.invite.send'), [
-            'email' => 'someone@example.com',
-            'role' => 'Admin',
+            'invitees' => [
+                ['email' => 'someone@example.com', 'role' => 'Admin'],
+            ],
         ])
-        ->assertInvalid(['role']);
+        ->assertInvalid(['invitees.0.role']);
 });
 
 test('non-admin cannot access user management routes', function () {
@@ -129,8 +134,9 @@ test('non-admin cannot send invitations', function () {
 
     $this->actingAs($student)
         ->post(route('admin.users.invite.send'), [
-            'email' => 'someone@example.com',
-            'role' => UserRole::Teacher->value,
+            'invitees' => [
+                ['email' => 'someone@example.com', 'role' => UserRole::Teacher->value],
+            ],
         ])
         ->assertForbidden();
 });
@@ -181,6 +187,27 @@ test('already accepted token shows error view', function () {
 test('invalid token returns 404', function () {
     $this->get(route('invitation.accept', ['token' => 'nonexistenttoken']))
         ->assertNotFound();
+});
+
+test('admin can send bulk invitations in a single request', function () {
+    Notification::fake();
+
+    $admin = User::factory()->admin()->create();
+
+    $this->actingAs($admin)
+        ->post(route('admin.users.invite.send'), [
+            'invitees' => [
+                ['email' => 'teacher@example.com', 'role' => UserRole::Teacher->value],
+                ['email' => 'student@example.com', 'role' => UserRole::Student->value],
+            ],
+        ])
+        ->assertRedirect(route('admin.users.index'))
+        ->assertSessionHas('success', '2 invitations sent successfully.');
+
+    expect(Invitation::where('email', 'teacher@example.com')->exists())->toBeTrue();
+    expect(Invitation::where('email', 'student@example.com')->exists())->toBeTrue();
+
+    Notification::assertSentOnDemandTimes(InvitationNotification::class, 2);
 });
 
 test('stale invitations job deletes expired records', function () {

@@ -11,7 +11,7 @@ use App\Http\Controllers\SetupController;
 use App\Http\Controllers\SiteAssetController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [LandingController::class, 'index'])->name('landing');
+// Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 Route::get('/new', [SetupController::class, 'newIndex'])->name('new.index');
 Route::get('/new/setup', [SetupController::class, 'index'])->name('new.setup');
@@ -23,6 +23,8 @@ Route::get('/site-assets/{key}', [SiteAssetController::class, 'show'])
     ->name('site-assets.show');
 
 Route::middleware('guest')->group(function (): void {
+    Route::get('/', [LandingController::class, 'index'])->name('landing');
+
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store')->middleware('throttle:5,1');
 

@@ -29,19 +29,28 @@ class UserManagementController extends Controller
 
     public function sendInvitation(InviteUserRequest $request): RedirectResponse
     {
-        $invitation = Invitation::create([
-            'email' => $request->validated('email'),
-            'role' => $request->validated('role'),
-            'invited_by' => auth()->id(),
-            'token' => Str::random(64),
-            'expires_at' => now()->addDays(7),
-        ]);
+        $count = 0;
 
-        (new AnonymousNotifiable)
-            ->route('mail', $invitation->email)
-            ->notify(new InvitationNotification($invitation));
+        foreach ($request->validated('invitees') as $invitee) {
+            $invitation = Invitation::create([
+                'email' => $invitee['email'],
+                'role' => $invitee['role'],
+                'invited_by' => auth()->id(),
+                'token' => Str::random(64),
+                'expires_at' => now()->addDays(7),
+            ]);
 
-        return redirect()->route('admin.users.index')
-            ->with('success', "Invitation sent to {$invitation->email}.");
+            (new AnonymousNotifiable)
+                ->route('mail', $invitation->email)
+                ->notify(new InvitationNotification($invitation));
+
+            $count++;
+        }
+
+        $message = $count === 1
+            ? "Invitation sent to {$request->validated('invitees.0.email')}."
+            : "{$count} invitations sent successfully.";
+
+        return redirect()->route('admin.users.index')->with('success', $message);
     }
 }

@@ -20,7 +20,8 @@ class InviteUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => [
+            'invitees' => ['required', 'array', 'min:1'],
+            'invitees.*.email' => [
                 'required',
                 'email',
                 Rule::unique('users', 'email'),
@@ -28,7 +29,7 @@ class InviteUserRequest extends FormRequest
                     fn ($query) => $query->whereNull('accepted_at')->where('expires_at', '>', now())
                 ),
             ],
-            'role' => ['required', new Enum(UserRole::class), Rule::in([UserRole::Teacher->value, UserRole::Student->value])],
+            'invitees.*.role' => ['required', new Enum(UserRole::class), Rule::in([UserRole::Teacher->value, UserRole::Student->value])],
         ];
     }
 
@@ -38,7 +39,23 @@ class InviteUserRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.unique' => 'This email address already has an account or a pending invitation.',
+            'invitees.*.email.unique' => 'This email address already has an account or a pending invitation.',
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        $attributes = [];
+
+        foreach ($this->input('invitees', []) as $index => $invitee) {
+            $num = $index + 1;
+            $attributes["invitees.{$index}.email"] = "email #{$num}";
+            $attributes["invitees.{$index}.role"] = "role #{$num}";
+        }
+
+        return $attributes;
     }
 }
