@@ -20,12 +20,6 @@ class DevResetSite extends Command
      */
     public function handle(): int
     {
-        if (! App::environment(['local', 'testing'])) {
-            $this->components->error('This command is only available in local/testing environments.');
-
-            return SymfonyCommand::FAILURE;
-        }
-
         if (! $this->confirm('This will delete setup images, site settings, and run migrate:fresh. Continue?', true)) {
             $this->components->warn('Cancelled.');
 
