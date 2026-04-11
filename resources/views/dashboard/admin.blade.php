@@ -17,13 +17,13 @@
                     Dashboard
                 </a>
 
-                {{-- Added in Phase 2.6 --}}
-                {{-- <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-base-200 text-base-content/80 text-sm transition-colors">
+                {{-- Phase 2.6: Manage Users --}}
+                <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-base-200 text-base-content/80 text-sm transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 shrink-0" aria-hidden="true">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8 4v6m3-3h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     Manage Users
-                </a> --}}
+                </a>
             </nav>
 
             <div class="p-3 border-t border-base-300">

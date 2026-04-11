@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\SiteAssetController;
@@ -29,6 +31,9 @@ Route::middleware('guest')->group(function (): void {
 
     Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
     Route::post('/reset-password', [NewPasswordController::class, 'store'])->name('password.update')->middleware('throttle:3,1');
+
+    Route::get('/invitation/accept/{token}', [InvitationController::class, 'show'])->name('invitation.accept');
+    Route::post('/invitation/accept/{token}', [InvitationController::class, 'store'])->name('invitation.accept.store');
 });
 
 Route::middleware('auth')->group(function (): void {
@@ -38,6 +43,9 @@ Route::middleware('auth')->group(function (): void {
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function (): void {
     Route::get('/dashboard', fn () => redirect()->route('dashboard'))->name('dashboard');
+    Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+    Route::get('/users/invite', [UserManagementController::class, 'invite'])->name('users.invite');
+    Route::post('/users/invite', [UserManagementController::class, 'sendInvitation'])->name('users.invite.send');
 });
 
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function (): void {
