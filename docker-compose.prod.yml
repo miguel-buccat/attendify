@@ -1,0 +1,176 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_NAME: '${APP_NAME:-Attendify}'
+      APP_ENV: production
+      APP_KEY: '${APP_KEY}'
+      APP_DEBUG: 'false'
+      APP_URL: '${APP_URL}'
+
+      BCRYPT_ROUNDS: '${BCRYPT_ROUNDS:-12}'
+
+      LOG_CHANNEL: stack
+      LOG_STACK: single
+      LOG_LEVEL: '${LOG_LEVEL:-warning}'
+
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: '${DB_DATABASE:-attendify}'
+      DB_USERNAME: '${DB_USERNAME:-attendify}'
+      DB_PASSWORD: '${DB_PASSWORD}'
+
+      SESSION_DRIVER: database
+      SESSION_LIFETIME: 120
+      SESSION_ENCRYPT: 'true'
+      SESSION_DOMAIN: '${SESSION_DOMAIN:-null}'
+
+      QUEUE_CONNECTION: database
+      CACHE_STORE: redis
+      FILESYSTEM_DISK: local
+
+      REDIS_HOST: redis
+      REDIS_PASSWORD: '${REDIS_PASSWORD:-null}'
+      REDIS_PORT: 6379
+
+      MAIL_MAILER: '${MAIL_MAILER:-smtp}'
+      MAIL_HOST: '${MAIL_HOST}'
+      MAIL_PORT: '${MAIL_PORT:-587}'
+      MAIL_USERNAME: '${MAIL_USERNAME}'
+      MAIL_PASSWORD: '${MAIL_PASSWORD}'
+      MAIL_ENCRYPTION: '${MAIL_ENCRYPTION:-tls}'
+      MAIL_FROM_ADDRESS: '${MAIL_FROM_ADDRESS}'
+      MAIL_FROM_NAME: '${MAIL_FROM_NAME:-Attendify}'
+    volumes:
+      - app-storage:/var/www/html/storage
+    ports:
+      - '${APP_PORT:-8080}:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:8080/up || exit 1']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+    environment:
+      APP_NAME: '${APP_NAME:-Attendify}'
+      APP_ENV: production
+      APP_KEY: '${APP_KEY}'
+      APP_DEBUG: 'false'
+      APP_URL: '${APP_URL}'
+
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: '${DB_DATABASE:-attendify}'
+      DB_USERNAME: '${DB_USERNAME:-attendify}'
+      DB_PASSWORD: '${DB_PASSWORD}'
+
+      QUEUE_CONNECTION: database
+      CACHE_STORE: redis
+
+      REDIS_HOST: redis
+      REDIS_PASSWORD: '${REDIS_PASSWORD:-null}'
+      REDIS_PORT: 6379
+
+      MAIL_MAILER: '${MAIL_MAILER:-smtp}'
+      MAIL_HOST: '${MAIL_HOST}'
+      MAIL_PORT: '${MAIL_PORT:-587}'
+      MAIL_USERNAME: '${MAIL_USERNAME}'
+      MAIL_PASSWORD: '${MAIL_PASSWORD}'
+      MAIL_ENCRYPTION: '${MAIL_ENCRYPTION:-tls}'
+      MAIL_FROM_ADDRESS: '${MAIL_FROM_ADDRESS}'
+      MAIL_FROM_NAME: '${MAIL_FROM_NAME:-Attendify}'
+    volumes:
+      - app-storage:/var/www/html/storage
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: php artisan schedule:work
+    environment:
+      APP_NAME: '${APP_NAME:-Attendify}'
+      APP_ENV: production
+      APP_KEY: '${APP_KEY}'
+      APP_DEBUG: 'false'
+      APP_URL: '${APP_URL}'
+
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: '${DB_DATABASE:-attendify}'
+      DB_USERNAME: '${DB_USERNAME:-attendify}'
+      DB_PASSWORD: '${DB_PASSWORD}'
+
+      QUEUE_CONNECTION: database
+      CACHE_STORE: redis
+
+      REDIS_HOST: redis
+      REDIS_PASSWORD: '${REDIS_PASSWORD:-null}'
+      REDIS_PORT: 6379
+    volumes:
+      - app-storage:/var/www/html/storage
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: '${DB_DATABASE:-attendify}'
+      POSTGRES_USER: '${DB_USERNAME:-attendify}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD}'
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME:-attendify} -d ${DB_DATABASE:-attendify}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: >
+      sh -c "if [ '${REDIS_PASSWORD:-null}' != 'null' ]; then
+        redis-server --requirepass '${REDIS_PASSWORD}';
+      else
+        redis-server;
+      fi"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  app-storage:
+  pgsql-data:
+  redis-data:
