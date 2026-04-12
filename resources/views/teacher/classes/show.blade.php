@@ -159,11 +159,18 @@
                     <div class="px-5 py-4 border-b border-base-300/30 flex items-center justify-between">
                         <h2 class="font-semibold text-sm">Sessions</h2>
                         @if ($class->isActive())
-                            <button type="button" onclick="document.getElementById('create-session-modal').showModal()"
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 text-primary border border-primary/15 text-xs font-semibold hover:bg-primary/15 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                                New Session
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="document.getElementById('preschedule-modal').showModal()"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-base-200 text-base-content/60 border border-base-300/50 text-xs font-semibold hover:bg-base-300/50 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    Pre-Schedule
+                                </button>
+                                <button type="button" onclick="document.getElementById('create-session-modal').showModal()"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 text-primary border border-primary/15 text-xs font-semibold hover:bg-primary/15 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                                    New Session
+                                </button>
+                            </div>
                         @endif
                     </div>
                     @if ($class->sessions->isEmpty())
@@ -172,7 +179,7 @@
                         </div>
                     @else
                         <div class="divide-y divide-base-300/30">
-                            @foreach ($class->sessions->sortByDesc('start_time') as $session)
+                            @foreach ($class->sessions->sortBy('start_time') as $session)
                                 @php
                                     $sStyle = match ($session->status->value) {
                                         'Active'     => 'text-success bg-success/10 border-success/20',
@@ -241,26 +248,104 @@
                     <label class="label"><span class="label-text font-medium">Grace Period (minutes)</span></label>
                     <input type="number" name="grace_period_minutes" class="input input-bordered rounded-lg w-full" value="15" min="1" max="60">
                 </div>
-                <div class="border-t border-base-300/30 pt-4 mt-2 space-y-3">
-                    <p class="text-xs font-bold uppercase tracking-widest text-base-content/35">Recurring (optional)</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="form-control">
-                            <label class="label"><span class="label-text font-medium">Repeat</span></label>
-                            <select name="recurrence_pattern" class="select select-bordered rounded-lg w-full">
-                                <option value="">No repeat</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="biweekly">Biweekly</option>
-                            </select>
-                        </div>
-                        <div class="form-control">
-                            <label class="label"><span class="label-text font-medium">Repeat Until</span></label>
-                            <input type="date" name="recurrence_end_date" class="input input-bordered rounded-lg w-full">
-                        </div>
-                    </div>
-                </div>
                 <div class="modal-action">
                     <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost rounded-lg">Cancel</button>
                     <button type="submit" class="btn btn-primary rounded-lg">Schedule</button>
+                </div>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
+
+    {{-- Pre-Schedule Modal --}}
+    <dialog id="preschedule-modal" class="modal">
+        <div class="modal-box rounded-2xl max-w-lg">
+            <h3 class="text-lg font-semibold mb-1">Pre-Schedule Sessions</h3>
+            <p class="text-xs text-base-content/40 mb-4">Create recurring sessions for specific days of the week.</p>
+
+            @if ($errors->hasBag('preschedule'))
+                <div class="alert alert-error text-sm mb-4">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->getBag('preschedule')->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('teacher.sessions.bulk-store', $class) }}" class="space-y-5">
+                @csrf
+
+                {{-- Day checkboxes --}}
+                <div>
+                    <label class="label pb-2"><span class="label-text font-medium">Days</span></label>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] as $day)
+                            <label class="cursor-pointer">
+                                <input type="checkbox" name="days[]" value="{{ $day }}" class="peer hidden">
+                                <span class="inline-flex items-center px-3.5 py-2 rounded-xl border border-base-300/50 bg-base-200/50 text-sm font-medium text-base-content/50 transition-all select-none peer-checked:bg-primary peer-checked:text-primary-content peer-checked:border-primary peer-checked:shadow-sm hover:bg-base-300/50 peer-checked:hover:bg-primary/90">
+                                    {{ $day }}
+                                </span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-medium">Modality</span></label>
+                        <select name="modality" class="select select-bordered rounded-lg w-full" required>
+                            <option value="Onsite">Onsite</option>
+                            <option value="Online">Online</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-medium">Location</span></label>
+                        <input type="text" name="location" class="input input-bordered rounded-lg w-full" placeholder="Room or URL">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-medium">Start Time</span></label>
+                        <input type="time" name="start_time" class="input input-bordered rounded-lg w-full" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-medium">End Time</span></label>
+                        <input type="time" name="end_time" class="input input-bordered rounded-lg w-full" required>
+                    </div>
+                </div>
+
+                <div class="form-control">
+                    <label class="label"><span class="label-text font-medium">Grace Period (minutes)</span></label>
+                    <input type="number" name="grace_period_minutes" class="input input-bordered rounded-lg w-full" value="15" min="1" max="60">
+                </div>
+
+                <div class="border-t border-base-300/30 pt-4 space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-medium">Repeat Every</span></label>
+                            <select name="interval_weeks" class="select select-bordered rounded-lg w-full" required>
+                                <option value="1">Every week</option>
+                                <option value="2">Every 2 weeks</option>
+                                <option value="3">Every 3 weeks</option>
+                                <option value="4">Every 4 weeks</option>
+                            </select>
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-medium">Starting From</span></label>
+                            <input type="date" name="start_date" class="input input-bordered rounded-lg w-full" required>
+                        </div>
+                    </div>
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-medium">Until</span></label>
+                        <input type="date" name="end_date" class="input input-bordered rounded-lg w-full" required>
+                    </div>
+                </div>
+
+                <div class="modal-action">
+                    <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost rounded-lg">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-lg">Schedule Sessions</button>
                 </div>
             </form>
         </div>
@@ -270,8 +355,11 @@
 
     @if ($class->isActive())
     <script>
-        @if ($errors->any())
+        @if ($errors->any() && !$errors->hasBag('preschedule'))
             document.getElementById('create-session-modal')?.showModal();
+        @endif
+        @if ($errors->hasBag('preschedule'))
+            document.getElementById('preschedule-modal')?.showModal();
         @endif
 
         const searchInput = document.getElementById('student-search');

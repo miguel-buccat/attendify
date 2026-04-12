@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Enums\SessionStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Teacher\BulkScheduleSessionRequest;
 use App\Http\Requests\Teacher\StartSessionRequest;
 use App\Jobs\MarkAbsenteesAfterSession;
 use App\Models\ActivityLog;
@@ -24,56 +25,95 @@ class ClassSessionController extends Controller
         Gate::authorize('enroll', $class);
 
         $validated = $request->validated();
-        $recurrencePattern = $validated['recurrence_pattern'] ?? null;
-        $recurrenceEndDate = isset($validated['recurrence_end_date']) ? Carbon::parse($validated['recurrence_end_date']) : null;
-        $recurrenceGroupId = $recurrencePattern ? (string) Str::uuid() : null;
-
-        $sessions = [];
         $startTime = Carbon::parse($validated['start_time']);
         $endTime = Carbon::parse($validated['end_time']);
         $gracePeriod = (int) ($validated['grace_period_minutes'] ?? 15);
 
-        // Create first session (and recurring if applicable)
-        $dates = [['start' => $startTime, 'end' => $endTime]];
+        $session = ClassSession::create([
+            'class_id' => $class->id,
+            'modality' => $validated['modality'],
+            'location' => $validated['location'] ?? null,
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+            'grace_period_minutes' => $gracePeriod,
+            'qr_token' => Str::random(64),
+            'qr_expires_at' => $endTime->copy()->addMinutes($gracePeriod),
+            'status' => SessionStatus::Scheduled,
+        ]);
 
-        if ($recurrencePattern && $recurrenceEndDate) {
-            $intervalDays = $recurrencePattern === 'biweekly' ? 14 : 7;
-            $currentStart = $startTime->copy()->addDays($intervalDays);
-            $currentEnd = $endTime->copy()->addDays($intervalDays);
+        ActivityLog::log('created_session', "Scheduled session for {$class->name}", $session);
 
-            while ($currentStart->toDateString() <= $recurrenceEndDate->toDateString()) {
-                $dates[] = ['start' => $currentStart->copy(), 'end' => $currentEnd->copy()];
-                $currentStart->addDays($intervalDays);
-                $currentEnd->addDays($intervalDays);
+        return redirect()->route('teacher.sessions.show', $session)
+            ->with('success', 'Session scheduled successfully.');
+    }
+
+    public function bulkStore(BulkScheduleSessionRequest $request, SchoolClass $class): RedirectResponse
+    {
+        Gate::authorize('enroll', $class);
+
+        $validated = $request->validated();
+        $days = $validated['days'];
+        $startTime = $validated['start_time'];
+        $endTime = $validated['end_time'];
+        $gracePeriod = (int) ($validated['grace_period_minutes'] ?? 15);
+        $intervalWeeks = (int) $validated['interval_weeks'];
+        $startDate = Carbon::parse($validated['start_date']);
+        $endDate = Carbon::parse($validated['end_date']);
+        $recurrenceGroupId = (string) Str::uuid();
+
+        $dayNumbers = array_map(fn (string $day) => match ($day) {
+            'Monday' => Carbon::MONDAY,
+            'Tuesday' => Carbon::TUESDAY,
+            'Wednesday' => Carbon::WEDNESDAY,
+            'Thursday' => Carbon::THURSDAY,
+            'Friday' => Carbon::FRIDAY,
+        }, $days);
+
+        $sessions = [];
+        $cursor = $startDate->copy();
+
+        while ($cursor->lte($endDate)) {
+            if (in_array($cursor->dayOfWeekIso, $dayNumbers, true)) {
+                $sessionStart = $cursor->copy()->setTimeFromTimeString($startTime);
+                $sessionEnd = $cursor->copy()->setTimeFromTimeString($endTime);
+
+                if ($sessionStart->gt(now())) {
+                    $sessions[] = ClassSession::create([
+                        'class_id' => $class->id,
+                        'modality' => $validated['modality'],
+                        'location' => $validated['location'] ?? null,
+                        'start_time' => $sessionStart,
+                        'end_time' => $sessionEnd,
+                        'grace_period_minutes' => $gracePeriod,
+                        'qr_token' => Str::random(64),
+                        'qr_expires_at' => $sessionEnd->copy()->addMinutes($gracePeriod),
+                        'status' => SessionStatus::Scheduled,
+                        'recurrence_pattern' => 'weekly',
+                        'recurrence_end_date' => $endDate,
+                        'recurrence_group_id' => $recurrenceGroupId,
+                    ]);
+                }
             }
-        }
 
-        foreach ($dates as $date) {
-            $sessions[] = ClassSession::create([
-                'class_id' => $class->id,
-                'modality' => $validated['modality'],
-                'location' => $validated['location'] ?? null,
-                'start_time' => $date['start'],
-                'end_time' => $date['end'],
-                'grace_period_minutes' => $gracePeriod,
-                'qr_token' => Str::random(64),
-                'qr_expires_at' => $date['end']->copy()->addMinutes($gracePeriod),
-                'status' => SessionStatus::Scheduled,
-                'recurrence_pattern' => $recurrencePattern,
-                'recurrence_end_date' => $recurrenceEndDate,
-                'recurrence_group_id' => $recurrenceGroupId,
-            ]);
+            // After processing all days in the current week (Sunday), skip forward by interval
+            if ($cursor->dayOfWeekIso === 7) {
+                $cursor->addWeeks($intervalWeeks - 1);
+            }
+
+            $cursor->addDay();
         }
 
         $sessionCount = count($sessions);
-        ActivityLog::log('created_session', "Scheduled {$sessionCount} session(s) for {$class->name}", $sessions[0]);
 
-        $message = $sessionCount > 1
-            ? "{$sessionCount} recurring sessions scheduled successfully."
-            : 'Session scheduled successfully.';
+        if ($sessionCount === 0) {
+            return redirect()->route('teacher.classes.show', $class)
+                ->with('success', 'No sessions were created — the selected days may already be in the past.');
+        }
 
-        return redirect()->route('teacher.sessions.show', $sessions[0])
-            ->with('success', $message);
+        ActivityLog::log('created_session', "Pre-scheduled {$sessionCount} session(s) for {$class->name}", $sessions[0]);
+
+        return redirect()->route('teacher.classes.show', $class)
+            ->with('success', "{$sessionCount} session(s) pre-scheduled successfully.");
     }
 
     public function show(ClassSession $session): View

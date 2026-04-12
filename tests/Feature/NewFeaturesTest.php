@@ -105,29 +105,37 @@ test('admin can view class overview page', function () {
 
 // ── Teacher: Recurring Sessions ──
 
-test('teacher can create recurring weekly sessions', function () {
+test('teacher can create recurring weekly sessions via bulk schedule', function () {
     $teacher = User::factory()->teacher()->create();
     $class = SchoolClass::factory()->create(['teacher_id' => $teacher->id]);
 
-    $startTime = now()->addDay()->setTime(10, 0)->format('Y-m-d H:i:s');
-    $endTime = now()->addDay()->setTime(12, 0)->format('Y-m-d H:i:s');
-    $endDate = now()->addDay()->addWeeks(4)->format('Y-m-d');
+    // Find the next occurrence of a weekday that's tomorrow or later
+    $nextDay = now()->addDay();
+    $dayName = $nextDay->format('l'); // e.g. "Monday"
+    // If it's Saturday or Sunday, skip to Monday
+    if ($nextDay->isWeekend()) {
+        $nextDay = $nextDay->next('Monday');
+        $dayName = 'Monday';
+    }
+
+    $endDate = $nextDay->copy()->addWeeks(4)->format('Y-m-d');
 
     $this->actingAs($teacher)
-        ->post(route('teacher.sessions.store', $class), [
+        ->post(route('teacher.sessions.bulk-store', $class), [
+            'days' => [$dayName],
             'modality' => SessionModality::Onsite->value,
             'location' => 'Room 101',
-            'start_time' => $startTime,
-            'end_time' => $endTime,
+            'start_time' => '10:00',
+            'end_time' => '12:00',
             'grace_period_minutes' => 15,
-            'recurrence_pattern' => 'weekly',
-            'recurrence_end_date' => $endDate,
+            'interval_weeks' => 1,
+            'end_date' => $endDate,
         ])
-        ->assertRedirect();
+        ->assertRedirect(route('teacher.classes.show', $class));
 
     $sessions = ClassSession::where('class_id', $class->id)->get();
 
-    expect($sessions)->toHaveCount(5) // initial + 4 weeks
+    expect($sessions)->toHaveCount(5)
         ->and($sessions->first()->recurrence_pattern)->toBe('weekly')
         ->and($sessions->first()->recurrence_group_id)->not->toBeNull();
 });

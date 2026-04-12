@@ -94,6 +94,7 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
     Route::post('/classes/{class}/enroll', [ClassController::class, 'enroll'])->name('classes.enroll');
     Route::delete('/classes/{class}/students/{student}', [ClassController::class, 'unenroll'])->name('classes.unenroll');
     Route::post('/classes/{class}/sessions', [ClassSessionController::class, 'store'])->name('sessions.store');
+    Route::post('/classes/{class}/sessions/bulk', [ClassSessionController::class, 'bulkStore'])->name('sessions.bulk-store');
     Route::get('/sessions/{session}', [ClassSessionController::class, 'show'])->name('sessions.show');
     Route::post('/sessions/{session}/start', [ClassSessionController::class, 'start'])->name('sessions.start');
     Route::post('/sessions/{session}/complete', [ClassSessionController::class, 'complete'])->name('sessions.complete');
