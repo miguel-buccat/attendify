@@ -15,8 +15,15 @@ mkdir -p \
     storage/logs \
     bootstrap/cache
 
+# Fix ownership — volume mounts can reset root ownership
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
+
+# Ensure site-settings.json is writable if it already exists
+if [ -f storage/app/site-settings.json ]; then
+    chown www-data:www-data storage/app/site-settings.json
+    chmod 664 storage/app/site-settings.json
+fi
 
 # Ensure storage symlink
 if [ ! -L public/storage ]; then
@@ -31,5 +38,9 @@ php artisan event:cache
 
 # Run migrations
 php artisan migrate --force
+
+# Re-fix ownership — artisan commands above run as root and may
+# have created files (e.g. site-settings.json) owned by root
+chown -R www-data:www-data storage bootstrap/cache
 
 exec "$@"
