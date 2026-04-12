@@ -8,6 +8,8 @@
 
         <title>{{ $title ? $title . ' – ' . config('app.name', 'Attendify') : config('app.name', 'Attendify') }}</title>
 
+        <link rel="icon" type="image/png" sizes="32x32" href="/assets/attendify.png">
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="min-h-screen bg-base-200 text-base-content">
