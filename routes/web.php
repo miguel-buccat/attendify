@@ -61,6 +61,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
     Route::get('/users/invite', [UserManagementController::class, 'invite'])->name('users.invite');
     Route::post('/users/invite', [UserManagementController::class, 'sendInvitation'])->name('users.invite.send');
+    Route::get('/users/{user}', [UserManagementController::class, 'show'])->name('users.show');
+    Route::patch('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
+    Route::post('/users/{user}/block', [UserManagementController::class, 'block'])->name('users.block');
+    Route::post('/users/{user}/unblock', [UserManagementController::class, 'unblock'])->name('users.unblock');
+    Route::post('/users/{user}/archive', [UserManagementController::class, 'archive'])->name('users.archive');
+    Route::delete('/invitations/{invitation}', [UserManagementController::class, 'invalidateInvitation'])->name('invitations.invalidate');
     Route::get('/settings', [SiteSettingsController::class, 'edit'])->name('settings.edit');
     Route::patch('/settings', [SiteSettingsController::class, 'update'])->name('settings.update');
 });
