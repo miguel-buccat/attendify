@@ -6,6 +6,7 @@ use App\Enums\AttendanceMarkedBy;
 use App\Enums\AttendanceStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Teacher\UpdateAttendanceRequest;
+use App\Models\ActivityLog;
 use App\Models\AttendanceRecord;
 use App\Models\ClassSession;
 use App\Notifications\ParentAbsenceNotification;
@@ -40,6 +41,8 @@ class AttendanceController extends Controller
             'notes' => $validated['notes'] ?? null,
             'marked_by' => AttendanceMarkedBy::Teacher,
         ]);
+
+        ActivityLog::log('updated_attendance', "Marked {$record->student->name} as {$validated['status']}", $record);
 
         // Notify parent/guardian if student is marked absent
         if ($record->status === AttendanceStatus::Absent) {

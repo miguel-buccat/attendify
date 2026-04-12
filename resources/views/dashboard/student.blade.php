@@ -4,7 +4,7 @@
         .d { animation: d-up .55s cubic-bezier(.16,1,.3,1) both; }
         .d1 { animation-delay: .00s; } .d2 { animation-delay: .07s; } .d3 { animation-delay: .14s; }
         .d4 { animation-delay: .21s; } .d5 { animation-delay: .28s; } .d6 { animation-delay: .35s; }
-        .d7 { animation-delay: .42s; } .d8 { animation-delay: .49s; }
+        .d7 { animation-delay: .42s; } .d8 { animation-delay: .49s; } .d9 { animation-delay: .56s; }
         @keyframes blob-drift {
             0%,100% { transform: translate(0,0) scale(1); }
             33%  { transform: translate(-12px,10px) scale(1.07); }
@@ -159,8 +159,38 @@
                     </div>
                 </div>
 
-                {{-- ── RECENT ATTENDANCE ── --}}
+                {{-- ── UPCOMING SESSIONS ── --}}
                 <div class="d d7 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
+                    <div class="px-5 py-4 border-b border-base-300/30 flex items-center justify-between">
+                        <h3 class="font-semibold text-sm">Upcoming Sessions</h3>
+                        <a href="{{ route('student.calendar.index') }}" class="text-xs text-primary hover:underline">Calendar →</a>
+                    </div>
+                    @if ($upcomingSessions->isEmpty())
+                        <div class="px-5 py-10 text-center">
+                            <p class="text-sm text-base-content/40">No upcoming sessions.</p>
+                        </div>
+                    @else
+                        <div class="divide-y divide-base-300/30">
+                            @foreach ($upcomingSessions as $upcoming)
+                                <div class="flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-base-200/40 transition-colors">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="shrink-0 size-8 rounded-lg bg-info/10 flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4 text-info"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-medium truncate">{{ $upcoming->schoolClass->name }}</p>
+                                            <p class="text-xs text-base-content/40">{{ $upcoming->start_time->format('M d, g:i A') }} · {{ $upcoming->modality->value }}</p>
+                                        </div>
+                                    </div>
+                                    <span class="shrink-0 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold text-info bg-info/10 border-info/20">{{ $upcoming->start_time->diffForHumans() }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                {{-- ── RECENT ATTENDANCE ── --}}
+                <div class="d d8 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
                     <div class="px-5 py-4 border-b border-base-300/30 flex items-center justify-between">
                         <h3 class="font-semibold text-sm">Recent Attendance</h3>
                         <a href="{{ route('student.attendance.index') }}" class="text-xs text-primary hover:underline">View all →</a>

@@ -115,7 +115,13 @@
                 <div class="d d4 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
                     <div class="px-5 py-4 border-b border-base-300/30 flex items-center justify-between">
                         <h2 class="font-semibold text-sm">Students</h2>
-                        <span class="text-xs text-base-content/40 font-mono">{{ $class->students->count() }}</span>
+                        <div class="flex items-center gap-3">
+                            <a href="{{ route('teacher.classes.analytics.pdf', $class) }}" class="inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5 5 5 5-5m-5 5V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                Export PDF
+                            </a>
+                            <span class="text-xs text-base-content/40 font-mono">{{ $class->students->count() }}</span>
+                        </div>
                     </div>
                     @if ($class->students->isEmpty())
                         <div class="py-10 flex flex-col items-center gap-2 text-center px-6">
@@ -137,6 +143,7 @@
                                         </div>
                                     </a>
                                     <div class="flex items-center gap-3 shrink-0">
+                                        <a href="{{ route('teacher.students.show', [$class, $student]) }}" class="text-xs text-primary hover:underline hidden sm:inline">Performance</a>
                                         <span class="hidden sm:block text-xs text-base-content/40">{{ $student->pivot->enrolled_at ? \Carbon\Carbon::parse($student->pivot->enrolled_at)->format('M d, Y') : '' }}</span>
                                         @if ($class->isActive())
                                             <form method="POST" action="{{ route('teacher.classes.unenroll', [$class, $student]) }}" onsubmit="return confirm('Remove {{ $student->name }} from this class?')">
@@ -497,6 +504,23 @@
                 <div class="form-control">
                     <label class="label"><span class="label-text font-medium">Grace Period (minutes)</span></label>
                     <input type="number" name="grace_period_minutes" class="input input-bordered rounded-lg w-full" value="15" min="1" max="60">
+                </div>
+                <div class="border-t border-base-300/30 pt-4 mt-2 space-y-3">
+                    <p class="text-xs font-bold uppercase tracking-widest text-base-content/35">Recurring (optional)</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-medium">Repeat</span></label>
+                            <select name="recurrence_pattern" class="select select-bordered rounded-lg w-full">
+                                <option value="">No repeat</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="biweekly">Biweekly</option>
+                            </select>
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-medium">Repeat Until</span></label>
+                            <input type="date" name="recurrence_end_date" class="input input-bordered rounded-lg w-full">
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-action">
                     <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost rounded-lg">Cancel</button>

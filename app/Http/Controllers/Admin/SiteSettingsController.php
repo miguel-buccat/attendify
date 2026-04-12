@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Support\SiteSettings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,6 +44,8 @@ class SiteSettingsController extends Controller
             $bannerPath = $request->file('landing_banner')->store('site-settings', 'public');
             $siteSettings->set('landing_banner', url(Storage::disk('public')->url($bannerPath)));
         }
+
+        ActivityLog::log('updated_settings', 'Updated site settings');
 
         return redirect()->route('admin.settings.edit')->with('success', 'Site settings updated.');
     }

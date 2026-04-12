@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Student;
 
 use App\Enums\AttendanceStatus;
+use App\Enums\SessionStatus;
 use App\Http\Controllers\Controller;
-use App\Models\AttendanceRecord;
+use App\Models\ClassSession;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -40,7 +42,7 @@ class StudentDashboardController extends Controller
             ->get();
 
         $lineData = [
-            'labels' => $weeklyData->pluck('week')->map(fn ($w) => \Carbon\Carbon::parse($w)->format('M d'))->toArray(),
+            'labels' => $weeklyData->pluck('week')->map(fn ($w) => Carbon::parse($w)->format('M d'))->toArray(),
             'values' => $weeklyData->map(fn ($row) => $row->total > 0 ? round(($row->attended / $row->total) * 100, 1) : 0)->toArray(),
             'label' => 'Attendance Rate %',
         ];
@@ -58,6 +60,16 @@ class StudentDashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Upcoming sessions for enrolled classes
+        $enrolledClassIds = $user->enrolledClasses()->pluck('school_classes.id');
+        $upcomingSessions = ClassSession::whereIn('class_id', $enrolledClassIds)
+            ->whereIn('status', [SessionStatus::Scheduled, SessionStatus::Active])
+            ->where('start_time', '>=', now())
+            ->orderBy('start_time')
+            ->with('schoolClass')
+            ->take(5)
+            ->get();
+
         return view('dashboard.student', compact(
             'user',
             'myClasses',
@@ -69,6 +81,7 @@ class StudentDashboardController extends Controller
             'lineData',
             'pieData',
             'recentRecords',
+            'upcomingSessions',
         ));
     }
 }

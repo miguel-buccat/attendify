@@ -6,13 +6,13 @@ use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\InviteUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
+use App\Models\ActivityLog;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Notifications\Auth\InvitationNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class UserManagementController extends Controller
@@ -34,6 +34,8 @@ class UserManagementController extends Controller
     {
         $user->update($request->validated());
 
+        ActivityLog::log('updated_user', "Updated user {$user->name}", $user);
+
         return redirect()->route('admin.users.show', $user)->with('success', 'User updated successfully.');
     }
 
@@ -46,12 +48,16 @@ class UserManagementController extends Controller
             'status_reason' => request()->validate(['reason' => ['nullable', 'string', 'max:500']])['reason'] ?? null,
         ]);
 
+        ActivityLog::log('blocked_user', "Blocked user {$user->name}", $user);
+
         return redirect()->route('admin.users.show', $user)->with('success', "{$user->name}'s account has been temporarily blocked.");
     }
 
     public function unblock(User $user): RedirectResponse
     {
         $user->update(['status' => UserStatus::Active, 'status_reason' => null]);
+
+        ActivityLog::log('unblocked_user', "Restored user {$user->name}", $user);
 
         return redirect()->route('admin.users.show', $user)->with('success', "{$user->name}'s account has been restored.");
     }
@@ -64,6 +70,8 @@ class UserManagementController extends Controller
             'status' => UserStatus::Archived,
             'status_reason' => request()->validate(['reason' => ['nullable', 'string', 'max:500']])['reason'] ?? null,
         ]);
+
+        ActivityLog::log('archived_user', "Archived user {$user->name}", $user);
 
         return redirect()->route('admin.users.show', $user)->with('success', "{$user->name}'s account has been archived.");
     }
@@ -96,6 +104,8 @@ class UserManagementController extends Controller
         $message = $count === 1
             ? "Invitation sent to {$request->validated('invitees.0.email')}."
             : "{$count} invitations sent successfully.";
+
+        ActivityLog::log('sent_invitations', "Sent {$count} invitation(s)");
 
         return redirect()->route('admin.users.index')->with('success', $message);
     }

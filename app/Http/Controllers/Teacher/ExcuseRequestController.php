@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Teacher;
 use App\Enums\ExcuseRequestStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Teacher\ReviewExcuseRequest;
+use App\Models\ActivityLog;
 use App\Models\ExcuseRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ExcuseRequestController extends Controller
 {
@@ -42,14 +44,16 @@ class ExcuseRequestController extends Controller
 
         $statusLabel = $validated['status'] === ExcuseRequestStatus::Acknowledged->value ? 'acknowledged' : 'rejected';
 
+        ActivityLog::log('reviewed_excuse', "Excuse request {$statusLabel} for {$excuseRequest->student->name}", $excuseRequest);
+
         return redirect()->route('teacher.excuses.index')
             ->with('success', "Excuse request {$statusLabel}.");
     }
 
-    public function download(ExcuseRequest $excuseRequest): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function download(ExcuseRequest $excuseRequest): BinaryFileResponse
     {
         Gate::authorize('review', $excuseRequest);
 
-        return response()->file(storage_path('app/private/' . $excuseRequest->document_path));
+        return response()->file(storage_path('app/private/'.$excuseRequest->document_path));
     }
 }
