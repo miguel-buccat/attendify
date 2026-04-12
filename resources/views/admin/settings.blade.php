@@ -1,4 +1,10 @@
 <x-layouts.app title="Site Settings">
+    <style>
+        @keyframes d-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+        .d { animation: d-up .45s cubic-bezier(.16,1,.3,1) both; }
+        .d1 { animation-delay: .00s; } .d2 { animation-delay: .07s; } .d3 { animation-delay: .14s; }
+        .d4 { animation-delay: .21s; } .d5 { animation-delay: .28s; }
+    </style>
     <div class="flex min-h-screen bg-base-200">
         <x-nav.sidebar active="settings" />
 
@@ -9,18 +15,21 @@
                     <x-alert type="success" :message="session('success')" />
                 @endif
 
-                <div>
-                    <h1 class="text-xl sm:text-2xl md:text-3xl font-semibold">Site Settings</h1>
-                    <p class="mt-1 text-sm text-base-content/60">Manage institution details and branding.</p>
+                <div class="d d1">
+                    <p class="text-[11px] font-bold uppercase tracking-[.25em] text-base-content/35">Admin</p>
+                    <h1 class="text-2xl md:text-3xl font-black tracking-tight">Site Settings</h1>
+                    <p class="mt-1 text-sm text-base-content/50">Manage institution details and branding.</p>
                 </div>
 
-                <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" class="max-w-2xl space-y-6">
+                <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" class="max-w-2xl space-y-4">
                     @csrf
                     @method('PATCH')
 
-                    <div class="card bg-base-100 rounded-xl border border-base-300">
-                        <div class="card-body gap-4">
-                            <h2 class="card-title text-lg">Institution Details</h2>
+                    <div class="d d2 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
+                        <div class="px-5 py-4 border-b border-base-300/30">
+                            <h2 class="font-semibold text-sm">Institution Details</h2>
+                        </div>
+                        <div class="px-5 py-5 space-y-4">
 
                             <x-form.field
                                 label="Institution Name"
@@ -29,9 +38,9 @@
                                 :value="$settings['institution_name']"
                             />
 
-                            <label class="form-control w-full">
-                                <span class="label-text mb-2">Timezone</span>
-                                <select name="timezone" class="select select-bordered w-full @error('timezone') select-error @enderror" required>
+                            <div>
+                                <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5">Timezone</label>
+                                <select name="timezone" class="w-full rounded-xl border {{ $errors->has('timezone') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40" required>
                                     @foreach (timezone_identifiers_list() as $tz)
                                         <option value="{{ $tz }}" @selected(old('timezone', $settings['timezone']) === $tz)>
                                             {{ $tz }} (UTC{{ (new DateTimeZone($tz))->getOffset(new DateTime) >= 0 ? '+' : '' }}{{ gmdate('H:i', abs((new DateTimeZone($tz))->getOffset(new DateTime))) }})
@@ -39,29 +48,32 @@
                                     @endforeach
                                 </select>
                                 @error('timezone') <p class="mt-1 text-xs text-error">{{ $message }}</p> @enderror
-                            </label>
+                            </div>
 
-                            <label class="form-control w-full">
-                                <span class="label-text mb-2">Mission Statement</span>
-                                <textarea name="mission" rows="3" class="textarea textarea-bordered w-full @error('mission') textarea-error @enderror" maxlength="1000" placeholder="Your institution's mission statement...">{{ old('mission', $settings['mission']) }}</textarea>
+                            <div>
+                                <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5">Mission Statement</label>
+                                <textarea name="mission" rows="3" class="w-full rounded-xl border {{ $errors->has('mission') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40" maxlength="1000" placeholder="Your institution's mission statement...">{{ old('mission', $settings['mission']) }}</textarea>
                                 @error('mission') <p class="mt-1 text-xs text-error">{{ $message }}</p> @enderror
-                            </label>
+                            </div>
 
-                            <label class="form-control w-full">
-                                <span class="label-text mb-2">Vision Statement</span>
-                                <textarea name="vision" rows="3" class="textarea textarea-bordered w-full @error('vision') textarea-error @enderror" maxlength="1000" placeholder="Your institution's vision statement...">{{ old('vision', $settings['vision']) }}</textarea>
+                            <div>
+                                <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5">Vision Statement</label>
+                                <textarea name="vision" rows="3" class="w-full rounded-xl border {{ $errors->has('vision') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40" maxlength="1000" placeholder="Your institution's vision statement...">{{ old('vision', $settings['vision']) }}</textarea>
                                 @error('vision') <p class="mt-1 text-xs text-error">{{ $message }}</p> @enderror
-                            </label>
+                            </div>
+
                         </div>
                     </div>
 
-                    <div class="card bg-base-100 rounded-xl border border-base-300">
-                        <div class="card-body gap-4">
-                            <h2 class="card-title text-lg">Branding</h2>
+                    <div class="d d3 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
+                        <div class="px-5 py-4 border-b border-base-300/30">
+                            <h2 class="font-semibold text-sm">Branding</h2>
+                        </div>
+                        <div class="px-5 py-5 space-y-4">
 
                             <div class="flex items-center gap-4">
                                 @if ($settings['institution_logo'])
-                                    <div class="size-16 rounded-xl border border-base-300 bg-base-200 p-2 shrink-0">
+                                    <div class="size-16 rounded-xl border border-base-300/50 bg-base-200 p-2 shrink-0">
                                         <img src="{{ $settings['institution_logo'] }}" alt="Current logo" class="h-full w-full object-contain">
                                     </div>
                                 @endif
@@ -81,10 +93,16 @@
                                 accept="image/*"
                                 hint="Leave empty to keep current."
                             />
+
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary rounded-xl">Save Settings</button>
+                    <div class="d d4">
+                        <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-content text-sm font-semibold hover:opacity-90 transition-opacity">
+                            Save Settings
+                        </button>
+                    </div>
+
                 </form>
 
             </div>

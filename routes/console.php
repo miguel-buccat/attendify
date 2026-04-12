@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\SendWeeklyReports;
 use App\Jobs\ExpireStaleInvitations;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -10,3 +11,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::job(new ExpireStaleInvitations)->daily();
+Schedule::command(SendWeeklyReports::class)->weeklyOn(0, '18:00');

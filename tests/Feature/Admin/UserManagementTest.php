@@ -115,7 +115,7 @@ test('invitation fails validation for invalid role', function () {
     $this->actingAs($admin)
         ->post(route('admin.users.invite.send'), [
             'invitees' => [
-                ['email' => 'someone@example.com', 'role' => 'Admin'],
+                ['email' => 'someone@example.com', 'role' => 'superuser'],
             ],
         ])
         ->assertInvalid(['invitees.0.role']);

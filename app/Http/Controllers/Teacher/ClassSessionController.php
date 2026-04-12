@@ -8,6 +8,7 @@ use App\Http\Requests\Teacher\StartSessionRequest;
 use App\Jobs\MarkAbsenteesAfterSession;
 use App\Models\ClassSession;
 use App\Models\SchoolClass;
+use App\Notifications\ClassSessionStartedNotification;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
@@ -54,6 +55,11 @@ class ClassSessionController extends Controller
         Gate::authorize('start', $session);
 
         $session->update(['status' => SessionStatus::Active]);
+
+        $session->load('schoolClass.students');
+        $session->schoolClass->students->each(
+            fn ($student) => $student->notify(new ClassSessionStartedNotification($session))
+        );
 
         return redirect()->route('teacher.sessions.show', $session)
             ->with('success', 'Session started. QR code is now active.');

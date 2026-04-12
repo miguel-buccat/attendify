@@ -588,7 +588,7 @@ All enums are backed by `string` values using TitleCase (matching project conven
 
 **Email Content**:
 - Subject: "[Institution Name] — Class session started: {Class Name}"
-- Body: Class name, session modality, location, start time, link to QR scanner page.
+- Body: Class name, session modality, location, start time, reminder to attend class. The QR code is distributed by the teacher in person.
 - Design: Matches the existing password-reset / invitation email template.
 
 **Template**: `resources/views/emails/class-session-started.blade.php`
@@ -638,7 +638,7 @@ Preferred: Direct dispatch in the controller for simplicity (no hidden side effe
 
 - ClassSessionStartedNotification is dispatched to enrolled students when session starts.
 - ClassSessionStartedNotification is NOT sent to non-enrolled students.
-- Notification email contains correct class name, time, and scanner link.
+- Notification email contains correct class name, time, and attendance reminder.
 - WeeklyAttendanceSummaryNotification contains correct stats for the student.
 - WeeklyAttendanceSummaryNotification contains correct stats for the teacher.
 - SendWeeklyReports command dispatches notifications for all active users.

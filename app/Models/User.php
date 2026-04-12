@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use App\Notifications\Auth\ResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -17,7 +18,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['name', 'email', 'password', 'role', 'email_verified_at', 'avatar_path', 'banner_path', 'about_me'])]
+#[Fillable(['name', 'email', 'password', 'role', 'email_verified_at', 'avatar_path', 'banner_path', 'about_me', 'status', 'status_reason', 'guardian_email', 'guardian_phone'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -35,12 +36,28 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'status' => UserStatus::class,
         ];
     }
 
     public function scopeAdmin(Builder $query): void
     {
         $query->where('role', UserRole::Admin);
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === UserStatus::Active;
+    }
+
+    public function isBlocked(): bool
+    {
+        return $this->status === UserStatus::Blocked;
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->status === UserStatus::Archived;
     }
 
     protected function avatarUrl(): Attribute

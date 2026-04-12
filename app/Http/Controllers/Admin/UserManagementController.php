@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\InviteUserRequest;
+use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Notifications\Auth\InvitationNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class UserManagementController extends Controller
@@ -20,6 +23,49 @@ class UserManagementController extends Controller
         $invitations = Invitation::with('inviter')->pending()->orderByDesc('created_at')->get();
 
         return view('admin.users.index', compact('users', 'invitations'));
+    }
+
+    public function show(User $user): View
+    {
+        return view('admin.users.show', compact('user'));
+    }
+
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
+    {
+        $user->update($request->validated());
+
+        return redirect()->route('admin.users.show', $user)->with('success', 'User updated successfully.');
+    }
+
+    public function block(User $user): RedirectResponse
+    {
+        abort_if($user->id === auth()->id(), 403, 'You cannot block yourself.');
+
+        $user->update([
+            'status' => UserStatus::Blocked,
+            'status_reason' => request()->validate(['reason' => ['nullable', 'string', 'max:500']])['reason'] ?? null,
+        ]);
+
+        return redirect()->route('admin.users.show', $user)->with('success', "{$user->name}'s account has been temporarily blocked.");
+    }
+
+    public function unblock(User $user): RedirectResponse
+    {
+        $user->update(['status' => UserStatus::Active, 'status_reason' => null]);
+
+        return redirect()->route('admin.users.show', $user)->with('success', "{$user->name}'s account has been restored.");
+    }
+
+    public function archive(User $user): RedirectResponse
+    {
+        abort_if($user->id === auth()->id(), 403, 'You cannot archive yourself.');
+
+        $user->update([
+            'status' => UserStatus::Archived,
+            'status_reason' => request()->validate(['reason' => ['nullable', 'string', 'max:500']])['reason'] ?? null,
+        ]);
+
+        return redirect()->route('admin.users.show', $user)->with('success', "{$user->name}'s account has been archived.");
     }
 
     public function invite(): View
@@ -52,5 +98,15 @@ class UserManagementController extends Controller
             : "{$count} invitations sent successfully.";
 
         return redirect()->route('admin.users.index')->with('success', $message);
+    }
+
+    public function invalidateInvitation(Invitation $invitation): RedirectResponse
+    {
+        abort_unless($invitation->isAccepted() === false, 404);
+
+        // Mark as expired by setting expires_at to the past
+        $invitation->update(['expires_at' => now()->subSecond()]);
+
+        return redirect()->route('admin.users.index')->with('success', 'Invitation invalidated.');
     }
 }

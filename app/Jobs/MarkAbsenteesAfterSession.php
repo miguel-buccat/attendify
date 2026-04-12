@@ -8,8 +8,11 @@ use App\Enums\ExcuseRequestStatus;
 use App\Models\AttendanceRecord;
 use App\Models\ClassSession;
 use App\Models\ExcuseRequest;
+use App\Models\User;
+use App\Notifications\ParentAbsenceNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Notifications\AnonymousNotifiable;
 
 class MarkAbsenteesAfterSession implements ShouldQueue
 {
@@ -52,5 +55,26 @@ class MarkAbsenteesAfterSession implements ShouldQueue
         ])->all();
 
         AttendanceRecord::insert($records);
+
+        // Notify parents of truly-absent students (not excused)
+        $this->session->load('schoolClass');
+        $studentsToNotify = User::whereIn('id', $absentStudentIds->diff($excusedStudentIds))
+            ->whereNotNull('guardian_email')
+            ->get();
+
+        foreach ($studentsToNotify as $student) {
+            $record = AttendanceRecord::where('class_session_id', $this->session->id)
+                ->where('student_id', $student->id)
+                ->first();
+
+            if ($record) {
+                $record->setRelation('student', $student);
+                $record->setRelation('classSession', $this->session);
+
+                (new AnonymousNotifiable)
+                    ->route('mail', $student->guardian_email)
+                    ->notify(new ParentAbsenceNotification($record));
+            }
+        }
     }
 }

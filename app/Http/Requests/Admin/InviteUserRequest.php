@@ -29,7 +29,7 @@ class InviteUserRequest extends FormRequest
                     fn ($query) => $query->whereNull('accepted_at')->where('expires_at', '>', now())
                 ),
             ],
-            'invitees.*.role' => ['required', new Enum(UserRole::class), Rule::in([UserRole::Teacher->value, UserRole::Student->value])],
+            'invitees.*.role' => ['required', new Enum(UserRole::class)],
         ];
     }
 

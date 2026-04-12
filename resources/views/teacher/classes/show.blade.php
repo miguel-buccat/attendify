@@ -1,13 +1,202 @@
 <x-layouts.app :title="$class->name">
+    <style>
+        @keyframes d-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+        .d { animation: d-up .45s cubic-bezier(.16,1,.3,1) both; }
+        .d1 { animation-delay: .00s; } .d2 { animation-delay: .07s; } .d3 { animation-delay: .14s; }
+        .d4 { animation-delay: .21s; } .d5 { animation-delay: .28s; } .d6 { animation-delay: .35s; }
+    </style>
+
     <div class="flex min-h-screen bg-base-200">
         <x-nav.sidebar active="classes" />
 
         <main class="flex-1 min-w-0 lg:min-h-screen pt-14 lg:pt-0">
-            <div class="p-4 md:p-8 space-y-6">
+            <div class="p-4 md:p-6 lg:p-8 space-y-5">
 
-                {{-- Back link + header --}}
-                <div>
-                    <a href="{{ route('teacher.classes.index') }}" class="inline-flex items-center gap-1.5 text-sm text-base-content/60 hover:text-base-content transition-colors mb-4">
+                {{-- Header --}}
+                <div class="d d1">
+                    <a href="{{ route('teacher.classes.index') }}" class="inline-flex items-center gap-1.5 text-sm text-base-content/40 hover:text-base-content transition-colors mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        My Classes
+                    </a>
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                        <div>
+                            <p class="text-[11px] font-bold uppercase tracking-[.25em] text-base-content/35">Class</p>
+                            <h1 class="text-2xl md:text-3xl font-black tracking-tight">{{ $class->name }}</h1>
+                            @if ($class->section)
+                                <p class="mt-1 text-sm text-base-content/50">{{ $class->section }}</p>
+                            @endif
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0 flex-wrap">
+                            @if ($class->status->value === 'Active')
+                                <span class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold text-success bg-success/10 border-success/20">Active</span>
+                            @else
+                                <span class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold text-base-content/50 bg-base-200 border-base-300/50">Archived</span>
+                            @endif
+                            @if ($class->isActive())
+                                <form method="POST" action="{{ route('teacher.classes.archive', $class) }}" onsubmit="return confirm('Archive this class?')">
+                                    @csrf
+                                    <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-base-200 text-base-content/50 border border-base-300/50 text-xs font-medium hover:bg-base-300/50 transition-colors">Archive</button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                @if (session('success'))
+                    <div class="d d2">
+                        <x-alert type="success" :message="session('success')" />
+                    </div>
+                @endif
+
+                {{-- Edit details (collapsible) --}}
+                @if ($class->description || $class->isActive())
+                <div class="d d2 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
+                    <details class="group">
+                        <summary class="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer hover:bg-base-200/40 transition-colors list-none">
+                            <span class="font-semibold text-sm">Class Details</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4 text-base-content/40 transition-transform group-open:rotate-180"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </summary>
+                        <div class="px-5 pb-5 pt-2 space-y-4 border-t border-base-300/30">
+                            @if ($class->description)
+                                <p class="text-sm text-base-content/60">{{ $class->description }}</p>
+                            @endif
+                            @if ($class->isActive())
+                            <form method="POST" action="{{ route('teacher.classes.update', $class) }}" class="space-y-3">
+                                @csrf
+                                @method('PATCH')
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div class="form-control">
+                                        <label class="label pb-1" for="edit-name"><span class="label-text text-sm">Name</span></label>
+                                        <input id="edit-name" type="text" name="name" value="{{ old('name', $class->name) }}" class="input input-bordered w-full rounded-xl input-sm h-10 @error('name') input-error @enderror" required>
+                                        @error('name') <p class="mt-1 text-xs text-error">{{ $message }}</p> @enderror
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="label pb-1" for="edit-section"><span class="label-text text-sm">Section</span></label>
+                                        <input id="edit-section" type="text" name="section" value="{{ old('section', $class->section) }}" class="input input-bordered w-full rounded-xl input-sm h-10">
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <label class="label pb-1" for="edit-desc"><span class="label-text text-sm">Description</span></label>
+                                    <textarea id="edit-desc" name="description" rows="2" class="textarea textarea-bordered w-full rounded-xl text-sm">{{ old('description', $class->description) }}</textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm rounded-xl">Save Changes</button>
+                            </form>
+                            @endif
+                        </div>
+                    </details>
+                </div>
+                @endif
+
+                {{-- Enroll Students --}}
+                @if ($class->isActive())
+                <div class="d d3 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
+                    <div class="px-5 py-4 border-b border-base-300/30">
+                        <h2 class="font-semibold text-sm">Enroll Students</h2>
+                        <p class="text-xs text-base-content/40 mt-0.5">Search by name or email to add students to this class.</p>
+                    </div>
+                    <div class="p-5 space-y-3">
+                        <div class="relative" id="search-container">
+                            <input type="text" id="student-search"
+                                class="input input-bordered w-full rounded-xl input-sm h-10"
+                                placeholder="Type a student name or email…"
+                                autocomplete="off">
+                            <div id="search-results" class="absolute z-20 top-full left-0 right-0 mt-1 rounded-2xl border border-base-300/50 bg-base-100 shadow-xl hidden max-h-64 overflow-y-auto"></div>
+                        </div>
+                        <form method="POST" action="{{ route('teacher.classes.enroll', $class) }}" id="enroll-form">
+                            @csrf
+                            <div id="selected-students" class="space-y-2"></div>
+                            <button type="submit" id="enroll-btn" class="btn btn-primary btn-sm rounded-xl mt-3 hidden">Enroll Students</button>
+                        </form>
+                    </div>
+                </div>
+                @endif
+
+                {{-- Student Roster --}}
+                <div class="d d4 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
+                    <div class="px-5 py-4 border-b border-base-300/30 flex items-center justify-between">
+                        <h2 class="font-semibold text-sm">Students</h2>
+                        <span class="text-xs text-base-content/40 font-mono">{{ $class->students->count() }}</span>
+                    </div>
+                    @if ($class->students->isEmpty())
+                        <div class="py-10 flex flex-col items-center gap-2 text-center px-6">
+                            <p class="text-sm text-base-content/40">No students enrolled yet.</p>
+                        </div>
+                    @else
+                        <div class="divide-y divide-base-300/30">
+                            @foreach ($class->students as $student)
+                                <div class="flex items-center justify-between gap-3 px-5 py-3 hover:bg-base-200/40 transition-colors">
+                                    <a href="{{ route('profile.show', $student) }}" class="flex items-center gap-3 min-w-0 group">
+                                        @if ($student->avatar_url)
+                                            <img src="{{ $student->avatar_url }}" alt="{{ $student->name }}" class="size-8 rounded-xl object-cover shrink-0">
+                                        @else
+                                            <span class="inline-flex items-center justify-center size-8 rounded-xl bg-accent/10 text-accent text-xs font-bold shrink-0">{{ mb_strtoupper(mb_substr($student->name, 0, 1)) }}</span>
+                                        @endif
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-medium group-hover:text-primary transition-colors truncate">{{ $student->name }}</p>
+                                            <p class="text-xs text-base-content/40 truncate">{{ $student->email }}</p>
+                                        </div>
+                                    </a>
+                                    <div class="flex items-center gap-3 shrink-0">
+                                        <span class="hidden sm:block text-xs text-base-content/40">{{ $student->pivot->enrolled_at ? \Carbon\Carbon::parse($student->pivot->enrolled_at)->format('M d, Y') : '' }}</span>
+                                        @if ($class->isActive())
+                                            <form method="POST" action="{{ route('teacher.classes.unenroll', [$class, $student]) }}" onsubmit="return confirm('Remove {{ $student->name }} from this class?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="size-7 flex items-center justify-center rounded-lg text-base-content/30 hover:text-error hover:bg-error/10 transition-colors" aria-label="Remove">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Sessions --}}
+                <div class="d d5 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
+                    <div class="px-5 py-4 border-b border-base-300/30 flex items-center justify-between">
+                        <h2 class="font-semibold text-sm">Sessions</h2>
+                        @if ($class->isActive())
+                            <button type="button" onclick="document.getElementById('create-session-modal').showModal()"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 text-primary border border-primary/15 text-xs font-semibold hover:bg-primary/15 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                                New Session
+                            </button>
+                        @endif
+                    </div>
+                    @if ($class->sessions->isEmpty())
+                        <div class="py-10 flex flex-col items-center gap-2 text-center px-6">
+                            <p class="text-sm text-base-content/40">No sessions yet.</p>
+                        </div>
+                    @else
+                        <div class="divide-y divide-base-300/30">
+                            @foreach ($class->sessions->sortByDesc('start_time') as $session)
+                                @php
+                                    $sStyle = match ($session->status->value) {
+                                        'Active'     => 'text-success bg-success/10 border-success/20',
+                                        'Scheduled'  => 'text-info bg-info/10 border-info/20',
+                                        'Completed'  => 'text-base-content/50 bg-base-200 border-base-300/50',
+                                        'Cancelled'  => 'text-error bg-error/10 border-error/20',
+                                        default      => 'text-base-content/50 bg-base-200 border-base-300/50',
+                                    };
+                                @endphp
+                                <a href="{{ route('teacher.sessions.show', $session) }}" class="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-base-200/40 transition-colors">
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-medium">{{ $session->start_time->format('M d, Y') }}</p>
+                                        <p class="text-xs text-base-content/40 mt-0.5">{{ $session->start_time->format('g:i A') }} – {{ $session->end_time->format('g:i A') }} · {{ $session->modality->value }}</p>
+                                    </div>
+                                    <span class="shrink-0 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold {{ $sStyle }}">{{ $session->status->value }}</span>
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+            </div>
+        </main>
+    </div>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4" aria-hidden="true">
                             <path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>

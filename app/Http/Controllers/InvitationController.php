@@ -39,10 +39,17 @@ class InvitationController extends Controller
             return view('invitation.invalid', ['reason' => 'expired']);
         }
 
-        $validated = $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        ];
+
+        if ($invitation->role === \App\Enums\UserRole::Student) {
+            $rules['guardian_email'] = ['required', 'email', 'max:255'];
+            $rules['guardian_phone'] = ['required', 'string', 'max:30'];
+        }
+
+        $validated = $request->validate($rules);
 
         if (User::where('email', $invitation->email)->exists()) {
             return back()->withErrors(['email' => 'This email address has already been registered.']);
@@ -51,9 +58,11 @@ class InvitationController extends Controller
         $user = User::create([
             'name' => $validated['name'],
             'email' => $invitation->email,
-            'password' => Hash::make($validated['password']),
+            'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
             'role' => $invitation->role,
             'email_verified_at' => now(),
+            'guardian_email' => $validated['guardian_email'] ?? null,
+            'guardian_phone' => $validated['guardian_phone'] ?? null,
         ]);
 
         $invitation->update(['accepted_at' => now()]);

@@ -8,7 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Teacher\UpdateAttendanceRequest;
 use App\Models\AttendanceRecord;
 use App\Models\ClassSession;
+use App\Notifications\ParentAbsenceNotification;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -38,6 +40,17 @@ class AttendanceController extends Controller
             'notes' => $validated['notes'] ?? null,
             'marked_by' => AttendanceMarkedBy::Teacher,
         ]);
+
+        // Notify parent/guardian if student is marked absent
+        if ($record->status === AttendanceStatus::Absent) {
+            $student = $record->student;
+            if ($student->guardian_email) {
+                $record->load(['classSession.schoolClass']);
+                (new AnonymousNotifiable)
+                    ->route('mail', $student->guardian_email)
+                    ->notify(new ParentAbsenceNotification($record));
+            }
+        }
 
         return redirect()->route('teacher.attendance.index', $record->class_session_id)
             ->with('success', 'Attendance record updated.');

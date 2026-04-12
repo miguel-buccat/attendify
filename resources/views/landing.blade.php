@@ -162,9 +162,51 @@
             </div>
         </div>
 
-        {{-- ══════ PAGE 2: MISSION (conditional) ══════ --}}
+        {{-- ══════ PAGE 2: VISION (conditional) ══════ --}}
+        @if ($institutionVision)
+        <div class="page bg-chalkboard" id="page-1" data-index="1">
+            {{-- Banner image panel (left side, fades into chalkboard bg) --}}
+            @if ($landingBanner)
+            <div class="absolute inset-y-0 left-0 w-5/12 hidden md:block z-[1]">
+                <img src="{{ $landingBanner }}" alt="" class="absolute inset-0 h-full w-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-l from-base-200 via-base-200/60 to-transparent"></div>
+            </div>
+            @endif
+
+            {{-- Corner deco SVGs --}}
+            <svg class="deco top-[6%] left-[5%] size-16" viewBox="0 0 24 24" fill="none"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1"/></svg>
+            <svg class="deco bottom-[8%] right-[5%] size-14" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1"/></svg>
+            {{-- Content pinned to the right --}}
+            <div class="absolute inset-y-0 right-0 w-full md:w-7/12 flex items-center z-10">
+                <div class="w-full px-10 md:px-16 space-y-8">
+                    {{-- Title row --}}
+                    <div class="page-content flex items-center gap-5">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-[.3em] text-secondary/60 font-semibold">Our</p>
+                            <h2 class="text-4xl md:text-5xl font-black tracking-tight leading-tight">Vision</h2>
+                        </div>
+                    </div>
+
+                    {{-- Pull-quote block --}}
+                    <div class="page-content relative pl-8 border-l-[3px] border-secondary/30">
+                        <p class="text-xl md:text-2xl lg:text-3xl text-base-content/70 leading-relaxed font-medium">{{ $institutionVision }}</p>
+                    </div>
+
+                    {{-- Decorative closing rule --}}
+                    <div class="page-content flex items-center gap-3">
+                        <div class="h-px w-24 bg-gradient-to-r from-secondary/40 to-transparent"></div>
+                        <div class="size-1.5 rounded-full bg-secondary/40"></div>
+                        <div class="size-1.5 rounded-full bg-secondary/25"></div>
+                        <div class="size-1.5 rounded-full bg-secondary/10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- ══════ PAGE 3: MISSION (conditional) ══════ --}}
         @if ($institutionMission)
-        <div class="page bg-base-100 bg-notebook" id="page-1" data-index="1">
+        <div class="page bg-base-100 bg-notebook" id="page-2" data-index="2">
             {{-- Banner image panel (right side, fades into notebook bg) --}}
             @if ($landingBanner)
             <div class="absolute inset-y-0 right-0 w-5/12 hidden md:block z-[1]">
@@ -199,51 +241,6 @@
                         <div class="size-1.5 rounded-full bg-primary/40"></div>
                         <div class="size-1.5 rounded-full bg-primary/25"></div>
                         <div class="size-1.5 rounded-full bg-primary/10"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endif
-
-        {{-- ══════ PAGE 3: VISION (conditional) ══════ --}}
-        @if ($institutionVision)
-        <div class="page bg-chalkboard" id="page-2" data-index="2">
-            {{-- Banner image panel (left side, fades into chalkboard bg) --}}
-            @if ($landingBanner)
-            <div class="absolute inset-y-0 left-0 w-5/12 hidden md:block z-[1]">
-                <img src="{{ $landingBanner }}" alt="" class="absolute inset-0 h-full w-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-l from-base-200 via-base-200/60 to-transparent"></div>
-            </div>
-            @endif
-
-            {{-- Corner deco SVGs --}}
-            <svg class="deco top-[6%] left-[5%] size-16" viewBox="0 0 24 24" fill="none"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1"/></svg>
-            <svg class="deco bottom-[8%] right-[5%] size-14" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1"/></svg>
-            {{-- Content pinned to the right --}}
-            <div class="absolute inset-y-0 right-0 w-full md:w-7/12 flex items-center z-10">
-                <div class="w-full px-10 md:px-16 space-y-8">
-                    {{-- Title row --}}
-                    <div class="page-content flex items-center gap-5">
-                        <div class="shrink-0 inline-flex items-center justify-center size-14 rounded-2xl bg-secondary/10 text-secondary">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
-                        </div>
-                        <div>
-                            <p class="text-[10px] uppercase tracking-[.3em] text-secondary/60 font-semibold">Our</p>
-                            <h2 class="text-4xl md:text-5xl font-black tracking-tight leading-tight">Vision</h2>
-                        </div>
-                    </div>
-
-                    {{-- Pull-quote block --}}
-                    <div class="page-content relative pl-8 border-l-[3px] border-secondary/30">
-                        <p class="text-xl md:text-2xl lg:text-3xl text-base-content/70 leading-relaxed font-medium">{{ $institutionVision }}</p>
-                    </div>
-
-                    {{-- Decorative closing rule --}}
-                    <div class="page-content flex items-center gap-3">
-                        <div class="h-px w-24 bg-gradient-to-r from-secondary/40 to-transparent"></div>
-                        <div class="size-1.5 rounded-full bg-secondary/40"></div>
-                        <div class="size-1.5 rounded-full bg-secondary/25"></div>
-                        <div class="size-1.5 rounded-full bg-secondary/10"></div>
                     </div>
                 </div>
             </div>
@@ -305,8 +302,8 @@
     {{-- Side navigation dots --}}
     <nav class="hidden md:flex fixed right-6 top-1/2 -translate-y-1/2 z-[200] flex-col items-center gap-3" aria-label="Page sections">
         <button data-page="0" class="nav-dot w-2 h-2 rounded-full bg-base-content/20 active" aria-label="Hero"></button>
-        @if ($institutionMission)<button data-page="1" class="nav-dot w-2 h-2 rounded-full bg-base-content/20" aria-label="Mission"></button>@endif
-        @if ($institutionVision)<button data-page="2" class="nav-dot w-2 h-2 rounded-full bg-base-content/20" aria-label="Vision"></button>@endif
+        @if ($institutionVision)<button data-page="1" class="nav-dot w-2 h-2 rounded-full bg-base-content/20" aria-label="Vision"></button>@endif
+        @if ($institutionMission)<button data-page="2" class="nav-dot w-2 h-2 rounded-full bg-base-content/20" aria-label="Mission"></button>@endif
         <button data-page="3" class="nav-dot w-2 h-2 rounded-full bg-base-content/20" aria-label="About"></button>
         <button data-page="4" class="nav-dot w-2 h-2 rounded-full bg-base-content/20" aria-label="Footer"></button>
     </nav>
