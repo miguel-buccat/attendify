@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Teacher;
 use App\Enums\AttendanceStatus;
 use App\Enums\ClassStatus;
 use App\Enums\ExcuseRequestStatus;
+use App\Enums\SessionStatus;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceRecord;
+use App\Models\ClassSession;
 use App\Models\ExcuseRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -79,6 +81,15 @@ class TeacherDashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Upcoming sessions
+        $upcomingSessions = ClassSession::whereIn('class_id', $classIds)
+            ->whereIn('status', [SessionStatus::Scheduled, SessionStatus::Active])
+            ->where('start_time', '>=', now())
+            ->orderBy('start_time')
+            ->with('schoolClass')
+            ->take(5)
+            ->get();
+
         return view('dashboard.teacher', compact(
             'user',
             'myClasses',
@@ -89,6 +100,7 @@ class TeacherDashboardController extends Controller
             'pieData',
             'pendingExcuses',
             'recentSessions',
+            'upcomingSessions',
         ));
     }
 }

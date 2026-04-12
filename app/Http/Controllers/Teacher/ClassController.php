@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Teacher\EnrollStudentsRequest;
 use App\Http\Requests\Teacher\StoreClassRequest;
 use App\Http\Requests\Teacher\UpdateClassRequest;
+use App\Models\ActivityLog;
 use App\Models\SchoolClass;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -40,6 +41,8 @@ class ClassController extends Controller
             ...$request->validated(),
         ]);
 
+        ActivityLog::log('created_class', "Created class {$class->name}", $class);
+
         return redirect()->route('teacher.classes.show', $class)
             ->with('success', 'Class created successfully.');
     }
@@ -68,6 +71,8 @@ class ClassController extends Controller
         Gate::authorize('archive', $class);
 
         $class->update(['status' => ClassStatus::Archived]);
+
+        ActivityLog::log('archived_class', "Archived class {$class->name}", $class);
 
         return redirect()->route('teacher.classes.index')
             ->with('success', 'Class archived.');

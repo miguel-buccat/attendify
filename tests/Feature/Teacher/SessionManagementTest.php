@@ -383,3 +383,105 @@ test('non-owner teacher cannot poll attendance data', function () {
         ->getJson(route('teacher.sessions.attendance', $session))
         ->assertForbidden();
 });
+
+test('teacher can bulk schedule sessions for selected days', function () {
+    $teacher = User::factory()->teacher()->create();
+    $class = SchoolClass::factory()->create(['teacher_id' => $teacher->id]);
+
+    // Schedule Monday and Wednesday sessions for the next 4 weeks
+    $endDate = now()->addWeeks(4)->format('Y-m-d');
+
+    $this->actingAs($teacher)
+        ->post(route('teacher.sessions.bulk-store', $class), [
+            'days' => ['Monday', 'Wednesday'],
+            'modality' => SessionModality::Onsite->value,
+            'location' => 'Room 202',
+            'start_time' => '09:00',
+            'end_time' => '11:00',
+            'grace_period_minutes' => 10,
+            'interval_weeks' => 1,
+            'start_date' => now()->format('Y-m-d'),
+            'end_date' => $endDate,
+        ])
+        ->assertRedirect(route('teacher.classes.show', $class));
+
+    $sessions = ClassSession::where('class_id', $class->id)->get();
+
+    expect($sessions->count())->toBeGreaterThanOrEqual(4)
+        ->and($sessions->first()->modality)->toBe(SessionModality::Onsite)
+        ->and($sessions->first()->location)->toBe('Room 202')
+        ->and($sessions->first()->grace_period_minutes)->toBe(10)
+        ->and($sessions->first()->recurrence_group_id)->not->toBeNull()
+        ->and($sessions->pluck('recurrence_group_id')->unique())->toHaveCount(1);
+
+    // All sessions should be on Monday (1) or Wednesday (3)
+    $sessions->each(function ($session) {
+        expect($session->start_time->dayOfWeekIso)->toBeIn([1, 3]);
+    });
+});
+
+test('teacher can bulk schedule with biweekly interval', function () {
+    $teacher = User::factory()->teacher()->create();
+    $class = SchoolClass::factory()->create(['teacher_id' => $teacher->id]);
+
+    $endDate = now()->addWeeks(6)->format('Y-m-d');
+
+    $this->actingAs($teacher)
+        ->post(route('teacher.sessions.bulk-store', $class), [
+            'days' => ['Friday'],
+            'modality' => SessionModality::Online->value,
+            'location' => 'https://meet.example.com/abc',
+            'start_time' => '14:00',
+            'end_time' => '16:00',
+            'grace_period_minutes' => 15,
+            'interval_weeks' => 2,
+            'start_date' => now()->format('Y-m-d'),
+            'end_date' => $endDate,
+        ])
+        ->assertRedirect(route('teacher.classes.show', $class));
+
+    $sessions = ClassSession::where('class_id', $class->id)->get();
+
+    // With biweekly interval over 6 weeks, expect ~3 Friday sessions
+    expect($sessions->count())->toBeGreaterThanOrEqual(2)
+        ->and($sessions->count())->toBeLessThanOrEqual(4);
+
+    $sessions->each(function ($session) {
+        expect($session->start_time->dayOfWeekIso)->toBe(5)
+            ->and($session->modality)->toBe(SessionModality::Online);
+    });
+});
+
+test('bulk schedule requires at least one day selected', function () {
+    $teacher = User::factory()->teacher()->create();
+    $class = SchoolClass::factory()->create(['teacher_id' => $teacher->id]);
+
+    $this->actingAs($teacher)
+        ->post(route('teacher.sessions.bulk-store', $class), [
+            'days' => [],
+            'modality' => SessionModality::Onsite->value,
+            'start_time' => '09:00',
+            'end_time' => '11:00',
+            'interval_weeks' => 1,
+            'start_date' => now()->format('Y-m-d'),
+            'end_date' => now()->addWeeks(4)->format('Y-m-d'),
+        ])
+        ->assertSessionHasErrors('days', errorBag: 'preschedule');
+});
+
+test('bulk schedule validates end date is in the future', function () {
+    $teacher = User::factory()->teacher()->create();
+    $class = SchoolClass::factory()->create(['teacher_id' => $teacher->id]);
+
+    $this->actingAs($teacher)
+        ->post(route('teacher.sessions.bulk-store', $class), [
+            'days' => ['Monday'],
+            'modality' => SessionModality::Onsite->value,
+            'start_time' => '09:00',
+            'end_time' => '11:00',
+            'interval_weeks' => 1,
+            'start_date' => now()->format('Y-m-d'),
+            'end_date' => now()->subDay()->format('Y-m-d'),
+        ])
+        ->assertSessionHasErrors('end_date', errorBag: 'preschedule');
+});

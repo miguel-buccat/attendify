@@ -91,7 +91,7 @@
                     name="guardian_phone"
                     value="{{ old('guardian_phone') }}"
                     class="w-full rounded-xl border {{ $errors->has('guardian_phone') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
-                    placeholder="+1 234 567 8900"
+                    placeholder="+63 000 000 0000"
                     required
                 >
                 @error('guardian_phone')<p class="mt-1 text-xs text-error">{{ $message }}</p>@enderror

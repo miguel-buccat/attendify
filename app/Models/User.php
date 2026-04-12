@@ -18,7 +18,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['name', 'email', 'password', 'role', 'email_verified_at', 'avatar_path', 'banner_path', 'about_me', 'status', 'status_reason', 'guardian_email', 'guardian_phone'])]
+#[Fillable(['name', 'email', 'password', 'role', 'email_verified_at', 'avatar_path', 'banner_path', 'about_me', 'status', 'status_reason', 'guardian_email', 'guardian_phone', 'notification_preferences'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -37,6 +37,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => UserRole::class,
             'status' => UserStatus::class,
+            'notification_preferences' => 'array',
         ];
     }
 
@@ -107,5 +108,22 @@ class User extends Authenticatable
     public function excuseRequests(): HasMany
     {
         return $this->hasMany(ExcuseRequest::class, 'student_id');
+    }
+
+    public function getNotificationPreference(string $key, bool $default = true): bool
+    {
+        $prefs = $this->notification_preferences ?? [];
+
+        return $prefs[$key] ?? $default;
+    }
+
+    public static function defaultNotificationPreferences(): array
+    {
+        return [
+            'session_started' => true,
+            'weekly_summary' => true,
+            'absence_alert' => true,
+            'excuse_updates' => true,
+        ];
     }
 }

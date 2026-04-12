@@ -29,12 +29,21 @@
                             <h1 class="text-2xl md:text-3xl font-black tracking-tight">Attendance</h1>
                             <p class="mt-1 text-sm text-base-content/50">{{ $session->start_time->format('M d, Y g:i A') }} – {{ $session->end_time->format('g:i A') }}</p>
                         </div>
-                        <a href="{{ route('teacher.attendance.export', $session) }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-base-200 text-base-content/60 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors shrink-0 self-start sm:self-auto">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4" aria-hidden="true">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5 5 5 5-5m-5 5V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            Export CSV
-                        </a>
+                        <div class="flex gap-2 shrink-0 self-start sm:self-auto">
+                            <a href="{{ route('teacher.attendance.export', $session) }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-base-200 text-base-content/60 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4" aria-hidden="true">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5 5 5 5-5m-5 5V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Export CSV
+                            </a>
+                            <a href="{{ route('teacher.attendance.export-pdf', $session) }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-base-200 text-base-content/60 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4" aria-hidden="true">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Export PDF
+                            </a>
+                        </div>
                     </div>
                 </div>
 

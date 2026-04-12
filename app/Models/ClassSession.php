@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['class_id', 'modality', 'location', 'start_time', 'end_time', 'grace_period_minutes', 'qr_token', 'qr_expires_at', 'status'])]
+#[Fillable(['class_id', 'modality', 'location', 'start_time', 'end_time', 'grace_period_minutes', 'qr_token', 'qr_expires_at', 'status', 'recurrence_pattern', 'recurrence_end_date', 'recurrence_group_id', 'cancellation_reason'])]
 class ClassSession extends Model
 {
     /** @use HasFactory<ClassSessionFactory> */
@@ -27,6 +27,7 @@ class ClassSession extends Model
             'end_time' => 'datetime',
             'qr_expires_at' => 'datetime',
             'grace_period_minutes' => 'integer',
+            'recurrence_end_date' => 'date',
         ];
     }
 
@@ -53,5 +54,15 @@ class ClassSession extends Model
     public function isCompleted(): bool
     {
         return $this->status === SessionStatus::Completed;
+    }
+
+    public function isRecurring(): bool
+    {
+        return $this->recurrence_group_id !== null;
+    }
+
+    public function recurringGroup(): HasMany
+    {
+        return $this->hasMany(self::class, 'recurrence_group_id', 'recurrence_group_id');
     }
 }
