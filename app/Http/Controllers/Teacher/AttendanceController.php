@@ -10,7 +10,9 @@ use App\Models\ActivityLog;
 use App\Models\AttendanceRecord;
 use App\Models\ClassSession;
 use App\Notifications\ParentAbsenceNotification;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
@@ -90,5 +92,47 @@ class AttendanceController extends Controller
         }, $filename, [
             'Content-Type' => 'text/csv',
         ]);
+    }
+
+    public function exportPdf(ClassSession $session): Response
+    {
+        Gate::authorize('viewAny', [AttendanceRecord::class, $session]);
+
+        $session->load(['schoolClass.teacher', 'attendanceRecords.student']);
+
+        $students = $session->schoolClass->students()->orderBy('name')->get();
+        $recordsByStudent = $session->attendanceRecords->keyBy('student_id');
+
+        $presentCount = 0;
+        $lateCount = 0;
+        $absentCount = 0;
+        $excusedCount = 0;
+        $noRecordCount = 0;
+
+        foreach ($students as $student) {
+            $record = $recordsByStudent->get($student->id);
+            match ($record?->status) {
+                AttendanceStatus::Present => $presentCount++,
+                AttendanceStatus::Late => $lateCount++,
+                AttendanceStatus::Absent => $absentCount++,
+                AttendanceStatus::Excused => $excusedCount++,
+                default => $noRecordCount++,
+            };
+        }
+
+        $filename = str_replace(' ', '_', $session->schoolClass->name).'_session_'.$session->start_time->format('Y-m-d').'.pdf';
+
+        $pdf = Pdf::loadView('reports.session-attendance', compact(
+            'session',
+            'students',
+            'recordsByStudent',
+            'presentCount',
+            'lateCount',
+            'absentCount',
+            'excusedCount',
+            'noRecordCount',
+        ));
+
+        return $pdf->download($filename);
     }
 }

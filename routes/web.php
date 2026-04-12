@@ -103,6 +103,7 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
     Route::get('/sessions/{session}/attendance/manage', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::patch('/attendance/{record}', [AttendanceController::class, 'update'])->name('attendance.update');
     Route::get('/sessions/{session}/attendance/export', [AttendanceController::class, 'export'])->name('attendance.export');
+    Route::get('/sessions/{session}/attendance/export-pdf', [AttendanceController::class, 'exportPdf'])->name('attendance.export-pdf');
     Route::get('/classes/{class}/students/{student}', [StudentPerformanceController::class, 'show'])->name('students.show');
     Route::get('/classes/{class}/analytics/pdf', [ClassAnalyticsController::class, 'exportPdf'])->name('classes.analytics.pdf');
     Route::get('/excuses', [TeacherExcuseRequestController::class, 'index'])->name('excuses.index');

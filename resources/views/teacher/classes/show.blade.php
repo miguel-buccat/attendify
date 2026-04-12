@@ -33,10 +33,7 @@
                                 <span class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold text-base-content/50 bg-base-200 border-base-300/50">Archived</span>
                             @endif
                             @if ($class->isActive())
-                                <form method="POST" action="{{ route('teacher.classes.archive', $class) }}" onsubmit="return confirm('Archive this class?')">
-                                    @csrf
-                                    <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-base-200 text-base-content/50 border border-base-300/50 text-xs font-medium hover:bg-base-300/50 transition-colors">Archive</button>
-                                </form>
+                                <button type="button" onclick="document.getElementById('archive-class-modal').showModal()" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-base-200 text-base-content/50 border border-base-300/50 text-xs font-medium hover:bg-base-300/50 transition-colors">Archive</button>
                             @endif
                         </div>
                     </div>
@@ -89,7 +86,7 @@
 
                 {{-- Enroll Students --}}
                 @if ($class->isActive())
-                <div class="d d3 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
+                <div class="d d3 rounded-2xl border border-base-300/50 bg-base-100">
                     <div class="px-5 py-4 border-b border-base-300/30">
                         <h2 class="font-semibold text-sm">Enroll Students</h2>
                         <p class="text-xs text-base-content/40 mt-0.5">Search by name or email to add students to this class.</p>
@@ -99,7 +96,7 @@
                             <input type="text" id="student-search"
                                 class="input input-bordered w-full rounded-xl input-sm h-10"
                                 placeholder="Type a student name or email…"
-                                autocomplete="off">
+                                autocomplete="off" name="student_search_nonce" role="presentation">
                             <div id="search-results" class="absolute z-20 top-full left-0 right-0 mt-1 rounded-2xl border border-base-300/50 bg-base-100 shadow-xl hidden max-h-64 overflow-y-auto"></div>
                         </div>
                         <form method="POST" action="{{ route('teacher.classes.enroll', $class) }}" id="enroll-form">
@@ -146,13 +143,9 @@
                                         <a href="{{ route('teacher.students.show', [$class, $student]) }}" class="text-xs text-primary hover:underline hidden sm:inline">Performance</a>
                                         <span class="hidden sm:block text-xs text-base-content/40">{{ $student->pivot->enrolled_at ? \Carbon\Carbon::parse($student->pivot->enrolled_at)->format('M d, Y') : '' }}</span>
                                         @if ($class->isActive())
-                                            <form method="POST" action="{{ route('teacher.classes.unenroll', [$class, $student]) }}" onsubmit="return confirm('Remove {{ $student->name }} from this class?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="size-7 flex items-center justify-center rounded-lg text-base-content/30 hover:text-error hover:bg-error/10 transition-colors" aria-label="Remove">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                                                </button>
-                                            </form>
+                                            <button type="button" onclick="openUnenrollModal({{ $student->id }}, '{{ e($student->name) }}')" class="size-7 flex items-center justify-center rounded-lg text-base-content/30 hover:text-error hover:bg-error/10 transition-colors" aria-label="Remove">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                                            </button>
                                         @endif
                                     </div>
                                 </div>
@@ -199,263 +192,6 @@
                             @endforeach
                         </div>
                     @endif
-                </div>
-
-            </div>
-        </main>
-    </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4" aria-hidden="true">
-                            <path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        Back to Classes
-                    </a>
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <h1 class="text-2xl md:text-3xl font-semibold">{{ $class->name }}</h1>
-                            @if ($class->section)
-                                <p class="mt-1 text-base-content/60">{{ $class->section }}</p>
-                            @endif
-                        </div>
-                        @if ($class->status->value === 'Active')
-                            <span class="badge badge-success badge-lg mt-1 shrink-0">Active</span>
-                        @else
-                            <span class="badge badge-ghost badge-lg mt-1 shrink-0">Archived</span>
-                        @endif
-                    </div>
-                </div>
-
-                @if (session('success'))
-                    <x-alert type="success" :message="session('success')" />
-                @endif
-
-                {{-- Class info + actions --}}
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                    {{-- Details card --}}
-                    <div class="lg:col-span-2 rounded-xl border border-base-300 bg-base-100 p-6 space-y-4">
-                        @if ($class->description)
-                            <p class="text-base-content/70">{{ $class->description }}</p>
-                        @endif
-
-                        {{-- Edit form --}}
-                        <details class="group">
-                            <summary class="cursor-pointer text-sm font-medium text-base-content/70 hover:text-base-content list-none flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4 group-open:hidden" aria-hidden="true">
-                                    <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4 hidden group-open:block" aria-hidden="true">
-                                    <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                Edit Class Details
-                            </summary>
-                            <form method="POST" action="{{ route('teacher.classes.update', $class) }}" class="mt-3 space-y-3">
-                                @csrf
-                                @method('PATCH')
-
-                                <div class="form-control">
-                                    <label class="label pb-1" for="edit-name"><span class="label-text text-sm">Name</span></label>
-                                    <input id="edit-name" type="text" name="name" value="{{ old('name', $class->name) }}" class="input input-bordered w-full rounded-xl input-sm h-10 @error('name') input-error @enderror" required>
-                                    @error('name') <p class="mt-1 text-xs text-error">{{ $message }}</p> @enderror
-                                </div>
-                                <div class="form-control">
-                                    <label class="label pb-1" for="edit-section"><span class="label-text text-sm">Section</span></label>
-                                    <input id="edit-section" type="text" name="section" value="{{ old('section', $class->section) }}" class="input input-bordered w-full rounded-xl input-sm h-10">
-                                </div>
-                                <div class="form-control">
-                                    <label class="label pb-1" for="edit-desc"><span class="label-text text-sm">Description</span></label>
-                                    <textarea id="edit-desc" name="description" rows="2" class="textarea textarea-bordered w-full rounded-xl">{{ old('description', $class->description) }}</textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-sm rounded-xl">Save Changes</button>
-                            </form>
-                        </details>
-                    </div>
-
-                    {{-- Actions sidebar --}}
-                    <div class="space-y-3">
-                        @if ($class->isActive())
-                            <form method="POST" action="{{ route('teacher.classes.archive', $class) }}" onsubmit="return confirm('Archive this class? It will no longer accept new sessions.')">
-                                @csrf
-                                <button type="submit" class="btn btn-ghost btn-sm rounded-xl w-full text-base-content/60">Archive Class</button>
-                            </form>
-                        @endif
-                    </div>
-
-                </div>
-
-                {{-- Enroll Students --}}
-                @if ($class->isActive())
-                    <div class="rounded-xl border border-base-300 bg-base-100">
-                        <div class="p-4 border-b border-base-300">
-                            <h2 class="font-semibold">Enroll Students</h2>
-                            <p class="text-sm text-base-content/60 mt-0.5">Search by name or email to add students to this class.</p>
-                        </div>
-                        <div class="p-4 space-y-3">
-                            {{-- Search input --}}
-                            <div class="relative" id="search-container">
-                                <input
-                                    type="text"
-                                    id="student-search"
-                                    class="input input-bordered w-full rounded-xl input-sm h-10"
-                                    placeholder="Type a student name or email..."
-                                    autocomplete="off"
-                                >
-                                <div id="search-results" class="absolute z-20 top-full left-0 right-0 mt-1 rounded-xl border border-base-300 bg-base-100 shadow-lg hidden max-h-64 overflow-y-auto"></div>
-                            </div>
-
-                            {{-- Selected students (to enroll) --}}
-                            <form method="POST" action="{{ route('teacher.classes.enroll', $class) }}" id="enroll-form">
-                                @csrf
-                                <div id="selected-students" class="space-y-2"></div>
-                                <button type="submit" id="enroll-btn" class="btn btn-primary btn-sm rounded-xl mt-3 hidden">
-                                    Enroll Students
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                @endif
-
-                {{-- Student Roster --}}
-                <div class="rounded-xl border border-base-300 bg-base-100">
-                    <div class="flex items-center justify-between p-4 border-b border-base-300">
-                        <h2 class="font-semibold">Students <span class="text-base-content/50 font-normal">({{ $class->students->count() }})</span></h2>
-                    </div>
-                    @if ($class->students->isEmpty())
-                        <p class="p-6 text-center text-sm text-base-content/50">No students enrolled yet. Use the search above to add students.</p>
-                    @else
-                        <div class="overflow-x-auto">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Student</th>
-                                        <th class="hidden sm:table-cell">Email</th>
-                                        <th class="hidden md:table-cell">Enrolled</th>
-                                        @if ($class->isActive())
-                                            <th class="w-12"></th>
-                                        @endif
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($class->students as $student)
-                                        <tr>
-                                            <td>
-                                                <a href="{{ route('profile.show', $student) }}" class="flex items-center gap-2.5 group">
-                                                    @if ($student->avatar_url)
-                                                        <img src="{{ $student->avatar_url }}" alt="{{ $student->name }}" class="size-7 rounded-lg object-cover shrink-0">
-                                                    @else
-                                                        <span class="inline-flex items-center justify-center size-7 rounded-lg bg-primary/15 text-primary text-xs font-bold shrink-0">
-                                                            {{ mb_strtoupper(mb_substr($student->name, 0, 1)) }}
-                                                        </span>
-                                                    @endif
-                                                    <div class="min-w-0">
-                                                        <span class="font-medium group-hover:text-primary transition-colors block truncate">{{ $student->name }}</span>
-                                                        <span class="text-xs text-base-content/50 sm:hidden block truncate">{{ $student->email }}</span>
-                                                    </div>
-                                                </a>
-                                            </td>
-                                            <td class="text-base-content/60 hidden sm:table-cell">{{ $student->email }}</td>
-                                            <td class="text-base-content/60 hidden md:table-cell">{{ $student->pivot->enrolled_at ? \Carbon\Carbon::parse($student->pivot->enrolled_at)->format('M d, Y') : '-' }}</td>
-                                            @if ($class->isActive())
-                                                <td>
-                                                    <form method="POST" action="{{ route('teacher.classes.unenroll', [$class, $student]) }}" onsubmit="return confirm('Remove {{ $student->name }} from this class?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-ghost btn-xs btn-square rounded-lg text-base-content/40 hover:text-error hover:bg-error/10" aria-label="Remove student">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5" aria-hidden="true">
-                                                                <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                                            </svg>
-                                                        </button>
-                                                    </form>
-                                                </td>
-                                            @endif
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @endif
-                </div>
-
-                {{-- Sessions section --}}
-                <div class="card bg-base-100 rounded-xl border border-base-300">
-                    <div class="card-body gap-4">
-                        <div class="flex items-center justify-between">
-                            <h2 class="card-title text-lg">Sessions</h2>
-                            @if ($class->isActive())
-                                <button type="button" onclick="document.getElementById('create-session-modal').showModal()" class="btn btn-primary btn-sm rounded-lg">
-                                    New Session
-                                </button>
-                            @endif
-                        </div>
-
-                        @if ($class->sessions->isEmpty())
-                            <p class="text-base-content/50 text-sm">No sessions yet.</p>
-                        @else
-                            {{-- Mobile: card layout --}}
-                            <div class="space-y-3 sm:hidden">
-                                @foreach ($class->sessions->sortByDesc('start_time') as $session)
-                                    <a href="{{ route('teacher.sessions.show', $session) }}" class="block rounded-xl border border-base-300 bg-base-200/40 p-4 space-y-2 active:bg-base-200 transition-colors">
-                                        <div class="flex items-center justify-between gap-2">
-                                            <span class="font-medium">{{ $session->start_time->format('M d, Y') }}</span>
-                                            @php
-                                                $sBadge = match ($session->status->value) {
-                                                    'Active' => 'badge-success',
-                                                    'Scheduled' => 'badge-info',
-                                                    'Completed' => 'badge-ghost',
-                                                    'Cancelled' => 'badge-error',
-                                                    default => 'badge-ghost',
-                                                };
-                                            @endphp
-                                            <span class="badge {{ $sBadge }} badge-sm">{{ $session->status->value }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-3 text-sm text-base-content/60">
-                                            <span>{{ $session->start_time->format('g:i A') }} – {{ $session->end_time->format('g:i A') }}</span>
-                                            <span class="text-base-content/30">·</span>
-                                            <span>{{ $session->modality->value }}</span>
-                                        </div>
-                                    </a>
-                                @endforeach
-                            </div>
-
-                            {{-- Desktop: table layout --}}
-                            <div class="hidden sm:block overflow-x-auto">
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Time</th>
-                                            <th>Modality</th>
-                                            <th>Status</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($class->sessions->sortByDesc('start_time') as $session)
-                                            <tr>
-                                                <td class="font-medium">{{ $session->start_time->format('M d, Y') }}</td>
-                                                <td class="text-base-content/60">{{ $session->start_time->format('g:i A') }} – {{ $session->end_time->format('g:i A') }}</td>
-                                                <td>{{ $session->modality->value }}</td>
-                                                <td>
-                                                    @php
-                                                        $sBadge = match ($session->status->value) {
-                                                            'Active' => 'badge-success',
-                                                            'Scheduled' => 'badge-info',
-                                                            'Completed' => 'badge-ghost',
-                                                            'Cancelled' => 'badge-error',
-                                                            default => 'badge-ghost',
-                                                        };
-                                                    @endphp
-                                                    <span class="badge {{ $sBadge }} badge-sm">{{ $session->status->value }}</span>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('teacher.sessions.show', $session) }}" class="btn btn-ghost btn-xs rounded-lg">View</a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @endif
-                    </div>
                 </div>
 
             </div>
@@ -652,6 +388,48 @@
             const d = document.createElement('div');
             d.textContent = str;
             return d.innerHTML;
+        }
+    </script>
+    @endif
+    {{-- Archive Class Modal --}}
+    @if ($class->isActive())
+    <dialog id="archive-class-modal" class="modal">
+        <div class="modal-box rounded-2xl max-w-sm">
+            <h3 class="text-lg font-bold">Archive Class</h3>
+            <p class="text-sm text-base-content/60 mt-2">Are you sure you want to archive <strong>{{ $class->name }}</strong>? Students will no longer be able to attend sessions.</p>
+            <div class="modal-action">
+                <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost rounded-xl">Cancel</button>
+                <form method="POST" action="{{ route('teacher.classes.archive', $class) }}">
+                    @csrf
+                    <button type="submit" class="btn btn-error rounded-xl">Archive</button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
+
+    {{-- Unenroll Student Modal --}}
+    <dialog id="unenroll-student-modal" class="modal">
+        <div class="modal-box rounded-2xl max-w-sm">
+            <h3 class="text-lg font-bold">Remove Student</h3>
+            <p class="text-sm text-base-content/60 mt-2">Are you sure you want to remove <strong id="unenroll-student-name"></strong> from this class?</p>
+            <div class="modal-action">
+                <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost rounded-xl">Cancel</button>
+                <form method="POST" id="unenroll-form" action="">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-error rounded-xl">Remove</button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
+
+    <script>
+        function openUnenrollModal(studentId, studentName) {
+            document.getElementById('unenroll-student-name').textContent = studentName;
+            document.getElementById('unenroll-form').action = @json(route('teacher.classes.unenroll', [$class, '__ID__'])).replace('__ID__', studentId);
+            document.getElementById('unenroll-student-modal').showModal();
         }
     </script>
     @endif

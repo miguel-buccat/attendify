@@ -72,16 +72,10 @@
                                 </form>
                                 <button type="button" onclick="document.getElementById('cancel-session-modal').showModal()" class="btn btn-ghost btn-sm rounded-xl text-error">Cancel</button>
                                 @if ($session->isRecurring())
-                                    <form method="POST" action="{{ route('teacher.sessions.cancel-upcoming', $session) }}" onsubmit="return confirm('Cancel all future sessions in this recurring group?')">
-                                        @csrf
-                                        <button type="submit" class="btn btn-ghost btn-sm rounded-xl text-error/70">Cancel All Upcoming</button>
-                                    </form>
+                                    <button type="button" onclick="document.getElementById('cancel-upcoming-modal').showModal()" class="btn btn-ghost btn-sm rounded-xl text-error/70">Cancel All Upcoming</button>
                                 @endif
                             @elseif ($session->isActive())
-                                <form method="POST" action="{{ route('teacher.sessions.complete', $session) }}" onsubmit="return confirm('Complete this session? Students who have not scanned will be marked absent.')">
-                                    @csrf
-                                    <button type="submit" class="btn btn-warning btn-sm rounded-xl">Complete Session</button>
-                                </form>
+                                <button type="button" onclick="document.getElementById('complete-session-modal').showModal()" class="btn btn-warning btn-sm rounded-xl">Complete Session</button>
                                 <button type="button" onclick="document.getElementById('cancel-session-modal').showModal()" class="btn btn-ghost btn-sm rounded-xl text-error">Cancel</button>
                             @endif
                             <a href="{{ route('teacher.attendance.index', $session) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-base-200 text-base-content/60 border border-base-300/50 text-xs font-medium hover:bg-base-300/50 transition-colors">
@@ -179,8 +173,40 @@
         </div>
         <form method="dialog" class="modal-backdrop"><button>close</button></form>
     </dialog>
+
+    {{-- Cancel All Upcoming Modal --}}
+    @if ($session->isRecurring())
+    <dialog id="cancel-upcoming-modal" class="modal">
+        <div class="modal-box rounded-2xl max-w-sm">
+            <h3 class="text-lg font-bold">Cancel All Upcoming</h3>
+            <p class="text-sm text-base-content/60 mt-2">This will cancel all future sessions in this recurring group. This action cannot be undone.</p>
+            <div class="modal-action">
+                <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost rounded-xl">Keep Sessions</button>
+                <form method="POST" action="{{ route('teacher.sessions.cancel-upcoming', $session) }}">
+                    @csrf
+                    <button type="submit" class="btn btn-error rounded-xl">Cancel All</button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
     @endif
-                    </a>
+
+    {{-- Complete Session Modal --}}
+    <dialog id="complete-session-modal" class="modal">
+        <div class="modal-box rounded-2xl max-w-sm">
+            <h3 class="text-lg font-bold">Complete Session</h3>
+            <p class="text-sm text-base-content/60 mt-2">Students who have not scanned will be marked absent. Are you sure you want to complete this session?</p>
+            <div class="modal-action">
+                <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost rounded-xl">Cancel</button>
+                <form method="POST" action="{{ route('teacher.sessions.complete', $session) }}">
+                    @csrf
+                    <button type="submit" class="btn btn-warning rounded-xl">Complete Session</button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
     <script>
         (function () {
             const url = @json(route('teacher.sessions.attendance', $session));
@@ -252,13 +278,6 @@
                 }
             }
 
-            function hideSessionActions() {
-                const el = document.getElementById('session-actions');
-                if (el) el.remove();
-                const qr = document.getElementById('qr-section');
-                if (qr) qr.remove();
-            }
-
             function refresh() {
                 fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
                     .then(res => res.json())
@@ -268,7 +287,6 @@
                         if (data.session_status !== 'Active' && !settled) {
                             settled = true;
                             updateStatusBadge(data.session_status);
-                            hideSessionActions();
                             // Keep polling briefly for the job to finish marking absentees
                             setTimeout(() => {
                                 fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
