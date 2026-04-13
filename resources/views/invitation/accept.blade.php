@@ -36,32 +36,21 @@
             @enderror
         </div>
 
-        <div>
-            <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="password">Password</label>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                class="w-full rounded-xl border {{ $errors->has('password') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
-                placeholder="Minimum 8 characters"
-                required
-            >
-            @error('password')
-                <p class="mt-1 text-xs text-error">{{ $message }}</p>
-            @enderror
-        </div>
+        <x-form.field
+            label="Password"
+            name="password"
+            type="password"
+            required
+            placeholder="Minimum 8 characters"
+        />
 
-        <div>
-            <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="password_confirmation">Confirm Password</label>
-            <input
-                type="password"
-                id="password_confirmation"
-                name="password_confirmation"
-                class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
-                placeholder="Repeat your password"
-                required
-            >
-        </div>
+        <x-form.field
+            label="Confirm Password"
+            name="password_confirmation"
+            type="password"
+            required
+            placeholder="Repeat your password"
+        />
 
         @if ($invitation->role === \App\Enums\UserRole::Student)
             <div class="rounded-2xl border border-base-300/50 bg-base-200/50 px-4 py-3 space-y-1">
