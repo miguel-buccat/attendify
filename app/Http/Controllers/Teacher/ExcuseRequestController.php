@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Teacher\ReviewExcuseRequest;
 use App\Models\ActivityLog;
 use App\Models\ExcuseRequest;
+use App\Notifications\ExcuseReviewedNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
@@ -45,6 +46,8 @@ class ExcuseRequestController extends Controller
         $statusLabel = $validated['status'] === ExcuseRequestStatus::Acknowledged->value ? 'acknowledged' : 'rejected';
 
         ActivityLog::log('reviewed_excuse', "Excuse request {$statusLabel} for {$excuseRequest->student->name}", $excuseRequest);
+
+        $excuseRequest->student->notify(new ExcuseReviewedNotification($excuseRequest));
 
         return redirect()->route('teacher.excuses.index')
             ->with('success', "Excuse request {$statusLabel}.");

@@ -119,15 +119,26 @@
                 </svg>
                 Calendar
             </a>
-            <a href="{{ route('student.notifications.edit') }}" class="{{ $navClass('notifications') }}">
+            <a href="{{ route('student.notifications.edit') }}" class="{{ $navClass('notification-prefs') }}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 shrink-0" aria-hidden="true">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9ZM13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Notifications
+                Notification Preferences
             </a>
         @endif
 
     </nav>
+
+    {{-- Notification bell --}}
+    <div class="p-3 border-t border-base-300">
+        <a href="{{ route('notifications.index') }}" class="{{ $navClass('notification-center') }} relative">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 shrink-0" aria-hidden="true">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9ZM13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Notifications
+            <span id="sidebar-notif-badge" class="hidden ml-auto badge badge-primary badge-xs rounded-full"></span>
+        </a>
+    </div>
 
     {{-- Student Scan QR — pinned to bottom of sidebar --}}
     @if ($role === 'Student')
@@ -297,11 +308,11 @@
                 </svg>
                 Calendar
             </a>
-            <a href="{{ route('student.notifications.edit') }}" class="{{ $navClass('notifications') }}">
+            <a href="{{ route('student.notifications.edit') }}" class="{{ $navClass('notification-prefs') }}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 shrink-0" aria-hidden="true">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9ZM13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Notifications
+                Notification Preferences
             </a>
             <a href="{{ route('student.scan.index') }}" class="{{ $navClass('scan') }}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 shrink-0" aria-hidden="true">
@@ -311,6 +322,15 @@
                 Scan QR
             </a>
         @endif
+
+        {{-- Notification center link (all roles) --}}
+        <a href="{{ route('notifications.index') }}" class="{{ $navClass('notification-center') }} relative">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 shrink-0" aria-hidden="true">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9ZM13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Notifications
+            <span id="mobile-notif-badge" class="hidden ml-auto badge badge-primary badge-xs rounded-full"></span>
+        </a>
     </nav>
 
     {{-- User / profile / logout --}}

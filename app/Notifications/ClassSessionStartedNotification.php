@@ -20,7 +20,7 @@ class ClassSessionStartedNotification extends Notification implements ShouldQueu
     /** @return array<int, string> */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -46,6 +46,11 @@ class ClassSessionStartedNotification extends Notification implements ShouldQueu
     /** @return array<string, mixed> */
     public function toArray(object $notifiable): array
     {
-        return [];
+        return [
+            'title' => 'Session Started',
+            'body' => "{$this->session->schoolClass->name} session has started.",
+            'icon' => 'play',
+            'url' => route('student.scan.index'),
+        ];
     }
 }

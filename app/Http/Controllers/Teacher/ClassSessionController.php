@@ -11,6 +11,7 @@ use App\Models\ActivityLog;
 use App\Models\ClassSession;
 use App\Models\SchoolClass;
 use App\Notifications\ClassSessionStartedNotification;
+use App\Notifications\SessionCompletedNotification;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -153,6 +154,11 @@ class ClassSessionController extends Controller
         ActivityLog::log('completed_session', "Completed session for {$session->schoolClass->name}", $session);
 
         MarkAbsenteesAfterSession::dispatch($session);
+
+        $session->load('schoolClass.students');
+        $session->schoolClass->students->each(
+            fn ($student) => $student->notify(new SessionCompletedNotification($session))
+        );
 
         return redirect()->route('teacher.sessions.show', $session)
             ->with('success', 'Session completed.');

@@ -9,6 +9,7 @@ use App\Http\Requests\Teacher\UpdateAttendanceRequest;
 use App\Models\ActivityLog;
 use App\Models\AttendanceRecord;
 use App\Models\ClassSession;
+use App\Notifications\AttendanceUpdatedNotification;
 use App\Notifications\ParentAbsenceNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
@@ -45,6 +46,8 @@ class AttendanceController extends Controller
         ]);
 
         ActivityLog::log('updated_attendance', "Marked {$record->student->name} as {$validated['status']}", $record);
+
+        $record->student->notify(new AttendanceUpdatedNotification($record));
 
         // Notify parent/guardian if student is marked absent
         if ($record->status === AttendanceStatus::Absent) {

@@ -129,6 +129,7 @@ test('teacher can create recurring weekly sessions via bulk schedule', function 
             'end_time' => '12:00',
             'grace_period_minutes' => 15,
             'interval_weeks' => 1,
+            'start_date' => $nextDay->format('Y-m-d'),
             'end_date' => $endDate,
         ])
         ->assertRedirect(route('teacher.classes.show', $class));

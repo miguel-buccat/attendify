@@ -107,7 +107,7 @@
                         </div>
                         <div class="p-5 flex flex-col items-center gap-4">
                             <x-qr-display
-                                :payload="json_encode(['session_id' => $session->id, 'token' => $session->qr_token])"
+                                :payload="route('attend.show', [$session->id, $session->qr_token])"
                                 class="w-48 sm:w-64 md:w-72"
                             />
                             <p class="text-sm text-base-content/50 text-center max-w-sm">Show this QR code to your students. They can scan it with their device camera.</p>

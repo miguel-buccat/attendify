@@ -51,7 +51,7 @@
 │  │ Routes   │  │ JSON     │  │ & Scheduler        │ │
 │  └──────────┘  └──────────┘  └────────────────────┘ │
 │  Eloquent ORM · Policies · Form Requests            │
-│  Notifications (mail) · Jobs (queued)               │
+│  Notifications (mail + database) · Jobs (queued)    │
 └────────────────────────┬────────────────────────────┘
               ┌──────────┴──────────┐
               │                     │
@@ -192,6 +192,18 @@
 | `subject_id` | string, nullable | Morph ID |
 | `created_at` | timestamp | |
 
+### `notifications` (Laravel Database Notifications)
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | uuid | PK |
+| `type` | string | Notification class name |
+| `notifiable_type` | string | Morph type (e.g. `App\Models\User`) |
+| `notifiable_id` | unsignedBigInteger | User ID |
+| `data` | json | Notification payload (`title`, `body`, `icon`, `url`) |
+| `read_at` | timestamp, nullable | Null until read |
+| `created_at` / `updated_at` | timestamps | |
+
 ---
 
 ## Route Reference
@@ -214,6 +226,8 @@
 | GET | `/new/setup` | `new.setup` | Setup wizard |
 | POST | `/new/setup/admin` | `new.setup.admin` | Create admin account |
 | POST | `/new/setup/settings` | `new.setup.settings` | Save institution settings |
+| GET | `/attend/{session}/{token}` | `attend.show` | Public attendance form |
+| POST | `/attend/{session}/{token}` | `attend.store` | Record attendance via public link |
 
 ### Authenticated (All Roles)
 
@@ -223,6 +237,10 @@
 | GET | `/profile/edit` | `profile.edit` | Edit own profile |
 | PATCH | `/profile` | `profile.update` | Save profile changes |
 | GET | `/profile/{user}` | `profile.show` | View any user's public profile |
+| GET | `/notifications` | `notifications.index` | Notification center page |
+| GET | `/notifications/unread` | `notifications.unread` | JSON: unread count + latest |
+| POST | `/notifications/{id}/read` | `notifications.read` | Mark notification as read |
+| POST | `/notifications/read-all` | `notifications.read-all` | Mark all as read |
 
 ### Admin
 
@@ -306,7 +324,7 @@ Returns live pending invitation data. Used by the 20-second polling script on th
 | POST | `/student/excuses` | `student.excuses.store` | Submit excuse |
 | GET | `/student/excuses` | `student.excuses.index` | Excuse history |
 | GET | `/student/excuses/{excuseRequest}/download` | `student.excuses.download` | Download own document |
-| GET | `/student/notifications` | `student.notifications.edit` | Notification preferences |
+| GET | `/student/notifications` | `student.notifications.edit` | Email notification preferences |
 | PATCH | `/student/notifications` | `student.notifications.update` | Save preferences |
 
 ---
@@ -322,13 +340,21 @@ Returns live pending invitation data. Used by the 20-second polling script on th
 
 ### Notifications
 
-| Notification | Channel | Trigger |
-|-------------|---------|---------|
+| Notification | Channels | Trigger |
+|-------------|----------|---------|
 | `InvitationNotification` | Mail | Admin sends an invitation |
-| `ClassSessionStartedNotification` | Mail | Teacher starts a session |
+| `ClassSessionStartedNotification` | Mail, Database | Teacher starts a session |
+| `SessionCompletedNotification` | Database | Teacher completes a session |
+| `AttendanceRecordedNotification` | Database | Student scans QR or uses public link |
+| `AttendanceUpdatedNotification` | Database | Teacher manually updates attendance status |
+| `ExcuseSubmittedNotification` | Database | Student submits an excuse request |
+| `ExcuseReviewedNotification` | Database | Teacher reviews an excuse request |
+| `NewUserRegisteredNotification` | Database | User accepts an invitation and registers |
 | `WeeklyAttendanceSummaryNotification` | Mail | Scheduled weekly |
 | `ParentAbsenceNotification` | Mail | Student marked Absent (guardian email configured) |
 | `ResetPasswordNotification` | Mail | User requests password reset |
+
+Database notifications store a JSON payload with `title`, `body`, `icon` (Lucide icon name), and `url` (link to relevant page). The notification bell in the sidebar polls `/notifications/unread` every 15 seconds to update badge counts and display toast popups for new notifications.
 
 ### Policies
 
