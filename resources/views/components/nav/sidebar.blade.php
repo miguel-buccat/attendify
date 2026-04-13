@@ -32,8 +32,8 @@
     #desktop-sidebar.sb-c .sb-link .badge { display: none; }
     /* Bottom sections: tighter padding */
     #desktop-sidebar.sb-c .sb-section { padding: 0.5rem; }
-    /* Logout + theme: both become square icon buttons, centered */
-    #desktop-sidebar.sb-c .sb-actions { justify-content: center; gap: 0.25rem; margin-top: 0.25rem; }
+    /* Logout + theme: stack vertically as centered icon squares, theme on top */
+    #desktop-sidebar.sb-c .sb-actions { flex-direction: column-reverse; align-items: center; gap: 0.25rem; margin-top: 0.25rem; }
     #desktop-sidebar.sb-c .sb-actions > * { flex: none; width: 2.25rem; height: 2.25rem; min-height: unset; padding: 0; justify-content: center; gap: 0; font-size: 0; }
 </style>
 <aside id="desktop-sidebar" class="sidebar-panel hidden lg:flex flex-col w-64 shrink-0 bg-base-100 border-r border-base-300 sticky top-0 h-screen overflow-y-auto overflow-x-hidden">
@@ -426,7 +426,7 @@
                 </form>
             </div>
             {{-- Avatar + info --}}
-            <div class="px-6 -mt-10 pb-6">
+            <div class="relative z-10 px-6 -mt-10 pb-6">
                 <div class="mb-4">
                     @if ($user->avatar_url)
                         <img src="{{ $user->avatar_url }}" class="size-20 rounded-2xl object-cover border-4 border-base-100 shadow-lg">

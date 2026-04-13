@@ -112,32 +112,6 @@
                     </div>
                 </div>
 
-                {{-- ── QUICK ACTIONS ── --}}
-                <div class="d d4 rounded-2xl border border-base-300/40 bg-base-100 p-5">
-                    <p class="text-xs uppercase tracking-widest text-base-content/35 font-semibold mb-3">Quick Actions</p>
-                    <div class="flex flex-wrap gap-2">
-                        <a href="{{ route('student.scan.index') }}"
-                           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 text-primary border border-primary/15 text-sm font-medium hover:bg-primary/15 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M3 17v2a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 12h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                            Scan QR
-                        </a>
-                        <a href="{{ route('student.classes.index') }}"
-                           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-base-200 text-base-content/70 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M4 6h16M4 10h16M4 14h8m-8 4h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                            My Classes
-                        </a>
-                        <a href="{{ route('student.attendance.index') }}"
-                           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-base-200 text-base-content/70 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            Attendance History
-                        </a>
-                        <a href="{{ route('student.excuses.create') }}"
-                           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-base-200 text-base-content/70 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            File Excuse
-                        </a>
-                    </div>
-                </div>
 
                 {{-- ── CHARTS ── --}}
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">

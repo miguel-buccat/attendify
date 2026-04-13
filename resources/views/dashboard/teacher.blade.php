@@ -96,22 +96,6 @@
                     </div>
                 </div>
 
-                {{-- ── QUICK ACTIONS ── --}}
-                <div class="d d8 rounded-2xl border border-base-300/40 bg-base-100 p-5">
-                    <p class="text-xs uppercase tracking-widest text-base-content/35 font-semibold mb-3">Quick Actions</p>
-                    <div class="flex flex-wrap gap-2">
-                        <a href="{{ route('teacher.classes.index') }}"
-                           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 text-primary border border-primary/15 text-sm font-medium hover:bg-primary/15 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M4 6h16M4 10h16M4 14h8m-8 4h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                            My Classes
-                        </a>
-                        <a href="{{ route('teacher.excuses.index') }}"
-                           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-base-200 text-base-content/70 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6M16 13H8m8 4H8m2-8H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            Excuse Requests
-                        </a>
-                    </div>
-                </div>
 
                 {{-- ── UPCOMING SESSIONS ── --}}
                 <div class="d d9 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
