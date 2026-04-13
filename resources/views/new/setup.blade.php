@@ -167,21 +167,31 @@
                                     />
                                 </div>
 
-                                <div class="rounded-xl border border-base-300/40 bg-base-200/40 px-4 py-3 space-y-4">
-                                    <p class="text-[11px] font-bold uppercase tracking-widest text-base-content/35">Optional</p>
-                                    <x-form.field
-                                        label="Vision Statement"
-                                        name="vision"
-                                        :value="$siteSettings->get('vision')"
-                                        placeholder="We envision..."
-                                    />
-                                    <x-form.field
-                                        label="Mission Statement"
-                                        name="mission"
-                                        :value="$siteSettings->get('mission')"
-                                        placeholder="Our mission is..."
-                                    />
-                                </div>
+                                <details class="group rounded-xl border border-base-300/40 bg-base-200/20 overflow-hidden">
+                                    <summary class="flex items-center justify-between gap-3 px-4 py-3 cursor-pointer select-none [&::-webkit-details-marker]:hidden hover:bg-base-200/50 transition-colors">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="size-6 rounded-lg bg-base-200 flex items-center justify-center shrink-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5 text-base-content/40"><path d="M12 3v1m0 16v1M4.22 4.22l.707.707M18.364 18.364l.707.707M3 12h1m16 0h1M4.927 19.073l.707-.707M18.364 5.636l.707-.707" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/></svg>
+                                            </div>
+                                            <span class="text-xs font-bold uppercase tracking-widest text-base-content/40">Optional Details</span>
+                                        </div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4 text-base-content/30 transition-transform duration-200 group-open:rotate-180 shrink-0"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </summary>
+                                    <div class="px-4 pb-4 pt-3 space-y-4 border-t border-base-300/30">
+                                        <x-form.field
+                                            label="Vision Statement"
+                                            name="vision"
+                                            :value="$siteSettings->get('vision')"
+                                            placeholder="We envision..."
+                                        />
+                                        <x-form.field
+                                            label="Mission Statement"
+                                            name="mission"
+                                            :value="$siteSettings->get('mission')"
+                                            placeholder="Our mission is..."
+                                        />
+                                    </div>
+                                </details>
 
                                 <div class="pt-1">
                                     <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-content shadow-lg shadow-primary/25 hover:opacity-90 active:scale-[.98] transition-all">

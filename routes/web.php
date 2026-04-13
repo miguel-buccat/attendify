@@ -73,6 +73,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/users/{user}/unblock', [UserManagementController::class, 'unblock'])->name('users.unblock');
     Route::post('/users/{user}/archive', [UserManagementController::class, 'archive'])->name('users.archive');
     Route::delete('/invitations/{invitation}', [UserManagementController::class, 'invalidateInvitation'])->name('invitations.invalidate');
+    Route::get('/invitations/pending', [UserManagementController::class, 'pendingInvitations'])->name('invitations.pending');
     Route::get('/settings', [SiteSettingsController::class, 'edit'])->name('settings.edit');
     Route::patch('/settings', [SiteSettingsController::class, 'update'])->name('settings.update');
     Route::get('/activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');

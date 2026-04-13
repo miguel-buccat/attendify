@@ -21,7 +21,7 @@
                         </a>
                         <p class="text-[11px] font-bold uppercase tracking-[.25em] text-base-content/35">Account</p>
                         <h1 class="text-2xl md:text-3xl font-black tracking-tight">Edit Profile</h1>
-                        <p class="mt-1 text-sm text-base-content/50">Update your avatar, banner image, and bio.</p>
+                        <p class="mt-1 text-sm text-base-content/50">Update your avatar and banner image.</p>
                     </div>
 
                     @if (session('success'))
@@ -98,27 +98,7 @@
                             </div>
                         </div>
 
-                        {{-- About Me --}}
-                        <div class="d d4 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
-                            <div class="px-5 py-4 border-b border-base-300/30">
-                                <h2 class="font-semibold text-sm">About Me</h2>
-                            </div>
-                            <div class="px-5 py-4">
-                                <textarea
-                                    id="about_me"
-                                    name="about_me"
-                                    rows="4"
-                                    maxlength="1000"
-                                    class="w-full rounded-xl border {{ $errors->has('about_me') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
-                                    placeholder="Write a short bio about yourself…"
-                                >{{ old('about_me', auth()->user()->about_me) }}</textarea>
-                                <div class="flex justify-end mt-1">
-                                    <span id="about-count" class="text-xs text-base-content/35">{{ mb_strlen(old('about_me', auth()->user()->about_me ?? '')) }}/1000</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d d5 flex items-center gap-3">
+                        <div class="d d4 flex items-center gap-3">
                             <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-content text-sm font-semibold hover:opacity-90 transition-opacity">
                                 Save Changes
                             </button>
@@ -146,11 +126,5 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
-
-        const textarea = document.getElementById('about_me');
-        const counter = document.getElementById('about-count');
-        textarea.addEventListener('input', () => {
-            counter.textContent = textarea.value.length + '/1000';
-        });
     </script>
 </x-layouts.app>

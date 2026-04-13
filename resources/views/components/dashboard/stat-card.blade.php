@@ -15,31 +15,31 @@
         default     => 'text-primary',
     };
     $iconBg = match ($color) {
-        'success'   => 'bg-success/10',
-        'warning'   => 'bg-warning/10',
-        'error'     => 'bg-error/10',
-        'info'      => 'bg-info/10',
-        'secondary' => 'bg-secondary/10',
-        'accent'    => 'bg-accent/10',
-        default     => 'bg-primary/10',
+        'success'   => 'bg-success/20',
+        'warning'   => 'bg-warning/20',
+        'error'     => 'bg-error/20',
+        'info'      => 'bg-info/20',
+        'secondary' => 'bg-secondary/20',
+        'accent'    => 'bg-accent/20',
+        default     => 'bg-primary/20',
     };
     $bgFrom = match ($color) {
-        'success'   => 'from-success/10',
-        'warning'   => 'from-warning/10',
-        'error'     => 'from-error/10',
-        'info'      => 'from-info/10',
-        'secondary' => 'from-secondary/10',
-        'accent'    => 'from-accent/10',
-        default     => 'from-primary/10',
+        'success'   => 'from-success/15',
+        'warning'   => 'from-warning/15',
+        'error'     => 'from-error/15',
+        'info'      => 'from-info/15',
+        'secondary' => 'from-secondary/15',
+        'accent'    => 'from-accent/15',
+        default     => 'from-primary/15',
     };
     $borderColor = match ($color) {
-        'success'   => 'border-success/20',
-        'warning'   => 'border-warning/20',
-        'error'     => 'border-error/20',
-        'info'      => 'border-info/20',
-        'secondary' => 'border-secondary/20',
-        'accent'    => 'border-accent/20',
-        default     => 'border-primary/20',
+        'success'   => 'border-success/35',
+        'warning'   => 'border-warning/35',
+        'error'     => 'border-error/35',
+        'info'      => 'border-info/35',
+        'secondary' => 'border-secondary/35',
+        'accent'    => 'border-accent/35',
+        default     => 'border-primary/35',
     };
 @endphp
 

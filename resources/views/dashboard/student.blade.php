@@ -40,7 +40,7 @@
                             <div class="flex items-start justify-between sm:justify-start gap-4">
                                 <div class="flex items-center gap-4">
                                     @if ($user->avatarUrl)
-                                        <img src="{{ $user->avatarUrl }}" class="size-14 rounded-2xl object-cover ring-2 ring-base-300/50 shrink-0" alt="">
+                                        <img src="{{ $user->avatarUrl }}" class="size-14 rounded-2xl object-cover ring-2 ring-accent/40 shrink-0" alt="">
                                     @else
                                         <div class="size-14 rounded-2xl bg-accent/10 flex items-center justify-center text-xl font-black text-accent shrink-0">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
                                     @endif

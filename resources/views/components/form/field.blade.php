@@ -1,5 +1,5 @@
 @props([
-    'label',
+    'label' => null,
     'name',
     'type' => 'text',
     'value' => '',
@@ -9,7 +9,9 @@
 ])
 
 <label class="form-control w-full">
-    <span class="label-text mb-2">{{ $label }}</span>
+    @if ($label)
+        <span class="label-text mb-2">{{ $label }}</span>
+    @endif
 
     @if ($type === 'file')
         <input

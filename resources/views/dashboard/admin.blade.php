@@ -28,7 +28,7 @@
                     <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
                         <div class="flex items-center gap-4">
                             @if ($user->avatarUrl)
-                                <img src="{{ $user->avatarUrl }}" class="size-14 rounded-2xl object-cover ring-2 ring-base-300/50 shrink-0" alt="">
+                                <img src="{{ $user->avatarUrl }}" class="size-14 rounded-2xl object-cover ring-2 ring-primary/40 shrink-0" alt="">
                             @else
                                 <div class="size-14 rounded-2xl bg-primary/10 flex items-center justify-center text-xl font-black text-primary shrink-0">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
                             @endif

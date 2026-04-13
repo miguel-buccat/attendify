@@ -35,13 +35,13 @@
                         @endif
                     </div>
                     @if (auth()->id() === $profileUser->id)
-                        <a href="{{ route('profile.edit') }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-base-200 text-base-content/60 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors mb-2">
+                        <button type="button" onclick="document.getElementById('profile-modal').showModal(); setTimeout(showProfileEdit, 50)" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-base-200 text-base-content/60 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5" aria-hidden="true">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                             Edit Profile
-                        </a>
+                        </button>
                     @endif
                 </div>
 
@@ -54,20 +54,6 @@
                         </div>
                         <p class="text-sm text-base-content/50 mt-0.5">{{ $profileUser->email }}</p>
                     </div>
-
-                    @if ($profileUser->about_me)
-                        <div class="max-w-2xl">
-                            <p class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 mb-2">About</p>
-                            <p class="text-base-content/80 leading-relaxed">{{ $profileUser->about_me }}</p>
-                        </div>
-                    @else
-                        @if (auth()->id() === $profileUser->id)
-                            <p class="text-sm text-base-content/40">
-                                You haven't added an about me yet.
-                                <a href="{{ route('profile.edit') }}" class="text-primary hover:underline">Add one</a>
-                            </p>
-                        @endif
-                    @endif
 
                     <p class="text-xs text-base-content/30">
                         Member since {{ $profileUser->created_at->format('F Y') }}

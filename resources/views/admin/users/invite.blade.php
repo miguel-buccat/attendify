@@ -43,7 +43,19 @@
                             <div class="invite-row rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden" data-index="0">
                                 <div class="px-5 py-4">
                                     <div class="flex items-start gap-3">
-                                        <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            <div>
+                                                <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="name-0">Full Name <span class="text-base-content/25 font-normal normal-case tracking-normal">(optional)</span></label>
+                                                <input
+                                                    type="text"
+                                                    id="name-0"
+                                                    name="invitees[0][name]"
+                                                    value="{{ old('invitees.0.name') }}"
+                                                    class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 {{ $errors->has('invitees.0.name') ? 'border-error' : '' }}"
+                                                    placeholder="Invitee's full name"
+                                                    autofocus
+                                                >
+                                            </div>
                                             <div>
                                                 <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="email-0">Email Address</label>
                                                 <input
@@ -54,7 +66,6 @@
                                                     class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 {{ $errors->has('invitees.0.email') ? 'border-error' : '' }}"
                                                     placeholder="invitee@example.com"
                                                     required
-                                                    autofocus
                                                 >
                                             </div>
                                             <div>
@@ -146,6 +157,8 @@
             // Re-index all rows
             list.querySelectorAll('.invite-row').forEach((row, i) => {
                 row.dataset.index = i;
+                row.querySelector('input[type="text"]').name = `invitees[${i}][name]`;
+                row.querySelector('input[type="text"]').id = `name-${i}`;
                 row.querySelector('input[type="email"]').name = `invitees[${i}][email]`;
                 row.querySelector('input[type="email"]').id = `email-${i}`;
                 row.querySelector('select').name = `invitees[${i}][role]`;
@@ -158,6 +171,7 @@
             const clone = template.cloneNode(true);
 
             // Clear cloned values
+            clone.querySelector('input[type="text"]').value = '';
             clone.querySelector('input[type="email"]').value = '';
             const select = clone.querySelector('select');
             select.selectedIndex = 0;

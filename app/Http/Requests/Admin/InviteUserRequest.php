@@ -29,6 +29,7 @@ class InviteUserRequest extends FormRequest
                     fn ($query) => $query->whereNull('accepted_at')->where('expires_at', '>', now())
                 ),
             ],
+            'invitees.*.name' => ['nullable', 'string', 'max:255'],
             'invitees.*.role' => ['required', new Enum(UserRole::class)],
         ];
     }
@@ -53,6 +54,7 @@ class InviteUserRequest extends FormRequest
         foreach ($this->input('invitees', []) as $index => $invitee) {
             $num = $index + 1;
             $attributes["invitees.{$index}.email"] = "email #{$num}";
+            $attributes["invitees.{$index}.name"] = "name #{$num}";
             $attributes["invitees.{$index}.role"] = "role #{$num}";
         }
 
