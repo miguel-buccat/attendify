@@ -179,17 +179,16 @@
 {{-- ─── Mobile top bar ─────────────────────────────────────────────────── --}}
 <div class="lg:hidden fixed top-0 inset-x-0 z-30 flex items-center justify-between px-4 h-14 bg-base-100 border-b border-base-300">
     <div class="flex items-center gap-2">
-        <button type="button" onclick="document.getElementById('mobile-drawer').classList.remove('translate-x-full'); document.getElementById('mobile-backdrop').classList.remove('hidden');" class="btn btn-ghost btn-sm btn-square rounded-lg" aria-label="Open menu">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5" aria-hidden="true">
-                <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-        </button>
         <div class="size-7 rounded-md border border-base-300 bg-base-200 p-1 shrink-0">
             <img src="{{ $institutionLogo }}" alt="{{ $institutionName }} logo" class="h-full w-full object-contain">
         </div>
         <span class="font-semibold text-sm truncate max-w-36">{{ $institutionName }}</span>
     </div>
-    <span class="badge badge-sm {{ $roleBadgeClass }}">{{ $role }}</span>
+    <button type="button" onclick="document.getElementById('mobile-drawer').classList.remove('translate-x-full'); document.getElementById('mobile-backdrop').classList.remove('hidden');" class="btn btn-ghost btn-sm btn-square rounded-lg" aria-label="Open menu">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5" aria-hidden="true">
+                <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+        </button>
 </div>
 
 {{-- ─── Mobile drawer overlay ────────────────────────────────────────── --}}
