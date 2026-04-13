@@ -46,10 +46,10 @@
                             │ HTTPS
 ┌───────────────────────────▼─────────────────────────┐
 │  Laravel 13 (PHP 8.4)                               │
-│  ┌──────────┐  ┌──────────┐  ┌────────────────────┐ │
-│  │ Web      │  │ API /    │  │ Console Commands   │ │
-│  │ Routes   │  │ JSON     │  │ & Scheduler        │ │
-│  └──────────┘  └──────────┘  └────────────────────┘ │
+│  ┌──────────────────────┐  ┌────────────────────┐   │
+│  │ Web Routes (Blade +  │  │ Console Commands   │   │
+│  │ a few JSON endpoints)│  │ & Scheduler        │   │
+│  └──────────────────────┘  └────────────────────┘   │
 │  Eloquent ORM · Policies · Form Requests            │
 │  Notifications (mail + database) · Jobs (queued)    │
 └────────────────────────┬────────────────────────────┘
@@ -61,6 +61,8 @@
 └────────────────────┘  │  / Queue            │
                          └─────────────────────┘
 ```
+
+> **Note:** This is a server-rendered Blade application. There is no separate API layer. A few routes return JSON for in-page polling (notification counts, pending invitations, session attendance data).
 
 ### Docker Compose Services
 
@@ -228,6 +230,7 @@
 | POST | `/new/setup/settings` | `new.setup.settings` | Save institution settings |
 | GET | `/attend/{session}/{token}` | `attend.show` | Public attendance form |
 | POST | `/attend/{session}/{token}` | `attend.store` | Record attendance via public link |
+| GET | `/site-assets/{key}` | `site-assets.show` | Serve institution logo / banner |
 
 ### Authenticated (All Roles)
 
@@ -305,7 +308,15 @@ Returns live pending invitation data. Used by the 20-second polling script on th
 | POST | `/teacher/classes/{class}/sessions` | `teacher.sessions.store` | Create session |
 | POST | `/teacher/classes/{class}/sessions/bulk` | `teacher.sessions.bulk-store` | Bulk create sessions |
 | GET | `/teacher/sessions/{session}` | `teacher.sessions.show` | Session detail + QR |
+| POST | `/teacher/sessions/{session}/start` | `teacher.sessions.start` | Start session (activate QR) |
+| POST | `/teacher/sessions/{session}/complete` | `teacher.sessions.complete` | Complete session |
+| POST | `/teacher/sessions/{session}/cancel` | `teacher.sessions.cancel` | Cancel session |
+| POST | `/teacher/sessions/{session}/cancel-upcoming` | `teacher.sessions.cancel-upcoming` | Cancel this + future recurrences |
+| GET | `/teacher/sessions/{session}/attendance` | `teacher.sessions.attendance` | JSON: attendance data |
+| GET | `/teacher/sessions/{session}/attendance/manage` | `teacher.attendance.index` | Manage attendance page |
 | PATCH | `/teacher/attendance/{record}` | `teacher.attendance.update` | Override attendance status |
+| GET | `/teacher/sessions/{session}/attendance/export` | `teacher.attendance.export` | CSV export |
+| GET | `/teacher/sessions/{session}/attendance/export-pdf` | `teacher.attendance.export-pdf` | PDF export |
 | GET | `/teacher/excuses` | `teacher.excuses.index` | Excuse request list |
 | PATCH | `/teacher/excuses/{excuseRequest}` | `teacher.excuses.review` | Approve / deny excuse |
 | GET | `/teacher/excuses/{excuseRequest}/download` | `teacher.excuses.download` | Download document |
