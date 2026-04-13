@@ -144,8 +144,6 @@ Navigate to **My Classes** in the sidebar.
 2. Enter the class **Name**, optional **Description**, and optional **Section**.
 3. Click **Create Class**.
 
-An 8-character alphanumeric **Invite Code** is generated automatically. Share this code with students so they can enrol themselves.
-
 #### Class Detail Page
 
 Click on a class to open its detail page. From here you can:
@@ -154,7 +152,6 @@ Click on a class to open its detail page. From here you can:
 - **Schedule sessions** — Create individual sessions or bulk-schedule recurring ones.
 - **View analytics** — See session-by-session attendance breakdown with charts.
 - **Export PDF analytics** — Download a PDF class analytics report.
-- **Regenerate invite code** — Issue a new invite code (e.g., if the current one was shared unintentionally).
 - **Archive the class** — Prevents new sessions but preserves all records.
 
 #### Enrolling / Removing Students
