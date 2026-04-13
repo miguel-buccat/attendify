@@ -19,7 +19,7 @@
 @endphp
 
 {{-- ─── Desktop sidebar ─────────────────────────────────────────────────── --}}
-<aside class="hidden lg:flex flex-col w-64 shrink-0 bg-base-100 border-r border-base-300 min-h-screen">
+<aside class="hidden lg:flex flex-col w-64 shrink-0 bg-base-100 border-r border-base-300 sticky top-0 h-screen overflow-y-auto">
 
     {{-- Logo / institution --}}
     <div class="flex items-center gap-3 p-5 border-b border-base-300">
