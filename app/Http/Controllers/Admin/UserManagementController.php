@@ -88,6 +88,7 @@ class UserManagementController extends Controller
         foreach ($request->validated('invitees') as $invitee) {
             $invitation = Invitation::create([
                 'email' => $invitee['email'],
+                'name' => $invitee['name'] ?? null,
                 'role' => $invitee['role'],
                 'invited_by' => auth()->id(),
                 'token' => Str::random(64),

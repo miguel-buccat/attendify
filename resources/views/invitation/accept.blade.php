@@ -25,7 +25,7 @@
                 type="text"
                 id="name"
                 name="name"
-                value="{{ old('name') }}"
+                value="{{ old('name', $invitation->name) }}"
                 class="w-full rounded-xl border {{ $errors->has('name') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
                 placeholder="Your full name"
                 required

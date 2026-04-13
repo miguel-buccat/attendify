@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['email', 'role', 'invited_by', 'token', 'accepted_at', 'expires_at'])]
+#[Fillable(['email', 'name', 'role', 'invited_by', 'token', 'accepted_at', 'expires_at'])]
 class Invitation extends Model
 {
     /** @use HasFactory<InvitationFactory> */
