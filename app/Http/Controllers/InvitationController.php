@@ -33,11 +33,11 @@ class InvitationController extends Controller
         $invitation = Invitation::where('token', $token)->firstOrFail();
 
         if ($invitation->isAccepted()) {
-            return view('invitation.invalid', ['reason' => 'accepted']);
+            return redirect()->route('invitation.accept', $token)->withErrors(['token' => 'This invitation has already been accepted.']);
         }
 
         if ($invitation->isExpired()) {
-            return view('invitation.invalid', ['reason' => 'expired']);
+            return redirect()->route('invitation.accept', $token)->withErrors(['token' => 'This invitation has expired.']);
         }
 
         $rules = [
