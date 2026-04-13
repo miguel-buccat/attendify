@@ -25,7 +25,7 @@ class ExcuseRequestController extends Controller
             ->with(['student', 'reviewer', 'schoolClass'])
             ->orderByRaw("case when status = 'Pending' then 0 else 1 end")
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(20);
 
         return view('teacher.excuses.index', compact('excuseRequests'));
     }

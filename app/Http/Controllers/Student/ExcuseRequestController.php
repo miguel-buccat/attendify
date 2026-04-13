@@ -17,7 +17,7 @@ class ExcuseRequestController extends Controller
         $excuseRequests = auth()->user()->excuseRequests()
             ->with(['reviewer', 'schoolClass.teacher'])
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(20);
 
         return view('student.excuses.index', compact('excuseRequests'));
     }

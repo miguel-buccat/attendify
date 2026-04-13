@@ -88,7 +88,7 @@ class AttendanceScanController extends Controller
         $records = auth()->user()->attendanceRecords()
             ->with(['classSession.schoolClass'])
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(25);
 
         return view('student.attendance', compact('records'));
     }

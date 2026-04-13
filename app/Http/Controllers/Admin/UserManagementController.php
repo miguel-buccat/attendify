@@ -12,23 +12,58 @@ use App\Models\User;
 use App\Notifications\Auth\InvitationNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class UserManagementController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = User::orderBy('name')->get();
+        $query = User::orderBy('name');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'ilike', "%{$search}%")
+                    ->orWhere('email', 'ilike', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->input('role'));
+        }
+
+        $users = $query->paginate(20)->withQueryString();
         $invitations = Invitation::with('inviter')->pending()->orderByDesc('created_at')->get();
 
         return view('admin.users.index', compact('users', 'invitations'));
     }
 
-    public function show(User $user): View
+    public function show(User $user): JsonResponse
     {
-        return view('admin.users.show', compact('user'));
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role->value,
+            'status' => $user->status->value,
+            'avatar_url' => $user->avatarUrl,
+            'email_verified_at' => $user->email_verified_at?->format('F j, Y'),
+            'created_at' => $user->created_at->format('F j, Y'),
+            'updated_at' => $user->updated_at->format('F j, Y, g:i A'),
+            'status_reason' => $user->status_reason,
+            'guardian_name' => $user->guardian_name,
+            'guardian_email' => $user->guardian_email,
+            'is_student' => $user->role === \App\Enums\UserRole::Student,
+            'is_self' => $user->id === auth()->id(),
+            'update_url' => route('admin.users.update', $user),
+            'block_url' => route('admin.users.block', $user),
+            'unblock_url' => route('admin.users.unblock', $user),
+            'archive_url' => route('admin.users.archive', $user),
+            'profile_url' => route('profile.show', $user),
+        ]);
     }
 
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
@@ -37,7 +72,7 @@ class UserManagementController extends Controller
 
         ActivityLog::log('updated_user', "Updated user {$user->name}", $user);
 
-        return redirect()->route('admin.users.show', $user)->with('success', 'User updated successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 
     public function block(User $user): RedirectResponse
@@ -51,7 +86,7 @@ class UserManagementController extends Controller
 
         ActivityLog::log('blocked_user', "Blocked user {$user->name}", $user);
 
-        return redirect()->route('admin.users.show', $user)->with('success', "{$user->name}'s account has been temporarily blocked.");
+        return redirect()->route('admin.users.index')->with('success', "{$user->name}'s account has been temporarily blocked.");
     }
 
     public function unblock(User $user): RedirectResponse
@@ -60,7 +95,7 @@ class UserManagementController extends Controller
 
         ActivityLog::log('unblocked_user', "Restored user {$user->name}", $user);
 
-        return redirect()->route('admin.users.show', $user)->with('success', "{$user->name}'s account has been restored.");
+        return redirect()->route('admin.users.index')->with('success', "{$user->name}'s account has been restored.");
     }
 
     public function archive(User $user): RedirectResponse
@@ -74,7 +109,7 @@ class UserManagementController extends Controller
 
         ActivityLog::log('archived_user', "Archived user {$user->name}", $user);
 
-        return redirect()->route('admin.users.show', $user)->with('success', "{$user->name}'s account has been archived.");
+        return redirect()->route('admin.users.index')->with('success', "{$user->name}'s account has been archived.");
     }
 
     public function invite(): View

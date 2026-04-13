@@ -116,6 +116,11 @@
                             </div>
                         @endforeach
                     </div>
+                    @if ($excuseRequests->hasPages())
+                        <div class="mt-4">
+                            {{ $excuseRequests->links() }}
+                        </div>
+                    @endif
                 @endif
 
             </div>

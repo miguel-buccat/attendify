@@ -12,21 +12,41 @@
     };
 
     // Helper: returns the correct active/inactive nav link classes
-    $navClass = fn (string $key) => 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors '
+    $navClass = fn (string $key) => 'sb-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors '
         . ($active === $key
             ? 'bg-primary/10 text-primary font-medium'
             : 'sidebar-nav-link hover:bg-base-200 text-base-content/80');
 @endphp
 
 {{-- ─── Desktop sidebar ─────────────────────────────────────────────────── --}}
-<aside class="sidebar-panel hidden lg:flex flex-col w-64 shrink-0 bg-base-100 border-r border-base-300 sticky top-0 h-screen overflow-y-auto">
+<style>
+    #desktop-sidebar { transition: width 200ms ease; }
+    #desktop-sidebar.sb-c { width: 4.5rem; }
+    #desktop-sidebar.sb-c .sb-text { display: none; }
+    /* Header: stack logo + toggle vertically so toggle stays reachable */
+    #desktop-sidebar.sb-c .sb-header { flex-direction: column; padding: 0.75rem; gap: 0.375rem; align-items: center; }
+    #desktop-sidebar.sb-c .sb-header .sb-toggle { margin-left: 0; }
+    #desktop-sidebar.sb-c .sb-toggle svg { transform: rotate(180deg); }
+    /* Nav links: icon-only centered */
+    #desktop-sidebar.sb-c .sb-link { font-size: 0; gap: 0; justify-content: center; padding-inline: 0; }
+    #desktop-sidebar.sb-c .sb-link .badge { display: none; }
+    /* Bottom sections: tighter padding */
+    #desktop-sidebar.sb-c .sb-section { padding: 0.5rem; }
+    /* Logout + theme: both become square icon buttons, centered */
+    #desktop-sidebar.sb-c .sb-actions { justify-content: center; gap: 0.25rem; margin-top: 0.25rem; }
+    #desktop-sidebar.sb-c .sb-actions > * { flex: none; width: 2.25rem; height: 2.25rem; min-height: unset; padding: 0; justify-content: center; gap: 0; font-size: 0; }
+</style>
+<aside id="desktop-sidebar" class="sidebar-panel hidden lg:flex flex-col w-64 shrink-0 bg-base-100 border-r border-base-300 sticky top-0 h-screen overflow-y-auto overflow-x-hidden">
 
     {{-- Logo / institution --}}
-    <div class="flex items-center gap-3 p-5 border-b border-base-300">
+    <div class="sb-header flex items-center gap-3 p-5 border-b border-base-300">
         <div class="size-9 rounded-lg border border-base-300 bg-base-200 p-1.5 shrink-0">
             <img src="{{ $institutionLogo }}" alt="{{ $institutionName }} logo" class="h-full w-full object-contain">
         </div>
-        <span class="font-semibold truncate text-sm">{{ $institutionName }}</span>
+        <span class="sb-text font-semibold truncate text-sm">{{ $institutionName }}</span>
+        <button type="button" onclick="toggleSidebar()" class="sb-toggle ml-auto shrink-0 inline-flex items-center justify-center size-7 rounded-lg text-base-content/30 hover:text-base-content/60 hover:bg-base-200 transition-colors" aria-label="Toggle sidebar" title="Toggle sidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4 transition-transform duration-200"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
     </div>
 
     {{-- Navigation --}}
@@ -130,7 +150,7 @@
     </nav>
 
     {{-- Notification bell --}}
-    <div class="p-3 border-t border-base-300">
+    <div class="sb-section p-3 border-t border-base-300">
         <a href="{{ route('notifications.index') }}" class="{{ $navClass('notification-center') }} relative">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 shrink-0" aria-hidden="true">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9ZM13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -142,7 +162,7 @@
 
     {{-- Student Scan QR — pinned to bottom of sidebar --}}
     @if ($role === 'Student')
-        <div class="p-3 border-t border-base-300">
+        <div class="sb-section p-3 border-t border-base-300">
             <a href="{{ route('student.scan.index') }}" class="{{ $navClass('scan') }}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 shrink-0" aria-hidden="true">
                     <path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M3 17v2a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -154,7 +174,7 @@
     @endif
 
     {{-- User / profile / logout --}}
-    <div class="p-3 border-t border-base-300">
+    <div class="sb-section p-3 border-t border-base-300">
         <button type="button" onclick="document.getElementById('profile-modal').showModal()" class="{{ $navClass('profile') }} w-full text-left">
             @if ($user->avatar_url)
                 <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="size-8 rounded-lg object-cover shrink-0">
@@ -163,12 +183,12 @@
                     {{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}
                 </span>
             @endif
-            <div class="min-w-0">
+            <div class="min-w-0 sb-text">
                 <p class="text-sm font-medium truncate">{{ $user->name }}</p>
                 <p class="text-xs {{ $active === 'profile' ? 'text-primary/70' : 'text-base-content/60' }}">{{ $role }}</p>
             </div>
         </button>
-        <div class="flex items-center gap-1.5 mt-1">
+        <div class="sb-actions flex items-center gap-1.5 mt-1">
             <button
                 type="button"
                 onclick="document.getElementById('logout-modal').showModal()"
@@ -594,4 +614,18 @@ function syncThemeIcons(theme) {
     });
 }
 syncThemeIcons(document.documentElement.getAttribute('data-theme') || 'light');
+
+// ── Collapsible sidebar ───────────────────────────────────────────────
+function toggleSidebar() {
+    var sb = document.getElementById('desktop-sidebar');
+    if (!sb) return;
+    var collapsed = sb.classList.toggle('sb-c');
+    localStorage.setItem('sidebar-collapsed', collapsed ? '1' : '0');
+}
+(function() {
+    if (localStorage.getItem('sidebar-collapsed') === '1') {
+        var sb = document.getElementById('desktop-sidebar');
+        if (sb) sb.classList.add('sb-c');
+    }
+})();
 </script>

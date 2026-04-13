@@ -46,7 +46,7 @@
                     <div class="d d2 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
                         <div class="px-5 py-4 border-b border-base-300/30 flex items-center justify-between">
                             <h2 class="font-semibold text-sm">Your Requests</h2>
-                            <span class="text-xs text-base-content/40">{{ $excuseRequests->count() }} total</span>
+                            <span class="text-xs text-base-content/40">{{ $excuseRequests->total() }} total</span>
                         </div>
                         <div class="divide-y divide-base-300/30">
                             @foreach ($excuseRequests as $request)
@@ -78,6 +78,11 @@
                                 </div>
                             @endforeach
                         </div>
+                        @if ($excuseRequests->hasPages())
+                            <div class="px-5 py-4 border-t border-base-300/30">
+                                {{ $excuseRequests->links() }}
+                            </div>
+                        @endif
                     </div>
                 @endif
 
