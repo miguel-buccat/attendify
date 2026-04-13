@@ -13,14 +13,16 @@ class AttendanceCalendarController extends Controller
 
         $records = $user->attendanceRecords()
             ->with('classSession.schoolClass')
+            ->whereHas('classSession')
             ->orderBy('created_at', 'asc')
             ->get()
             ->map(fn ($record) => [
-                'date' => $record->classSession?->start_time?->format('Y-m-d'),
+                'date' => $record->classSession->start_time?->format('Y-m-d'),
                 'status' => $record->status->value,
-                'class' => $record->classSession?->schoolClass?->name ?? 'Unknown',
-                'time' => $record->classSession?->start_time?->format('g:i A'),
+                'class' => $record->classSession->schoolClass?->name ?? 'Unknown',
+                'time' => $record->classSession->start_time?->format('g:i A'),
             ])
+            ->filter(fn ($record) => $record['date'] !== null)
             ->groupBy('date');
 
         return view('student.calendar.index', compact('records'));

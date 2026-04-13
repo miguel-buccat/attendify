@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\ScanAttendanceRequest;
 use App\Models\AttendanceRecord;
 use App\Models\ClassSession;
+use App\Notifications\AttendanceRecordedNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 
@@ -64,7 +65,7 @@ class AttendanceScanController extends Controller
             ? AttendanceStatus::Present
             : AttendanceStatus::Late;
 
-        AttendanceRecord::create([
+        $record = AttendanceRecord::create([
             'class_session_id' => $session->id,
             'student_id' => $student->id,
             'status' => $status,
@@ -72,7 +73,8 @@ class AttendanceScanController extends Controller
             'marked_by' => AttendanceMarkedBy::System,
         ]);
 
-        $session->load('schoolClass');
+        $session->load('schoolClass.teacher');
+        $session->schoolClass->teacher->notify(new AttendanceRecordedNotification($record));
 
         return response()->json([
             'status' => $status->value,
@@ -86,7 +88,7 @@ class AttendanceScanController extends Controller
         $records = auth()->user()->attendanceRecords()
             ->with(['classSession.schoolClass'])
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(25);
 
         return view('student.attendance', compact('records'));
     }

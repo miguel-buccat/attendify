@@ -10,7 +10,9 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicAttendanceController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\SiteAssetController;
 use App\Http\Controllers\Student\AttendanceCalendarController;
@@ -37,6 +39,9 @@ Route::get('/site-assets/{key}', [SiteAssetController::class, 'show'])
     ->whereIn('key', ['institution_logo', 'landing_banner'])
     ->name('site-assets.show');
 
+Route::get('/attend/{session}/{token}', [PublicAttendanceController::class, 'show'])->name('attend.show');
+Route::post('/attend/{session}/{token}', [PublicAttendanceController::class, 'store'])->name('attend.store');
+
 Route::middleware('guest')->group(function (): void {
     Route::get('/', [LandingController::class, 'index'])->name('landing');
 
@@ -60,6 +65,11 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/unread', [NotificationController::class, 'unread'])->name('notifications.unread');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function (): void {

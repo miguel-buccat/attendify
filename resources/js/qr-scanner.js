@@ -20,12 +20,27 @@ if (readerEl) {
         isProcessing = true;
 
         let payload;
+
+        // Try parsing as URL first (new format), then JSON (legacy)
         try {
-            payload = JSON.parse(decodedText);
+            const url = new URL(decodedText);
+            const pathParts = url.pathname.split('/').filter(Boolean);
+            // Expected: /attend/{session_id}/{token}
+            if (pathParts.length >= 3 && pathParts[0] === 'attend') {
+                payload = { session_id: pathParts[1], token: pathParts[2] };
+            }
         } catch {
-            showResult('Invalid QR code format.', 'error');
-            isProcessing = false;
-            return;
+            // Not a URL, try JSON
+        }
+
+        if (!payload) {
+            try {
+                payload = JSON.parse(decodedText);
+            } catch {
+                showResult('Invalid QR code format.', 'error');
+                isProcessing = false;
+                return;
+            }
         }
 
         if (!payload.session_id || !payload.token) {

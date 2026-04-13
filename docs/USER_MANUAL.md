@@ -10,8 +10,9 @@
 2. [Admin Role](#admin-role)
 3. [Teacher Role](#teacher-role)
 4. [Student Role](#student-role)
-5. [Profile Management](#profile-management)
-6. [Themes & Accessibility](#themes--accessibility)
+5. [Notification Center](#notification-center)
+6. [Profile Management](#profile-management)
+7. [Themes & Accessibility](#themes--accessibility)
 
 ---
 
@@ -185,6 +186,8 @@ The session detail page shows:
 - The active **QR code** while the session is running.
 - Ability to **manually override** individual student attendance statuses.
 
+> **Platform-agnostic QR**: The QR code encodes a public attendance URL. Students can scan it with any QR reader app (not just the in-app scanner). They will be taken to a web page where they enter their email address to record attendance. This works on any device with a browser — no Attendify login required.
+
 ### Excuse Requests
 
 Navigate to **Excuse Requests** to review submissions from your students.
@@ -212,10 +215,23 @@ The Student dashboard shows:
 
 ### Scanning Attendance
 
+#### Using the In-App Scanner
+
 1. Navigate to **Scan QR** in the sidebar (or bottom nav on mobile).
 2. Allow camera access when prompted.
 3. **Point your camera at the QR code** displayed by your teacher's session screen.
 4. A success message confirms your attendance has been recorded.
+
+#### Using Any QR Scanner (Public Link)
+
+The QR code can also be scanned with any phone camera or third-party QR reader app:
+
+1. Scan the QR code — it opens a web page in your browser.
+2. Enter your registered **email address** on the attendance page.
+3. Click **Mark Attendance**.
+4. A confirmation message shows your attendance status.
+
+> No login is required for the public attendance link. The system identifies you by email and checks that you are enrolled in the class.
 
 > QR codes expire at `session end time + grace period`. Scanning after this time will not register attendance.
 
@@ -242,11 +258,62 @@ If you were absent or late, you can submit an excuse request:
 
 ### Notification Preferences
 
-Navigate to **Notifications** (via the bell icon or sidebar) to configure which email notifications you receive:
+Navigate to **Notification Preferences** in the sidebar to configure which email notifications you receive:
 
 - Session start notifications
 - Weekly attendance summary
 - Parent/guardian absence notifications (if a guardian email is configured on your profile)
+
+---
+
+## Notification Center
+
+All roles have access to an in-app **Notification Center** that delivers real-time updates about system events.
+
+### Accessing Notifications
+
+- Click the **bell icon** (🔔) in the sidebar (desktop) or drawer (mobile).
+- A **red badge** shows the number of unread notifications. This count updates automatically every 15 seconds.
+
+### Toast Notifications
+
+When new notifications arrive, a **toast popup** slides in from the top-right of the screen. Toasts:
+
+- Show the notification title and a brief body.
+- Are clickable — clicking opens the relevant page (e.g., class session, excuse request).
+- Auto-dismiss after 5 seconds, or can be closed manually.
+
+### Notification Types
+
+#### For Students
+
+| Notification | When it appears |
+|-------------|-----------------|
+| Class Session Started | Teacher starts a session in one of your enrolled classes |
+| Session Completed | A class session you are enrolled in has ended |
+| Excuse Reviewed | Teacher has approved or denied your excuse request |
+| Attendance Updated | Teacher manually changed your attendance status |
+
+#### For Teachers
+
+| Notification | When it appears |
+|-------------|-----------------|
+| Attendance Recorded | A student scans QR or marks attendance via the public link |
+| Excuse Submitted | A student submits a new excuse request for one of your sessions |
+
+#### For Admins
+
+| Notification | When it appears |
+|-------------|-----------------|
+| New User Registered | A user accepts an invitation and creates an account |
+
+### Managing Notifications
+
+On the **Notifications** page (click the bell icon):
+
+- **Unread** notifications are highlighted with a coloured left border.
+- Click a notification to navigate to the relevant page — the notification is automatically marked as read.
+- Click **Mark all as read** to clear the unread badge.
 
 ---
 

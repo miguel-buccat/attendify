@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\UserRole;
 use App\Models\Invitation;
 use App\Models\User;
+use App\Notifications\NewUserRegisteredNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -67,6 +68,10 @@ class InvitationController extends Controller
         ]);
 
         $invitation->update(['accepted_at' => now()]);
+
+        User::admin()->get()->each(
+            fn (User $admin) => $admin->notify(new NewUserRegisteredNotification($user))
+        );
 
         Auth::login($user);
 

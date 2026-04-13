@@ -33,7 +33,7 @@
                     <div class="d d2 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
                         <div class="px-5 py-4 border-b border-base-300/30 flex items-center justify-between">
                             <h2 class="font-semibold text-sm">Records</h2>
-                            <span class="text-xs text-base-content/40">{{ $records->count() }} total</span>
+                            <span class="text-xs text-base-content/40">{{ $records->total() }} total</span>
                         </div>
                         <div class="divide-y divide-base-300/30">
                             @foreach ($records as $record)
@@ -60,6 +60,11 @@
                                 </div>
                             @endforeach
                         </div>
+                        @if ($records->hasPages())
+                            <div class="px-5 py-4 border-t border-base-300/30">
+                                {{ $records->links() }}
+                            </div>
+                        @endif
                     </div>
                 @endif
 

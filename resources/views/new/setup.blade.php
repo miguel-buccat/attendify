@@ -101,7 +101,7 @@
                                 <x-form.field label="Password" name="password" type="password" required />
                                 <x-form.field label="Confirm Password" name="password_confirmation" type="password" required />
 
-                                <div class="pt-2">
+                                <div class="pt-5">
                                     <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-content shadow-lg shadow-primary/25 hover:opacity-90 active:scale-[.98] transition-all">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         Create Admin Account
@@ -193,7 +193,7 @@
                                     </div>
                                 </details>
 
-                                <div class="pt-1">
+                                <div class="pt-2">
                                     <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-content shadow-lg shadow-primary/25 hover:opacity-90 active:scale-[.98] transition-all">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4.5"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         Finish Setup &amp; Launch
