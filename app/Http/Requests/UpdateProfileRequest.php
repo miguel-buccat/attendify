@@ -19,7 +19,6 @@ class UpdateProfileRequest extends FormRequest
         return [
             'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
-            'about_me' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

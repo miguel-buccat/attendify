@@ -49,11 +49,9 @@ class ProfileController extends Controller
             );
         }
 
-        $data['about_me'] = $request->validated('about_me');
-
         $user->update($data);
 
-        return redirect()->route('profile.show', $user)
-            ->with('success', 'Profile updated.');
+        return redirect()->back()
+            ->with('success', 'Profile updated successfully.');
     }
 }

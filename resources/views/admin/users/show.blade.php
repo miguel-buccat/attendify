@@ -147,22 +147,22 @@
                                 </div>
                             </div>
 
-                            <div>
-                                <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="about_me">About</label>
-                                <textarea
-                                    id="about_me"
-                                    name="about_me"
-                                    rows="3"
-                                    class="w-full rounded-xl border {{ $errors->has('about_me') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
-                                    maxlength="1000"
-                                >{{ old('about_me', $user->about_me) }}</textarea>
-                                @error('about_me')<p class="mt-1 text-xs text-error">{{ $message }}</p>@enderror
-                            </div>
-
                             @if ($user->role === \App\Enums\UserRole::Student)
                                 <div class="rounded-xl bg-base-200/50 border border-base-300/40 px-4 py-3 space-y-3">
                                     <p class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35">Parent / Guardian</p>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="guardian_name">Guardian Name</label>
+                                            <input
+                                                type="text"
+                                                id="guardian_name"
+                                                name="guardian_name"
+                                                value="{{ old('guardian_name', $user->guardian_name) }}"
+                                                class="w-full rounded-xl border {{ $errors->has('guardian_name') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
+                                                placeholder="Parent or guardian's full name"
+                                            >
+                                            @error('guardian_name')<p class="mt-1 text-xs text-error">{{ $message }}</p>@enderror
+                                        </div>
                                         <div>
                                             <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="guardian_email">Guardian Email</label>
                                             <input
@@ -174,18 +174,6 @@
                                                 placeholder="parent@example.com"
                                             >
                                             @error('guardian_email')<p class="mt-1 text-xs text-error">{{ $message }}</p>@enderror
-                                        </div>
-                                        <div>
-                                            <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="guardian_phone">Guardian Phone</label>
-                                            <input
-                                                type="tel"
-                                                id="guardian_phone"
-                                                name="guardian_phone"
-                                                value="{{ old('guardian_phone', $user->guardian_phone) }}"
-                                                class="w-full rounded-xl border {{ $errors->has('guardian_phone') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
-                                                placeholder="+1 234 567 8900"
-                                            >
-                                            @error('guardian_phone')<p class="mt-1 text-xs text-error">{{ $message }}</p>@enderror
                                         </div>
                                     </div>
                                 </div>

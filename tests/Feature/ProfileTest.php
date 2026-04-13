@@ -50,16 +50,6 @@ test('user can view the edit profile form', function () {
         ->assertOk();
 });
 
-test('user can update their about me text', function () {
-    $user = User::factory()->create();
-
-    $this->actingAs($user)
-        ->patch(route('profile.update'), ['about_me' => 'Hello, I teach math.'])
-        ->assertRedirect(route('profile.show', $user));
-
-    expect($user->fresh()->about_me)->toBe('Hello, I teach math.');
-});
-
 test('user can upload a valid avatar', function () {
     Storage::fake('public');
 
@@ -68,7 +58,7 @@ test('user can upload a valid avatar', function () {
 
     $this->actingAs($user)
         ->patch(route('profile.update'), ['avatar' => $file])
-        ->assertRedirect(route('profile.show', $user));
+        ->assertRedirect();
 
     $user->refresh();
     expect($user->avatar_path)->not->toBeNull();
@@ -83,7 +73,7 @@ test('user can upload a valid banner', function () {
 
     $this->actingAs($user)
         ->patch(route('profile.update'), ['banner' => $file])
-        ->assertRedirect(route('profile.show', $user));
+        ->assertRedirect();
 
     $user->refresh();
     expect($user->banner_path)->not->toBeNull();
@@ -130,14 +120,6 @@ test('validation rejects non-image file as avatar', function () {
     $this->actingAs($user)
         ->patch(route('profile.update'), ['avatar' => $file])
         ->assertInvalid(['avatar']);
-});
-
-test('validation rejects about me exceeding 1000 characters', function () {
-    $user = User::factory()->create();
-
-    $this->actingAs($user)
-        ->patch(route('profile.update'), ['about_me' => str_repeat('a', 1001)])
-        ->assertInvalid(['about_me']);
 });
 
 test('unauthenticated user cannot access profile routes', function () {

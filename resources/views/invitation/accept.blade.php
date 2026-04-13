@@ -70,6 +70,20 @@
             </div>
 
             <div>
+                <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="guardian_name">Parent/Guardian Full Name</label>
+                <input
+                    type="text"
+                    id="guardian_name"
+                    name="guardian_name"
+                    value="{{ old('guardian_name') }}"
+                    class="w-full rounded-xl border {{ $errors->has('guardian_name') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
+                    placeholder="Full name"
+                    required
+                >
+                @error('guardian_name')<p class="mt-1 text-xs text-error">{{ $message }}</p>@enderror
+            </div>
+
+            <div>
                 <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="guardian_email">Parent/Guardian Email</label>
                 <input
                     type="email"
@@ -81,20 +95,6 @@
                     required
                 >
                 @error('guardian_email')<p class="mt-1 text-xs text-error">{{ $message }}</p>@enderror
-            </div>
-
-            <div>
-                <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="guardian_phone">Parent/Guardian Phone</label>
-                <input
-                    type="tel"
-                    id="guardian_phone"
-                    name="guardian_phone"
-                    value="{{ old('guardian_phone') }}"
-                    class="w-full rounded-xl border {{ $errors->has('guardian_phone') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
-                    placeholder="+63 000 000 0000"
-                    required
-                >
-                @error('guardian_phone')<p class="mt-1 text-xs text-error">{{ $message }}</p>@enderror
             </div>
         @endif
 

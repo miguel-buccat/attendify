@@ -133,6 +133,22 @@
         }
     </style>
 
+    {{-- Fixed theme toggle (above scroll-capture at z-101) --}}
+    <button
+        type="button"
+        onclick="toggleTheme()"
+        aria-label="Toggle theme"
+        class="fixed top-4 right-4 z-[101] inline-flex items-center justify-center size-9 rounded-xl bg-base-100/80 backdrop-blur border border-base-300/60 text-base-content/60 hover:text-base-content hover:bg-base-100 shadow-sm transition-colors"
+    >
+        <svg class="theme-toggle-sun size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <svg class="theme-toggle-moon size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+
     {{-- The fixed stage where all pages live --}}
     <div id="pages">
 
@@ -154,7 +170,7 @@
                 @endif
                 <h1 class="hero-d1 text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight">{{ $institutionName }}</h1>
                 <p class="hero-d2 mt-3 text-2xl md:text-3xl font-bold text-primary">Attendance System</p>
-                <p class="hero-d3 mt-5 text-base md:text-lg text-base-content/50 max-w-lg mx-auto leading-relaxed">Modern QR-based attendance tracking for educators and students.</p>
+                <p class="hero-d3 mt-5 text-base md:text-lg text-base-content/70 max-w-lg mx-auto leading-relaxed">Modern QR-based attendance tracking for educators and students.</p>
                 <a href="{{ route('login') }}" class="hero-d4 mt-10 btn btn-primary btn-lg rounded-full px-12 shadow-xl shadow-primary/30 gap-2">
                     Login to Account
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -182,14 +198,14 @@
                     {{-- Title row --}}
                     <div class="page-content flex items-center gap-5">
                         <div>
-                            <p class="text-[10px] uppercase tracking-[.3em] text-secondary/60 font-semibold">Our</p>
+                            <p class="text-[10px] uppercase tracking-[.3em] text-secondary font-semibold">Our</p>
                             <h2 class="text-4xl md:text-5xl font-black tracking-tight leading-tight">Vision</h2>
                         </div>
                     </div>
 
                     {{-- Pull-quote block --}}
                     <div class="page-content relative pl-8 border-l-[3px] border-secondary/30">
-                        <p class="text-xl md:text-2xl lg:text-3xl text-base-content/70 leading-relaxed font-medium">{{ $institutionVision }}</p>
+                        <p class="text-xl md:text-2xl lg:text-3xl text-base-content/80 leading-relaxed font-medium">{{ $institutionVision }}</p>
                     </div>
 
                     {{-- Decorative closing rule --}}
@@ -225,14 +241,14 @@
                     {{-- Title row --}}
                     <div class="page-content flex items-center gap-5">
                         <div>
-                            <p class="text-[10px] uppercase tracking-[.3em] text-primary/60 font-semibold">Our</p>
+                            <p class="text-[10px] uppercase tracking-[.3em] text-primary font-semibold">Our</p>
                             <h2 class="text-4xl md:text-5xl font-black tracking-tight leading-tight">Mission</h2>
                         </div>
                     </div>
 
                     {{-- Pull-quote block --}}
                     <div class="page-content relative pl-8 border-l-[3px] border-primary/30">
-                        <p class="text-xl md:text-2xl lg:text-3xl text-base-content/70 leading-relaxed font-medium">{{ $institutionMission }}</p>
+                        <p class="text-xl md:text-2xl lg:text-3xl text-base-content/80 leading-relaxed font-medium">{{ $institutionMission }}</p>
                     </div>
 
                     {{-- Decorative closing rule --}}
@@ -258,7 +274,7 @@
                         <h2 class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight">About Attendify</h2>
                         <div class="mt-2 md:mt-3 mx-auto w-16 h-1 rounded-full bg-accent/40"></div>
                     </div>
-                    <p class="page-content text-sm md:text-xl text-base-content/55 leading-relaxed max-w-2xl mx-auto">
+                    <p class="page-content text-sm md:text-xl text-base-content/75 leading-relaxed max-w-2xl mx-auto">
                         A modern, QR-based attendance management system designed to make tracking student attendance seamless and efficient — so educators can focus on what matters most.
                     </p>
                 </div>
@@ -268,21 +284,21 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 md:size-7"><path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M3 17v2a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 12h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                         </div>
                         <h3 class="font-bold text-xs md:text-lg">QR Scanning</h3>
-                        <p class="mt-1 md:mt-2 text-xs text-base-content/50 leading-relaxed hidden md:block">Instant attendance capture via mobile QR. No manual roll calls.</p>
+                        <p class="mt-1 md:mt-2 text-xs text-base-content/65 leading-relaxed hidden md:block">Instant attendance capture via mobile QR. No manual roll calls.</p>
                     </div>
                     <div class="feature-card p-4 md:p-7 rounded-2xl md:rounded-3xl bg-base-100 border border-base-300/50 text-center">
                         <div class="inline-flex items-center justify-center size-10 md:size-14 rounded-xl md:rounded-2xl bg-secondary/10 text-secondary mb-3 md:mb-5">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 md:size-7"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </div>
                         <h3 class="font-bold text-xs md:text-lg">Live Tracking</h3>
-                        <p class="mt-1 md:mt-2 text-xs text-base-content/50 leading-relaxed hidden md:block">Real-time session monitoring with auto-updating attendance lists.</p>
+                        <p class="mt-1 md:mt-2 text-xs text-base-content/65 leading-relaxed hidden md:block">Real-time session monitoring with auto-updating attendance lists.</p>
                     </div>
                     <div class="feature-card p-4 md:p-7 rounded-2xl md:rounded-3xl bg-base-100 border border-base-300/50 text-center">
                         <div class="inline-flex items-center justify-center size-10 md:size-14 rounded-xl md:rounded-2xl bg-accent/10 text-accent mb-3 md:mb-5">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 md:size-7"><path d="M12 2 2 7l10 5 10-5-10-5ZM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </div>
                         <h3 class="font-bold text-xs md:text-lg">Smart Dashboards</h3>
-                        <p class="mt-1 md:mt-2 text-xs text-base-content/50 leading-relaxed hidden md:block">Role-based analytics and insights for every user type.</p>
+                        <p class="mt-1 md:mt-2 text-xs text-base-content/65 leading-relaxed hidden md:block">Role-based analytics and insights for every user type.</p>
                     </div>
                 </div>
             </div>
@@ -291,8 +307,8 @@
         {{-- ══════ PAGE 5: FOOTER ══════ --}}
         <div class="page bg-base-200" id="page-4" data-index="4" style="align-items:center;min-height:auto;height:100vh;">
             <div class="z-10 text-center space-y-4 px-6">
-                <img src="{{ asset('assets/attendify.png') }}" alt="Attendify" class="w-10 h-10 mx-auto object-contain opacity-30">
-                <p class="text-sm text-base-content/35">
+                <img src="{{ asset('assets/attendify.png') }}" alt="Attendify" class="w-10 h-10 mx-auto object-contain opacity-50">
+                <p class="text-sm text-base-content/55">
                     Attendify licensed under the MIT License.<br>Copyright &copy; {{ now()->year }} Attendify Developers.
                 </p>
             </div>

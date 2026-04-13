@@ -1,6 +1,22 @@
 @props(['title' => ''])
 
 <x-layouts.app :title="$title">
+    {{-- Fixed theme toggle (top-right, visible on all auth pages) --}}
+    <button
+        type="button"
+        onclick="toggleTheme()"
+        aria-label="Toggle theme"
+        class="fixed top-4 right-4 z-50 inline-flex items-center justify-center size-9 rounded-xl bg-base-100/80 backdrop-blur border border-base-300/60 text-base-content/60 hover:text-base-content hover:bg-base-100 shadow-sm transition-colors"
+    >
+        <svg class="theme-toggle-sun size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <svg class="theme-toggle-moon size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+
     <main class="relative min-h-screen grid place-items-center p-6 overflow-hidden">
         @if ($landingBanner)
             <img

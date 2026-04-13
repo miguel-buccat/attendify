@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use App\Models\Invitation;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -44,9 +45,9 @@ class InvitationController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
 
-        if ($invitation->role === \App\Enums\UserRole::Student) {
+        if ($invitation->role === UserRole::Student) {
+            $rules['guardian_name'] = ['required', 'string', 'max:255'];
             $rules['guardian_email'] = ['required', 'email', 'max:255'];
-            $rules['guardian_phone'] = ['required', 'string', 'max:30'];
         }
 
         $validated = $request->validate($rules);
@@ -58,11 +59,11 @@ class InvitationController extends Controller
         $user = User::create([
             'name' => $validated['name'],
             'email' => $invitation->email,
-            'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+            'password' => Hash::make($validated['password']),
             'role' => $invitation->role,
             'email_verified_at' => now(),
+            'guardian_name' => $validated['guardian_name'] ?? null,
             'guardian_email' => $validated['guardian_email'] ?? null,
-            'guardian_phone' => $validated['guardian_phone'] ?? null,
         ]);
 
         $invitation->update(['accepted_at' => now()]);

@@ -20,9 +20,8 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId)],
+            'guardian_name' => ['nullable', 'string', 'max:255'],
             'guardian_email' => ['nullable', 'email', 'max:255'],
-            'guardian_phone' => ['nullable', 'string', 'max:30'],
-            'about_me' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

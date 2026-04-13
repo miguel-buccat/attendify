@@ -10,6 +10,7 @@ use App\Models\ActivityLog;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Notifications\Auth\InvitationNotification;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Str;
@@ -119,5 +120,26 @@ class UserManagementController extends Controller
         $invitation->update(['expires_at' => now()->subSecond()]);
 
         return redirect()->route('admin.users.index')->with('success', 'Invitation invalidated.');
+    }
+
+    public function pendingInvitations(): JsonResponse
+    {
+        $invitations = Invitation::with('inviter')->pending()->orderByDesc('created_at')->get();
+
+        $items = $invitations->map(fn (Invitation $invitation) => [
+            'id' => $invitation->id,
+            'display_name' => $invitation->name ?? $invitation->email,
+            'email' => $invitation->email,
+            'role' => $invitation->role->value,
+            'inviter_name' => $invitation->inviter->name,
+            'has_name' => $invitation->name !== null,
+            'expires_at' => $invitation->expires_at->format('M j, Y'),
+            'invalidate_url' => route('admin.invitations.invalidate', $invitation),
+        ]);
+
+        return response()->json([
+            'count' => $invitations->count(),
+            'items' => $items,
+        ]);
     }
 }
