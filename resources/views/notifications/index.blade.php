@@ -20,7 +20,8 @@
 
                 <div class="bg-base-100 rounded-2xl border border-base-300/50 overflow-hidden divide-y divide-base-300/30">
                     @forelse ($notifications as $notification)
-                        <a href="{{ $notification->data['url'] ?? '#' }}"
+                        <!-- <a href="{{ $notification->data['url'] ?? '#' }}" -->
+                        <a
                            onclick="fetch('{{ route('notifications.read', $notification->id) }}', {method:'POST',headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'}})"
                            class="flex items-start gap-3 px-5 py-4 hover:bg-base-200/50 transition-colors {{ $notification->read_at ? 'opacity-60' : '' }}">
                             <div class="mt-0.5 shrink-0">
