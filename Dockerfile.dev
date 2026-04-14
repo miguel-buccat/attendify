@@ -6,8 +6,13 @@ RUN apt-get update \
         unzip \
         libpq-dev \
         libzip-dev \
+        libpng-dev \
+        libjpeg-dev \
+        libwebp-dev \
+    && docker-php-ext-configure gd --with-jpeg --with-webp \
     && docker-php-ext-install -j"$(nproc)" \
         bcmath \
+        gd \
         pcntl \
         pdo_pgsql \
         pgsql \

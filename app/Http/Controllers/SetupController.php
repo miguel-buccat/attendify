@@ -30,7 +30,7 @@ class SetupController extends Controller
         }
 
         return view('new.setup', [
-            'hasAdmin' => $this->hasAdminAccount(),
+            'hasAdmin' => User::admin()->exists(),
             'siteSettings' => $siteSettings,
         ]);
     }
@@ -41,7 +41,7 @@ class SetupController extends Controller
             return redirect()->route('landing');
         }
 
-        if ($this->hasAdminAccount()) {
+        if (User::admin()->exists()) {
             return redirect()->route('new.setup');
         }
 
@@ -70,14 +70,17 @@ class SetupController extends Controller
             return redirect()->route('landing');
         }
 
-        if (! $this->hasAdminAccount()) {
+        if (! User::admin()->exists()) {
             return redirect()->route('new.setup');
         }
 
         $validated = $request->validate([
             'institution_name' => ['required', 'string', 'max:255'],
-            'institution_logo' => ['required', 'image', 'max:2048'],
-            'landing_banner' => ['required', 'image', 'max:4096'],
+            'timezone' => ['required', 'string', 'timezone:all'],
+            'institution_logo' => ['required', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:2048'],
+            'landing_banner' => ['required', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:4096'],
+            'mission' => ['nullable', 'string', 'max:1000'],
+            'vision' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $logoPath = $request->file('institution_logo')->store('site-settings', 'public');
@@ -87,26 +90,19 @@ class SetupController extends Controller
             Artisan::call('storage:link');
         }
 
-        $logoUrl = Storage::disk('public')->url($logoPath);
-        $bannerUrl = Storage::disk('public')->url($bannerPath);
-
         $siteSettings->set('institution_name', $validated['institution_name']);
-        $siteSettings->set('institution_logo', url($logoUrl));
-        $siteSettings->set('landing_banner', url($bannerUrl));
+        $siteSettings->set('timezone', $validated['timezone']);
+        $siteSettings->set('institution_logo', url(Storage::disk('public')->url($logoPath)));
+        $siteSettings->set('landing_banner', url(Storage::disk('public')->url($bannerPath)));
+        $siteSettings->set('mission', $validated['mission'] ?? null);
+        $siteSettings->set('vision', $validated['vision'] ?? null);
 
         return redirect()->route('landing');
     }
 
-    private function hasAdminAccount(): bool
-    {
-        return User::query()
-            ->where('role', UserRole::Admin->value)
-            ->exists();
-    }
-
     private function isSetupComplete(SiteSettings $siteSettings): bool
     {
-        return $this->hasAdminAccount()
+        return User::admin()->exists()
             && (bool) $siteSettings->get('institution_logo')
             && (bool) $siteSettings->get('landing_banner');
     }

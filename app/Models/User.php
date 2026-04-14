@@ -4,15 +4,21 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use App\Notifications\Auth\ResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['name', 'email', 'password', 'role', 'email_verified_at'])]
+#[Fillable(['name', 'email', 'password', 'role', 'email_verified_at', 'avatar_path', 'banner_path', 'guardian_name', 'status', 'status_reason', 'guardian_email', 'notification_preferences'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -30,7 +36,47 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'status' => UserStatus::class,
+            'notification_preferences' => 'array',
         ];
+    }
+
+    public function scopeAdmin(Builder $query): void
+    {
+        $query->where('role', UserRole::Admin);
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === UserStatus::Active;
+    }
+
+    public function isBlocked(): bool
+    {
+        return $this->status === UserStatus::Blocked;
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->status === UserStatus::Archived;
+    }
+
+    protected function avatarUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->avatar_path
+                ? Storage::disk('public')->url($this->avatar_path)
+                : null,
+        );
+    }
+
+    protected function bannerUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->banner_path
+                ? Storage::disk('public')->url($this->banner_path)
+                : null,
+        );
     }
 
     public function sendPasswordResetNotification($token): void
@@ -41,5 +87,43 @@ class User extends Authenticatable
         ], false));
 
         $this->notify(new ResetPasswordNotification($resetUrl));
+    }
+
+    public function classes(): HasMany
+    {
+        return $this->hasMany(SchoolClass::class, 'teacher_id');
+    }
+
+    public function enrolledClasses(): BelongsToMany
+    {
+        return $this->belongsToMany(SchoolClass::class, 'class_student', 'student_id', 'class_id')
+            ->withPivot('enrolled_at');
+    }
+
+    public function attendanceRecords(): HasMany
+    {
+        return $this->hasMany(AttendanceRecord::class, 'student_id');
+    }
+
+    public function excuseRequests(): HasMany
+    {
+        return $this->hasMany(ExcuseRequest::class, 'student_id');
+    }
+
+    public function getNotificationPreference(string $key, bool $default = true): bool
+    {
+        $prefs = $this->notification_preferences ?? [];
+
+        return $prefs[$key] ?? $default;
+    }
+
+    public static function defaultNotificationPreferences(): array
+    {
+        return [
+            'session_started' => true,
+            'weekly_summary' => true,
+            'absence_alert' => true,
+            'excuse_updates' => true,
+        ];
     }
 }

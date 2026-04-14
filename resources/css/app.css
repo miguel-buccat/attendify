@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @plugin "daisyui" {
-    themes: dark --default;
+    themes: light --default, dark;
 }
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -11,4 +11,45 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* ── Theme-toggle floating button (CSS-driven icon swap) ──────────────────── */
+.theme-toggle-sun  { display: none; }
+.theme-toggle-moon { display: block; }
+[data-theme="dark"] .theme-toggle-sun  { display: block; }
+[data-theme="dark"] .theme-toggle-moon { display: none; }
+
+/* ── Light-mode colorisation ──────────────────────────────────────────────
+   Boost contrast of very-muted text in light theme while leaving dark
+   theme completely untouched (dark uses [data-theme="dark"] variables). */
+[data-theme="light"] {
+    /* Eyebrow / kicker labels  e.g. "Admin", "Account" */
+    .text-base-content\/35 {
+        color: color-mix(in oklch, var(--color-primary) 65%, transparent);
+    }
+    /* Very faint metadata e.g. "Member since …" */
+    .text-base-content\/30 {
+        color: color-mix(in oklch, var(--color-base-content) 55%, transparent);
+    }
+    /* Subtitle / secondary text */
+    .text-base-content\/50 {
+        color: color-mix(in oklch, var(--color-base-content) 68%, transparent);
+    }
+    /* Light metadata */
+    .text-base-content\/40 {
+        color: color-mix(in oklch, var(--color-base-content) 60%, transparent);
+    }
+
+    /* ── Sidebar: subtle gradient tint + colorful inactive icons ──────── */
+    .sidebar-panel {
+        background: linear-gradient(160deg, color-mix(in oklch, var(--color-primary) 6%, var(--color-base-100)) 0%, var(--color-base-100) 55%);
+        border-color: color-mix(in oklch, var(--color-primary) 18%, var(--color-base-300));
+    }
+    .sidebar-nav-link svg {
+        color: color-mix(in oklch, var(--color-primary) 50%, var(--color-base-content));
+        opacity: 0.75;
+    }
+    .sidebar-nav-link:hover svg {
+        opacity: 1;
+    }
 }
