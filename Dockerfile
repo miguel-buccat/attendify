@@ -22,6 +22,7 @@ RUN npm ci
 COPY resources/ resources/
 COPY vite.config.js ./
 COPY public/ public/
+COPY --from=composer-deps /app/vendor/laravel/framework/src/Illuminate/Pagination/resources/views vendor/laravel/framework/src/Illuminate/Pagination/resources/views/
 RUN npm run build
 
 # ───────────────────────────────────────────
