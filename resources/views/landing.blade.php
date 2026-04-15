@@ -171,7 +171,7 @@
                 <h1 class="hero-d1 text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight">{{ $institutionName }}</h1>
                 <p class="hero-d2 mt-3 text-2xl md:text-3xl font-bold text-primary">Attendance System</p>
                 <p class="hero-d3 mt-5 text-base md:text-lg text-base-content/70 max-w-lg mx-auto leading-relaxed">Modern QR-based attendance tracking for educators and students.</p>
-                <a href="{{ route('login') }}" class="hero-d4 mt-10 btn btn-primary btn-lg rounded-full px-12 shadow-xl shadow-primary/30 gap-2">
+                <a href="{{ route('login') }}" class="hero-d4 mt-10 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-12 py-3.5 text-lg font-bold text-primary-content shadow-xl shadow-primary/30 hover:opacity-90 active:scale-[.98] transition-all">
                     Login to Account
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </a>

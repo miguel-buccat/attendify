@@ -10,7 +10,7 @@
 
         <x-form.field label="Email" name="email" type="email" required autofocus />
 
-        <button type="submit" class="btn btn-primary rounded-md">Send Reset Link</button>
+        <x-ui.button type="submit" variant="primary" class="w-full">Send Reset Link</x-ui.button>
     </form>
 
     <a href="{{ route('login') }}" class="link link-hover">Back to login</a>

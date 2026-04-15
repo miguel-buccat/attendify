@@ -1,12 +1,12 @@
 @props(['title' => ''])
 
 <x-layouts.app :title="$title">
-    {{-- Fixed theme toggle (top-right, visible on all auth pages) --}}
+    {{-- Fixed theme toggle --}}
     <button
         type="button"
         onclick="toggleTheme()"
         aria-label="Toggle theme"
-        class="fixed top-4 right-4 z-50 inline-flex items-center justify-center size-9 rounded-xl bg-base-100/80 backdrop-blur border border-base-300/60 text-base-content/60 hover:text-base-content hover:bg-base-100 shadow-sm transition-colors"
+        class="fixed top-4 right-4 z-50 inline-flex items-center justify-center size-9 rounded-xl bg-base-100/80 backdrop-blur-sm border border-base-300/40 shadow-sm text-base-content/60 hover:text-base-content hover:bg-base-100 transition-colors"
     >
         <svg class="theme-toggle-sun size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.8"/>
@@ -22,25 +22,33 @@
             <img
                 src="{{ $landingBanner }}"
                 alt="Institution banner"
-                class="absolute inset-0 h-full w-full object-cover opacity-20"
+                class="absolute inset-0 h-full w-full object-cover opacity-15 blur-sm"
             >
         @endif
 
-        <div class="absolute inset-0 bg-gradient-to-br from-base-300/70 via-base-200/80 to-base-100/80"></div>
+        {{-- Gradient overlay with brand colors --}}
+        <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-base-200/90 to-secondary/10"></div>
 
-        <section class="card relative z-10 w-full max-w-md bg-base-100/95 backdrop-blur-sm shadow-2xl border border-base-300/80">
-            <div class="card-body gap-5">
-                <div class="flex flex-col items-center gap-3 text-center">
-                    <div class="size-20 rounded-2xl bg-base-200 border border-base-300 p-3 shadow-sm">
-                        <img src="{{ $institutionLogo }}" alt="{{ $institutionName }} logo" class="h-full w-full object-contain">
+        {{-- Decorative blobs --}}
+        <div class="blob-a absolute top-1/4 -left-32 size-96 rounded-full bg-primary/8 blur-3xl pointer-events-none"></div>
+        <div class="blob-b absolute bottom-1/4 -right-32 size-80 rounded-full bg-accent/8 blur-3xl pointer-events-none"></div>
+
+        <section class="relative z-10 w-full max-w-md">
+            <div class="af-glass rounded-2xl border border-base-300/40 shadow-2xl overflow-hidden">
+                <div class="p-8 space-y-6">
+                    {{-- Branding --}}
+                    <div class="flex flex-col items-center gap-4 text-center">
+                        <div class="size-16 rounded-2xl bg-base-200/80 border border-base-300/40 p-2.5 shadow-sm">
+                            <img src="{{ $institutionLogo }}" alt="{{ $institutionName }} logo" class="h-full w-full object-contain">
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35">{{ $institutionName }}</p>
+                            <h1 class="text-2xl font-black tracking-tight mt-1">{{ $title }}</h1>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-sm uppercase tracking-wider text-base-content/60">{{ $institutionName }}</p>
-                        <h1 class="text-2xl font-semibold">{{ $title }}</h1>
-                    </div>
+
+                    {{ $slot }}
                 </div>
-
-                {{ $slot }}
             </div>
         </section>
     </main>

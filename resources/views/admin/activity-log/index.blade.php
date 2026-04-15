@@ -15,25 +15,25 @@
                 {{-- Filters --}}
                 <form method="GET" action="{{ route('admin.activity-log.index') }}" class="flex flex-wrap gap-3">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search descriptions..."
-                        class="input input-bordered input-sm rounded-xl w-64" />
-                    <select name="action" class="select select-bordered select-sm rounded-xl">
+                        class="af-input w-64" />
+                    <select name="action" class="af-input">
                         <option value="">All Actions</option>
                         @foreach ($actions as $action)
                             <option value="{{ $action }}" @selected(request('action') === $action)>{{ str_replace('_', ' ', ucfirst($action)) }}</option>
                         @endforeach
                     </select>
-                    <button type="submit" class="btn btn-primary btn-sm rounded-xl">Filter</button>
+                    <x-ui.button type="submit" variant="primary" size="sm">Filter</x-ui.button>
                     @if (request()->hasAny(['search', 'action', 'user']))
-                        <a href="{{ route('admin.activity-log.index') }}" class="btn btn-ghost btn-sm rounded-xl">Clear</a>
+                        <x-ui.button href="{{ route('admin.activity-log.index') }}" variant="ghost" size="sm">Clear</x-ui.button>
                     @endif
                 </form>
 
                 {{-- Log Table --}}
-                <div class="bg-base-100 border border-base-300/50 rounded-2xl overflow-hidden">
+                <div class="af-card overflow-hidden !p-0">
                     <div class="overflow-x-auto">
                         <table class="table table-sm">
                             <thead>
-                                <tr class="border-b border-base-300/50">
+                                <tr class="border-b af-divider">
                                     <th class="text-xs font-bold uppercase tracking-wider text-base-content/40">When</th>
                                     <th class="text-xs font-bold uppercase tracking-wider text-base-content/40">User</th>
                                     <th class="text-xs font-bold uppercase tracking-wider text-base-content/40">Action</th>
@@ -43,7 +43,7 @@
                             </thead>
                             <tbody>
                                 @forelse ($logs as $log)
-                                    <tr class="border-b border-base-200/50 hover:bg-base-200/30">
+                                    <tr class="border-b af-divider hover:bg-base-content/[.03]">
                                         <td class="text-xs text-base-content/60 whitespace-nowrap">
                                             {{ $log->created_at->format('M d, Y') }}<br>
                                             <span class="text-base-content/40">{{ $log->created_at->format('g:i A') }}</span>
@@ -65,7 +65,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <span class="badge badge-sm badge-ghost rounded-lg font-mono">{{ str_replace('_', ' ', $log->action) }}</span>
+                                            <x-ui.badge variant="neutral" size="xs">{{ str_replace('_', ' ', $log->action) }}</x-ui.badge>
                                         </td>
                                         <td class="text-sm max-w-xs truncate">{{ $log->description }}</td>
                                         <td class="text-xs text-base-content/40 font-mono">{{ $log->ip_address }}</td>
@@ -83,7 +83,7 @@
                     </div>
 
                     @if ($logs->hasPages())
-                        <div class="p-4 border-t border-base-300/50">
+                        <div class="p-4 border-t af-divider">
                             {{ $logs->links() }}
                         </div>
                     @endif

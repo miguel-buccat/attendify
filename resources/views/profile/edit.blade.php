@@ -1,15 +1,9 @@
 <x-layouts.app title="Edit Profile">
-    <style>
-        @keyframes d-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-        .d { animation: d-up .45s cubic-bezier(.16,1,.3,1) both; }
-        .d1 { animation-delay: .00s; } .d2 { animation-delay: .07s; } .d3 { animation-delay: .14s; }
-        .d4 { animation-delay: .21s; } .d5 { animation-delay: .28s; }
-    </style>
     <div class="flex min-h-screen bg-base-200">
         <x-nav.sidebar active="profile" />
 
-        <main class="flex-1 min-w-0 pt-14 lg:pt-0">
-            <div class="p-4 md:p-8">
+        <main class="flex-1 min-w-0 lg:min-h-screen pt-14 lg:pt-0">
+            <div class="p-4 md:p-6 lg:p-8">
                 <div class="max-w-2xl">
 
                     <div class="d d1 mb-6">
@@ -25,9 +19,7 @@
                     </div>
 
                     @if (session('success'))
-                        <div class="d d2 rounded-2xl border border-success/30 bg-success/5 px-4 py-3 mb-5">
-                            <p class="text-sm text-success">{{ session('success') }}</p>
-                        </div>
+                        <x-ui.alert type="success" class="d d2 mb-5">{{ session('success') }}</x-ui.alert>
                     @endif
 
                     @if ($errors->any())
@@ -43,8 +35,8 @@
                         @method('PATCH')
 
                         {{-- Avatar --}}
-                        <div class="d d2 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
-                            <div class="px-5 py-4 border-b border-base-300/30">
+                        <div class="d d2 af-card !p-0 overflow-hidden">
+                            <div class="px-5 py-4 border-b af-divider">
                                 <h2 class="font-semibold text-sm">Avatar</h2>
                             </div>
                             <div class="px-5 py-4">
@@ -65,7 +57,7 @@
                                             id="avatar"
                                             name="avatar"
                                             accept="image/jpeg,image/png,image/webp"
-                                            class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2 text-sm file:mr-3 file:border-0 file:bg-primary/10 file:text-primary file:text-xs file:font-semibold file:px-3 file:py-1 file:rounded-lg focus:outline-none {{ $errors->has('avatar') ? 'border-error' : '' }}"
+                                            class="af-input file:mr-3 file:border-0 file:bg-primary/10 file:text-primary file:text-xs file:font-semibold file:px-3 file:py-1 file:rounded-lg @error('avatar') af-input-error @enderror"
                                             onchange="previewImage(this, 'avatar-preview', 'avatar-placeholder')"
                                         >
                                         <p class="text-xs text-base-content/40 mt-1.5">JPG, PNG or WebP · max 2 MB</p>
@@ -75,8 +67,8 @@
                         </div>
 
                         {{-- Banner --}}
-                        <div class="d d3 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
-                            <div class="px-5 py-4 border-b border-base-300/30">
+                        <div class="d d3 af-card !p-0 overflow-hidden">
+                            <div class="px-5 py-4 border-b af-divider">
                                 <h2 class="font-semibold text-sm">Banner Image</h2>
                             </div>
                             <div class="px-5 py-4 space-y-3">
@@ -91,7 +83,7 @@
                                     id="banner"
                                     name="banner"
                                     accept="image/jpeg,image/png,image/webp"
-                                    class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2 text-sm file:mr-3 file:border-0 file:bg-primary/10 file:text-primary file:text-xs file:font-semibold file:px-3 file:py-1 file:rounded-lg focus:outline-none {{ $errors->has('banner') ? 'border-error' : '' }}"
+                                    class="af-input file:mr-3 file:border-0 file:bg-primary/10 file:text-primary file:text-xs file:font-semibold file:px-3 file:py-1 file:rounded-lg @error('banner') af-input-error @enderror"
                                     onchange="previewImage(this, 'banner-preview', 'banner-placeholder')"
                                 >
                                 <p class="text-xs text-base-content/40">JPG, PNG or WebP · max 4 MB</p>
@@ -99,12 +91,8 @@
                         </div>
 
                         <div class="d d4 flex items-center gap-3">
-                            <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-content text-sm font-semibold hover:opacity-90 transition-opacity">
-                                Save Changes
-                            </button>
-                            <a href="{{ route('profile.show', auth()->user()) }}" class="inline-flex items-center px-4 py-2.5 rounded-xl bg-base-200 text-base-content/60 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors">
-                                Cancel
-                            </a>
+                            <x-ui.button type="submit" variant="primary">Save Changes</x-ui.button>
+                            <x-ui.button variant="ghost" href="{{ route('profile.show', auth()->user()) }}">Cancel</x-ui.button>
                         </div>
                     </form>
                 </div>

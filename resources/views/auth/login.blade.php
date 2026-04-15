@@ -1,21 +1,23 @@
 <x-layouts.auth title="Login">
     @if (session('status'))
-        <x-alert>{{ session('status') }}</x-alert>
+        <x-ui.alert variant="success">{{ session('status') }}</x-ui.alert>
     @endif
 
-    <form method="POST" action="{{ route('login.store') }}" class="grid gap-4">
+    <form method="POST" action="{{ route('login.store') }}" class="space-y-4">
         @csrf
 
         <x-form.field label="Email" name="email" type="email" required autofocus />
         <x-form.field label="Password" name="password" type="password" required />
 
-        <label class="label cursor-pointer justify-start gap-3">
-            <input type="checkbox" name="remember" class="checkbox checkbox-sm">
-            <span class="label-text">Remember me</span>
+        <label class="flex items-center gap-3 cursor-pointer group">
+            <input type="checkbox" name="remember" class="size-4 rounded-md border-base-300/70 text-primary focus:ring-primary/30 transition">
+            <span class="text-sm text-base-content/60 group-hover:text-base-content/80 transition-colors">Remember me</span>
         </label>
 
-        <button type="submit" class="btn btn-primary rounded-md">Login</button>
+        <x-ui.button type="submit" variant="primary" class="w-full">Login</x-ui.button>
     </form>
 
-    <a href="{{ route('password.request') }}" class="link link-hover">Forgot password?</a>
+    <div class="text-center mt-2">
+        <a href="{{ route('password.request') }}" class="text-sm text-primary/80 hover:text-primary transition-colors font-medium">Forgot password?</a>
+    </div>
 </x-layouts.auth>

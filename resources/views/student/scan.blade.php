@@ -1,9 +1,4 @@
 <x-layouts.app title="Scan QR Code">
-    <style>
-        @keyframes d-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-        .d { animation: d-up .45s cubic-bezier(.16,1,.3,1) both; }
-        .d1 { animation-delay: .00s; } .d2 { animation-delay: .07s; } .d3 { animation-delay: .14s; }
-    </style>
     <div class="flex min-h-screen bg-base-200">
         <x-nav.sidebar active="scan" />
 
@@ -20,8 +15,8 @@
                 <div id="scan-result" class="hidden"></div>
 
                 {{-- Camera viewport --}}
-                <div class="d d2 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
-                    <div class="px-5 py-4 border-b border-base-300/30">
+                <div class="d d2 af-card overflow-hidden !p-0">
+                    <div class="px-5 py-4 border-b af-divider">
                         <h2 class="font-semibold text-sm">Camera</h2>
                     </div>
                     <div class="p-4 flex flex-col items-center gap-4">

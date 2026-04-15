@@ -1,10 +1,4 @@
 <x-layouts.app title="Create Class">
-    <style>
-        @keyframes d-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-        .d { animation: d-up .45s cubic-bezier(.16,1,.3,1) both; }
-        .d1 { animation-delay: .00s; } .d2 { animation-delay: .07s; } .d3 { animation-delay: .14s; }
-    </style>
-
     <div class="flex min-h-screen bg-base-200">
         <x-nav.sidebar active="classes" />
 
@@ -22,63 +16,23 @@
                         <p class="mt-1 text-sm text-base-content/50">Set up a new class for your students.</p>
                     </div>
 
-                    <form method="POST" action="{{ route('teacher.classes.store') }}" class="d d2 rounded-2xl border border-base-300/50 bg-base-100 p-6 space-y-5">
+                    <form method="POST" action="{{ route('teacher.classes.store') }}" class="d d2 af-card p-6 space-y-5">
                         @csrf
 
-                        <div class="form-control">
-                            <label class="label pb-1" for="name">
-                                <span class="label-text font-medium text-sm">Class Name <span class="text-error">*</span></span>
-                            </label>
-                            <input
-                                id="name"
-                                type="text"
-                                name="name"
-                                value="{{ old('name') }}"
-                                class="input input-bordered w-full rounded-xl input-sm h-10 @error('name') input-error @enderror"
-                                placeholder="e.g. ICT 101"
-                                required
-                                autofocus
-                            >
-                            @error('name')
-                                <p class="mt-1 text-xs text-error">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.field name="name" label="Class Name" required>
+                            <input id="name" type="text" name="name" value="{{ old('name') }}" class="af-input @error('name') af-input-error @enderror" placeholder="e.g. ICT 101" required autofocus>
+                        </x-form.field>
 
-                        <div class="form-control">
-                            <label class="label pb-1" for="section">
-                                <span class="label-text font-medium text-sm">Section</span>
-                            </label>
-                            <input
-                                id="section"
-                                type="text"
-                                name="section"
-                                value="{{ old('section') }}"
-                                class="input input-bordered w-full rounded-xl input-sm h-10 @error('section') input-error @enderror"
-                                placeholder="e.g. Section A"
-                            >
-                            @error('section')
-                                <p class="mt-1 text-xs text-error">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.field name="section" label="Section">
+                            <input id="section" type="text" name="section" value="{{ old('section') }}" class="af-input @error('section') af-input-error @enderror" placeholder="e.g. Section A">
+                        </x-form.field>
 
-                        <div class="form-control">
-                            <label class="label pb-1" for="description">
-                                <span class="label-text font-medium text-sm">Description</span>
-                            </label>
-                            <textarea
-                                id="description"
-                                name="description"
-                                rows="3"
-                                class="textarea textarea-bordered w-full rounded-xl @error('description') textarea-error @enderror"
-                                placeholder="Optional class description"
-                            >{{ old('description') }}</textarea>
-                            @error('description')
-                                <p class="mt-1 text-xs text-error">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.field name="description" label="Description">
+                            <textarea id="description" name="description" rows="3" class="af-input @error('description') af-input-error @enderror" placeholder="Optional class description">{{ old('description') }}</textarea>
+                        </x-form.field>
 
                         <div class="flex justify-end pt-2">
-                            <button type="submit" class="btn btn-primary rounded-xl">Create Class</button>
+                            <x-ui.button type="submit" variant="primary">Create Class</x-ui.button>
                         </div>
                     </form>
 

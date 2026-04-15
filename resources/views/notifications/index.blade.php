@@ -13,17 +13,17 @@
                     @if ($notifications->where('read_at', null)->count() > 0)
                         <form method="POST" action="{{ route('notifications.read-all') }}">
                             @csrf
-                            <button type="submit" class="btn btn-ghost btn-sm rounded-xl text-primary">Mark all as read</button>
+                            <x-ui.button type="submit" variant="ghost" size="sm">Mark all as read</x-ui.button>
                         </form>
                     @endif
                 </div>
 
-                <div class="bg-base-100 rounded-2xl border border-base-300/50 overflow-hidden divide-y divide-base-300/30">
+                <div class="af-card !p-0 overflow-hidden divide-y af-divider">
                     @forelse ($notifications as $notification)
                         <!-- <a href="{{ $notification->data['url'] ?? '#' }}" -->
                         <a
                            onclick="fetch('{{ route('notifications.read', $notification->id) }}', {method:'POST',headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'}})"
-                           class="flex items-start gap-3 px-5 py-4 hover:bg-base-200/50 transition-colors {{ $notification->read_at ? 'opacity-60' : '' }}">
+                           class="flex items-start gap-3 px-5 py-4 hover:bg-base-content/[.03] transition-colors {{ $notification->read_at ? 'opacity-60' : '' }}">
                             <div class="mt-0.5 shrink-0">
                                 @if (! $notification->read_at)
                                     <span class="size-2.5 rounded-full bg-primary block"></span>

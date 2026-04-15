@@ -4,7 +4,7 @@
 
         <div class="flex items-center justify-between rounded-xl bg-base-200 px-4 py-3 text-sm">
             <p class="text-base-content/60 text-xs uppercase tracking-wide font-medium">Invited as</p>
-            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold text-primary bg-primary/10 border-primary/20">{{ $invitation->role->value }}</span>
+            <x-ui.badge variant="primary" size="xs">{{ $invitation->role->value }}</x-ui.badge>
         </div>
 
         <div>
@@ -13,28 +13,24 @@
                 type="email"
                 id="email"
                 value="{{ $invitation->email }}"
-                class="w-full rounded-xl border border-base-300/70 bg-base-200 px-3 py-2.5 text-sm text-base-content/60 cursor-not-allowed"
+                class="af-input bg-base-200 text-base-content/60 cursor-not-allowed"
                 readonly
                 disabled
             >
         </div>
 
-        <div>
-            <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="name">Full Name</label>
+        <x-form.field name="name" label="Full Name" required>
             <input
                 type="text"
                 id="name"
                 name="name"
                 value="{{ old('name', $invitation->name) }}"
-                class="w-full rounded-xl border {{ $errors->has('name') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
+                class="af-input @error('name') af-input-error @enderror"
                 placeholder="Your full name"
                 required
                 autofocus
             >
-            @error('name')
-                <p class="mt-1 text-xs text-error">{{ $message }}</p>
-            @enderror
-        </div>
+        </x-form.field>
 
         <x-form.field
             label="Password"
@@ -58,38 +54,32 @@
                 <p class="text-xs text-base-content/50">We'll notify them whenever you're marked absent.</p>
             </div>
 
-            <div>
-                <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="guardian_name">Parent/Guardian Full Name</label>
+            <x-form.field name="guardian_name" label="Parent/Guardian Full Name" required>
                 <input
                     type="text"
                     id="guardian_name"
                     name="guardian_name"
                     value="{{ old('guardian_name') }}"
-                    class="w-full rounded-xl border {{ $errors->has('guardian_name') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
+                    class="af-input @error('guardian_name') af-input-error @enderror"
                     placeholder="Full name"
                     required
                 >
-                @error('guardian_name')<p class="mt-1 text-xs text-error">{{ $message }}</p>@enderror
-            </div>
+            </x-form.field>
 
-            <div>
-                <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5" for="guardian_email">Parent/Guardian Email</label>
+            <x-form.field name="guardian_email" label="Parent/Guardian Email" required>
                 <input
                     type="email"
                     id="guardian_email"
                     name="guardian_email"
                     value="{{ old('guardian_email') }}"
-                    class="w-full rounded-xl border {{ $errors->has('guardian_email') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
+                    class="af-input @error('guardian_email') af-input-error @enderror"
                     placeholder="parent@example.com"
                     required
                 >
-                @error('guardian_email')<p class="mt-1 text-xs text-error">{{ $message }}</p>@enderror
-            </div>
+            </x-form.field>
         @endif
 
-        <button type="submit" class="mt-2 w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-content text-sm font-semibold hover:opacity-90 transition-opacity">
-            Create Account
-        </button>
+        <x-ui.button type="submit" variant="primary" class="w-full mt-2">Create Account</x-ui.button>
 
         <p class="text-center text-xs text-base-content/40">
             Invitation expires {{ $invitation->expires_at->format('F j, Y') }}

@@ -1,19 +1,4 @@
 <x-layouts.app title="Admin Dashboard">
-    <style>
-        @keyframes d-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-        .d { animation: d-up .55s cubic-bezier(.16,1,.3,1) both; }
-        .d1 { animation-delay: .00s; } .d2 { animation-delay: .07s; } .d3 { animation-delay: .14s; }
-        .d4 { animation-delay: .21s; } .d5 { animation-delay: .28s; } .d6 { animation-delay: .35s; }
-        .d7 { animation-delay: .42s; } .d8 { animation-delay: .49s; }
-        @keyframes blob-drift {
-            0%,100% { transform: translate(0,0) scale(1); }
-            33%  { transform: translate(-12px,10px) scale(1.07); }
-            66%  { transform: translate(10px,-8px) scale(.95); }
-        }
-        .blob-a { animation: blob-drift 9s ease-in-out infinite; }
-        .blob-b { animation: blob-drift 11s ease-in-out infinite reverse; animation-delay: 2s; }
-    </style>
-
     <div class="flex min-h-screen bg-base-200">
         <x-nav.sidebar active="dashboard" />
 
@@ -21,16 +6,16 @@
             <div class="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-5">
 
                 {{-- ── GREETING HERO ── --}}
-                <div class="d d1 relative overflow-hidden rounded-3xl bg-base-100 border border-base-300/30 px-7 py-7 md:px-10 md:py-9">
+                <div class="d d1 relative overflow-hidden af-card px-7 py-7 md:px-10 md:py-9">
                     <div class="blob-a absolute -top-16 -right-12 size-64 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
                     <div class="blob-b absolute -bottom-10 left-1/3 size-44 rounded-full bg-secondary/10 blur-2xl pointer-events-none"></div>
-                    <div class="absolute inset-0 pointer-events-none" style="background-image:radial-gradient(circle,oklch(var(--bc)/.06) 1px,transparent 1px);background-size:22px 22px;"></div>
+                    <div class="af-dots absolute inset-0 pointer-events-none"></div>
                     <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
                         <div class="flex items-center gap-4">
                             @if ($user->avatarUrl)
-                                <img src="{{ $user->avatarUrl }}" class="size-14 rounded-2xl object-cover ring-2 ring-primary/40 shrink-0" alt="">
+                                <img src="{{ $user->avatarUrl }}" class="size-14 rounded-2xl object-cover ring-2 ring-primary/30 shadow-lg shadow-primary/10 shrink-0" alt="">
                             @else
-                                <div class="size-14 rounded-2xl bg-primary/10 flex items-center justify-center text-xl font-black text-primary shrink-0">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
+                                <div class="size-14 rounded-2xl bg-primary/12 flex items-center justify-center text-xl font-black text-primary shrink-0 ring-1 ring-primary/15">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
                             @endif
                             <div>
                                 <p class="text-[11px] font-bold uppercase tracking-[.25em] text-base-content/35">Welcome back</p>
@@ -40,12 +25,9 @@
                         </div>
                         <div class="flex items-center gap-2.5 flex-wrap">
                             @if ($pendingExcuses > 0)
-                                <span class="inline-flex items-center gap-1.5 rounded-full bg-warning/10 border border-warning/25 text-warning text-sm font-semibold px-3.5 py-1.5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M10.29 3.86L1.71 18a2 2 0 0 0 1.71 3h16.58a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0ZM12 9v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                                    {{ $pendingExcuses }} pending
-                                </span>
+                                <x-ui.badge variant="warning" dot>{{ $pendingExcuses }} pending</x-ui.badge>
                             @endif
-                            <span class="inline-flex items-center rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-bold px-4 py-1.5">Admin</span>
+                            <x-ui.badge variant="primary">Admin</x-ui.badge>
                         </div>
                     </div>
                 </div>
@@ -94,7 +76,6 @@
                         />
                     </div>
                 </div>
-
 
             </div>
         </main>

@@ -1,5 +1,12 @@
-@props(['type' => 'success'])
+@props(['type' => 'success', 'message' => null])
 
-<div class="alert alert-{{ $type }}">
-    <span>{{ $slot }}</span>
-</div>
+@php
+    $variant = match ($type) {
+        'success' => 'success',
+        'error', 'danger' => 'error',
+        'warning' => 'warning',
+        default => 'info',
+    };
+@endphp
+
+<x-ui.alert :variant="$variant">{{ $message ?? $slot }}</x-ui.alert>

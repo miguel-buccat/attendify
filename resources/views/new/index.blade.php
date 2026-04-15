@@ -95,7 +95,7 @@
             {{-- Right: feature cards orb --}}
             <div class="flex-1 relative flex items-center justify-center min-h-[420px] lg:min-h-[520px] w-full max-w-lg lg:max-w-none">
                 {{-- Institution logo center orb --}}
-                <div class="absolute size-28 rounded-3xl bg-base-100 border border-base-300/50 shadow-xl flex items-center justify-center z-20 p-4">
+                <div class="absolute size-28 rounded-3xl af-card flex items-center justify-center z-20 !p-4 shadow-xl">
                     <img src="{{ $institutionLogo }}" alt="{{ $institutionName }}" class="size-full object-contain">
                 </div>
 
@@ -150,7 +150,7 @@
             </div>
         </section>
 
-        <footer class="relative z-10 border-t border-base-300/30 px-6 py-4 md:px-10 text-xs text-base-content/35 flex items-center justify-between">
+        <footer class="relative z-10 border-t af-divider px-6 py-4 md:px-10 text-xs text-base-content/35 flex items-center justify-between">
             <span>Attendify licensed under the MIT License. Copyright &copy; {{ now()->year }} Attendify Developers.</span>
         </footer>
     </main>

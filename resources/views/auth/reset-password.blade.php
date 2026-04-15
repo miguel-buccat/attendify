@@ -8,6 +8,6 @@
         <x-form.field label="New Password" name="password" type="password" required />
         <x-form.field label="Confirm Password" name="password_confirmation" type="password" required />
 
-        <button type="submit" class="btn btn-primary rounded-md">Reset Password</button>
+        <x-ui.button type="submit" variant="primary" class="w-full">Reset Password</x-ui.button>
     </form>
 </x-layouts.auth>

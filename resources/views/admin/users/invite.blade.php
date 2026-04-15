@@ -1,14 +1,9 @@
 <x-layouts.app title="Invite Users">
-    <style>
-        @keyframes d-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-        .d { animation: d-up .45s cubic-bezier(.16,1,.3,1) both; }
-        .d1 { animation-delay: .00s; } .d2 { animation-delay: .07s; }
-    </style>
     <div class="flex min-h-screen bg-base-200">
         <x-nav.sidebar active="users" />
 
         <main class="flex-1 min-w-0 lg:min-h-screen pt-14 lg:pt-0">
-            <div class="p-4 md:p-8">
+            <div class="p-4 md:p-6 lg:p-8">
                 <div class="max-w-2xl">
 
                     <div class="d d1 mb-6">
@@ -40,7 +35,7 @@
                         @csrf
 
                         <div id="invitees-list" class="space-y-3">
-                            <div class="invite-row rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden" data-index="0">
+                            <div class="invite-row af-card overflow-hidden !p-0" data-index="0">
                                 <div class="px-5 py-4">
                                     <div class="flex items-start gap-3">
                                         <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -51,7 +46,7 @@
                                                     id="name-0"
                                                     name="invitees[0][name]"
                                                     value="{{ old('invitees.0.name') }}"
-                                                    class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 {{ $errors->has('invitees.0.name') ? 'border-error' : '' }}"
+                                                    class="af-input {{ $errors->has('invitees.0.name') ? 'af-input-error' : '' }}"
                                                     placeholder="Invitee's full name"
                                                     autofocus
                                                 >
@@ -63,7 +58,7 @@
                                                     id="email-0"
                                                     name="invitees[0][email]"
                                                     value="{{ old('invitees.0.email') }}"
-                                                    class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 {{ $errors->has('invitees.0.email') ? 'border-error' : '' }}"
+                                                    class="af-input {{ $errors->has('invitees.0.email') ? 'af-input-error' : '' }}"
                                                     placeholder="invitee@example.com"
                                                     required
                                                 >
@@ -73,7 +68,7 @@
                                                 <select
                                                     id="role-0"
                                                     name="invitees[0][role]"
-                                                    class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 {{ $errors->has('invitees.0.role') ? 'border-error' : '' }}"
+                                                    class="af-input {{ $errors->has('invitees.0.role') ? 'af-input-error' : '' }}"
                                                     required
                                                 >
                                                     <option value="" disabled {{ old('invitees.0.role') ? '' : 'selected' }}>Select role</option>
@@ -111,12 +106,8 @@
                         </button>
 
                         <div class="flex items-center gap-3 mt-5">
-                            <button type="submit" id="submit-btn" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-content text-sm font-semibold hover:opacity-90 transition-opacity">
-                                Send Invitation
-                            </button>
-                            <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-4 py-2.5 rounded-xl bg-base-200 text-base-content/60 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors">
-                                Cancel
-                            </a>
+                            <x-ui.button type="submit" variant="primary" id="submit-btn">Send Invitation</x-ui.button>
+                            <x-ui.button href="{{ route('admin.users.index') }}" variant="ghost">Cancel</x-ui.button>
                         </div>
                     </form>
 

@@ -12,7 +12,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     @forelse ($classesRanked as $index => $class)
-                        <div class="bg-base-100 border border-base-300/50 rounded-2xl p-5 hover:shadow-md transition-shadow">
+                        <div class="af-card p-5 hover:shadow-md transition-shadow">
                             <div class="flex items-start justify-between">
                                 <div>
                                     <h3 class="text-base font-bold">{{ $class->name }}</h3>

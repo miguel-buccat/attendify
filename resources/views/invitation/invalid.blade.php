@@ -16,8 +16,6 @@
             @endif
         </div>
 
-        <a href="{{ route('login') }}" class="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-content text-sm font-semibold hover:opacity-90 transition-opacity">
-            Go to Login
-        </a>
+        <x-ui.button variant="primary" href="{{ route('login') }}" class="w-full">Go to Login</x-ui.button>
     </div>
 </x-layouts.auth>

@@ -1,11 +1,4 @@
 <x-layouts.app :title="$class->name">
-    <style>
-        @keyframes d-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-        .d { animation: d-up .45s cubic-bezier(.16,1,.3,1) both; }
-        .d1 { animation-delay: .00s; } .d2 { animation-delay: .07s; } .d3 { animation-delay: .14s; }
-        .d4 { animation-delay: .21s; } .d5 { animation-delay: .28s; } .d6 { animation-delay: .35s; }
-    </style>
-
     <div class="flex min-h-screen bg-base-200">
         <x-nav.sidebar active="classes" />
 
@@ -28,12 +21,12 @@
                         </div>
                         <div class="flex items-center gap-2 shrink-0 flex-wrap">
                             @if ($class->status->value === 'Active')
-                                <span class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold text-success bg-success/10 border-success/20">Active</span>
+                                <x-ui.badge variant="success">Active</x-ui.badge>
                             @else
-                                <span class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold text-base-content/50 bg-base-200 border-base-300/50">Archived</span>
+                                <x-ui.badge variant="neutral">Archived</x-ui.badge>
                             @endif
                             @if ($class->isActive())
-                                <button type="button" onclick="document.getElementById('archive-class-modal').showModal()" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-base-200 text-base-content/50 border border-base-300/50 text-xs font-medium hover:bg-base-300/50 transition-colors">Archive</button>
+                                <x-ui.button variant="ghost" size="xs" onclick="document.getElementById('archive-class-modal').showModal()">Archive</x-ui.button>
                             @endif
                         </div>
                     </div>
@@ -47,13 +40,13 @@
 
                 {{-- Edit details (collapsible) --}}
                 @if ($class->description || $class->isActive())
-                <div class="d d2 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
+                <div class="d d2 af-card overflow-hidden !p-0">
                     <details class="group">
-                        <summary class="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer hover:bg-base-200/40 transition-colors list-none">
+                        <summary class="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer hover:bg-base-content/[.03] transition-colors list-none">
                             <span class="font-semibold text-sm">Class Details</span>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4 text-base-content/40 transition-transform group-open:rotate-180"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </summary>
-                        <div class="px-5 pb-5 pt-2 space-y-4 border-t border-base-300/30">
+                        <div class="px-5 pb-5 pt-2 space-y-4 border-t af-divider">
                             @if ($class->description)
                                 <p class="text-sm text-base-content/60">{{ $class->description }}</p>
                             @endif
@@ -62,21 +55,17 @@
                                 @csrf
                                 @method('PATCH')
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div class="form-control">
-                                        <label class="label pb-1" for="edit-name"><span class="label-text text-sm">Name</span></label>
-                                        <input id="edit-name" type="text" name="name" value="{{ old('name', $class->name) }}" class="input input-bordered w-full rounded-xl input-sm h-10 @error('name') input-error @enderror" required>
-                                        @error('name') <p class="mt-1 text-xs text-error">{{ $message }}</p> @enderror
-                                    </div>
-                                    <div class="form-control">
-                                        <label class="label pb-1" for="edit-section"><span class="label-text text-sm">Section</span></label>
-                                        <input id="edit-section" type="text" name="section" value="{{ old('section', $class->section) }}" class="input input-bordered w-full rounded-xl input-sm h-10">
-                                    </div>
+                                    <x-form.field name="name" label="Name">
+                                        <input id="edit-name" type="text" name="name" value="{{ old('name', $class->name) }}" class="af-input @error('name') af-input-error @enderror" required>
+                                    </x-form.field>
+                                    <x-form.field name="section" label="Section">
+                                        <input id="edit-section" type="text" name="section" value="{{ old('section', $class->section) }}" class="af-input">
+                                    </x-form.field>
                                 </div>
-                                <div class="form-control">
-                                    <label class="label pb-1" for="edit-desc"><span class="label-text text-sm">Description</span></label>
-                                    <textarea id="edit-desc" name="description" rows="2" class="textarea textarea-bordered w-full rounded-xl text-sm">{{ old('description', $class->description) }}</textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-sm rounded-xl">Save Changes</button>
+                                <x-form.field name="description" label="Description">
+                                    <textarea id="edit-desc" name="description" rows="2" class="af-input">{{ old('description', $class->description) }}</textarea>
+                                </x-form.field>
+                                <x-ui.button type="submit" variant="primary" size="sm">Save Changes</x-ui.button>
                             </form>
                             @endif
                         </div>
@@ -86,53 +75,48 @@
 
                 {{-- Enroll Students --}}
                 @if ($class->isActive())
-                <div class="d d3 rounded-2xl border border-base-300/50 bg-base-100">
-                    <div class="px-5 py-4 border-b border-base-300/30">
+                <div class="d d3 af-card overflow-hidden !p-0">
+                    <div class="px-5 py-4 border-b af-divider">
                         <h2 class="font-semibold text-sm">Enroll Students</h2>
                         <p class="text-xs text-base-content/40 mt-0.5">Search by name or email to add students to this class.</p>
                     </div>
                     <div class="p-5 space-y-3">
                         <div class="relative" id="search-container">
                             <input type="text" id="student-search"
-                                class="input input-bordered w-full rounded-xl input-sm h-10"
+                                class="af-input"
                                 placeholder="Type a student name or email…"
                                 autocomplete="off" name="student_search_nonce" role="presentation">
-                            <div id="search-results" class="absolute z-20 top-full left-0 right-0 mt-1 rounded-2xl border border-base-300/50 bg-base-100 shadow-xl hidden max-h-64 overflow-y-auto"></div>
+                            <div id="search-results" class="absolute z-20 top-full left-0 right-0 mt-1 af-card !p-0 shadow-xl hidden max-h-64 overflow-y-auto"></div>
                         </div>
                         <form method="POST" action="{{ route('teacher.classes.enroll', $class) }}" id="enroll-form">
                             @csrf
                             <div id="selected-students" class="space-y-2"></div>
-                            <button type="submit" id="enroll-btn" class="btn btn-primary btn-sm rounded-xl mt-3 hidden">Enroll Students</button>
+                            <button type="submit" id="enroll-btn" class="af-btn af-btn-primary btn-sm rounded-xl mt-3 hidden">Enroll Students</button>
                         </form>
                     </div>
                 </div>
                 @endif
 
                 {{-- Student Roster --}}
-                <div class="d d4 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
-                    <div class="px-5 py-4 border-b border-base-300/30 flex items-center justify-between">
-                        <h2 class="font-semibold text-sm">Students</h2>
-                        <div class="flex items-center gap-3">
-                            <a href="{{ route('teacher.classes.analytics.pdf', $class) }}" class="inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5 5 5 5-5m-5 5V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                Export PDF
-                            </a>
-                            <span class="text-xs text-base-content/40 font-mono">{{ $class->students->count() }}</span>
-                        </div>
+                <div class="d d4 af-card overflow-hidden !p-0">
+                    <div class="px-5 py-4 border-b af-divider flex items-center justify-between">
+                        <x-ui.section-header label="Students" :count="$class->students->count()" action-href="{{ route('teacher.classes.analytics.pdf', $class) }}" action-label="Export PDF" />
                     </div>
                     @if ($class->students->isEmpty())
-                        <div class="py-10 flex flex-col items-center gap-2 text-center px-6">
-                            <p class="text-sm text-base-content/40">No students enrolled yet.</p>
-                        </div>
+                        <x-ui.empty-state
+                            icon="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+                            title="No students enrolled"
+                            description="No students enrolled yet."
+                        />
                     @else
-                        <div class="divide-y divide-base-300/30">
+                        <div class="divide-y af-divider">
                             @foreach ($class->students as $student)
-                                <div class="flex items-center justify-between gap-3 px-5 py-3 hover:bg-base-200/40 transition-colors">
+                                <div class="flex items-center justify-between gap-3 px-5 py-3 hover:bg-base-content/[.03] transition-colors">
                                     <a href="{{ route('profile.show', $student) }}" class="flex items-center gap-3 min-w-0 group">
                                         @if ($student->avatar_url)
-                                            <img src="{{ $student->avatar_url }}" alt="{{ $student->name }}" class="size-8 rounded-xl object-cover shrink-0">
+                                            <img src="{{ $student->avatar_url }}" alt="{{ $student->name }}" class="size-8 rounded-xl object-cover ring-1 ring-base-300/30 shrink-0">
                                         @else
-                                            <span class="inline-flex items-center justify-center size-8 rounded-xl bg-accent/10 text-accent text-xs font-bold shrink-0">{{ mb_strtoupper(mb_substr($student->name, 0, 1)) }}</span>
+                                            <span class="inline-flex items-center justify-center size-8 rounded-xl bg-accent/10 text-accent ring-1 ring-accent/15 text-xs font-bold shrink-0">{{ mb_strtoupper(mb_substr($student->name, 0, 1)) }}</span>
                                         @endif
                                         <div class="min-w-0">
                                             <p class="text-sm font-medium group-hover:text-primary transition-colors truncate">{{ $student->name }}</p>
@@ -155,46 +139,45 @@
                 </div>
 
                 {{-- Sessions --}}
-                <div class="d d5 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
-                    <div class="px-5 py-4 border-b border-base-300/30 flex items-center justify-between">
+                <div class="d d5 af-card overflow-hidden !p-0">
+                    <div class="px-5 py-4 border-b af-divider flex items-center justify-between">
                         <h2 class="font-semibold text-sm">Sessions</h2>
                         @if ($class->isActive())
                             <div class="flex items-center gap-2">
-                                <button type="button" onclick="document.getElementById('preschedule-modal').showModal()"
-                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-base-200 text-base-content/60 border border-base-300/50 text-xs font-semibold hover:bg-base-300/50 transition-colors">
+                                <x-ui.button variant="ghost" size="xs" onclick="document.getElementById('preschedule-modal').showModal()">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                     Pre-Schedule
-                                </button>
-                                <button type="button" onclick="document.getElementById('create-session-modal').showModal()"
-                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 text-primary border border-primary/15 text-xs font-semibold hover:bg-primary/15 transition-colors">
+                                </x-ui.button>
+                                <x-ui.button variant="outline" size="xs" onclick="document.getElementById('create-session-modal').showModal()">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                                     New Session
-                                </button>
+                                </x-ui.button>
                             </div>
                         @endif
                     </div>
                     @if ($class->sessions->isEmpty())
-                        <div class="py-10 flex flex-col items-center gap-2 text-center px-6">
-                            <p class="text-sm text-base-content/40">No sessions yet.</p>
-                        </div>
+                        <x-ui.empty-state
+                            icon="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"
+                            title="No sessions yet"
+                            description="Schedule your first session to get started."
+                        />
                     @else
-                        <div class="divide-y divide-base-300/30">
+                        <div class="divide-y af-divider">
                             @foreach ($class->sessions->sortBy('start_time') as $session)
                                 @php
-                                    $sStyle = match ($session->status->value) {
-                                        'Active'     => 'text-success bg-success/10 border-success/20',
-                                        'Scheduled'  => 'text-info bg-info/10 border-info/20',
-                                        'Completed'  => 'text-base-content/50 bg-base-200 border-base-300/50',
-                                        'Cancelled'  => 'text-error bg-error/10 border-error/20',
-                                        default      => 'text-base-content/50 bg-base-200 border-base-300/50',
+                                    $sVariant = match ($session->status->value) {
+                                        'Active'    => 'success',
+                                        'Scheduled' => 'info',
+                                        'Cancelled' => 'error',
+                                        default     => 'neutral',
                                     };
                                 @endphp
-                                <a href="{{ route('teacher.sessions.show', $session) }}" class="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-base-200/40 transition-colors">
+                                <a href="{{ route('teacher.sessions.show', $session) }}" class="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-base-content/[.03] transition-colors">
                                     <div class="min-w-0">
-                                        <p class="text-sm font-medium">{{ $session->start_time->format('M d, Y') }}</p>
+                                        <p class="text-sm font-semibold">{{ $session->start_time->format('M d, Y') }}</p>
                                         <p class="text-xs text-base-content/40 mt-0.5">{{ $session->start_time->format('g:i A') }} – {{ $session->end_time->format('g:i A') }} · {{ $session->modality->value }}</p>
                                     </div>
-                                    <span class="shrink-0 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold {{ $sStyle }}">{{ $session->status->value }}</span>
+                                    <x-ui.badge :variant="$sVariant" size="xs">{{ $session->status->value }}</x-ui.badge>
                                 </a>
                             @endforeach
                         </div>
@@ -208,49 +191,44 @@
     {{-- Create Session Modal --}}
     @if ($class->isActive())
     <dialog id="create-session-modal" class="modal">
-        <div class="modal-box rounded-2xl">
+        <div class="af-modal-box modal-box rounded-2xl border border-base-300/30 shadow-2xl">
             <h3 class="text-lg font-semibold mb-4">Schedule New Session</h3>
 
             @if ($errors->any())
-                <div class="alert alert-error text-sm mb-2">
-                    <ul class="list-disc list-inside">
+                <x-ui.alert variant="error" class="mb-2">
+                    <ul class="list-disc list-inside text-sm">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
-                </div>
+                </x-ui.alert>
             @endif
 
             <form method="POST" action="{{ route('teacher.sessions.store', $class) }}" class="space-y-4">
                 @csrf
-                <div class="form-control">
-                    <label class="label"><span class="label-text font-medium">Modality</span></label>
-                    <select name="modality" class="select select-bordered rounded-lg w-full" required>
+                <x-form.field name="modality" label="Modality">
+                    <select name="modality" class="af-input" required>
                         <option value="Onsite">Onsite</option>
                         <option value="Online">Online</option>
                     </select>
-                </div>
-                <div class="form-control">
-                    <label class="label"><span class="label-text font-medium">Location</span></label>
-                    <input type="text" name="location" class="input input-bordered rounded-lg w-full" placeholder="Room or platform URL">
-                </div>
+                </x-form.field>
+                <x-form.field name="location" label="Location">
+                    <input type="text" name="location" class="af-input" placeholder="Room or platform URL">
+                </x-form.field>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div class="form-control">
-                        <label class="label"><span class="label-text font-medium">Start Time</span></label>
-                        <input type="datetime-local" name="start_time" class="input input-bordered rounded-lg w-full" required>
-                    </div>
-                    <div class="form-control">
-                        <label class="label"><span class="label-text font-medium">End Time</span></label>
-                        <input type="datetime-local" name="end_time" class="input input-bordered rounded-lg w-full" required>
-                    </div>
+                    <x-form.field name="start_time" label="Start Time">
+                        <input type="datetime-local" name="start_time" class="af-input" required>
+                    </x-form.field>
+                    <x-form.field name="end_time" label="End Time">
+                        <input type="datetime-local" name="end_time" class="af-input" required>
+                    </x-form.field>
                 </div>
-                <div class="form-control">
-                    <label class="label"><span class="label-text font-medium">Grace Period (minutes)</span></label>
-                    <input type="number" name="grace_period_minutes" class="input input-bordered rounded-lg w-full" value="15" min="1" max="60">
-                </div>
+                <x-form.field name="grace_period_minutes" label="Grace Period (minutes)">
+                    <input type="number" name="grace_period_minutes" class="af-input" value="15" min="1" max="60">
+                </x-form.field>
                 <div class="modal-action">
-                    <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost rounded-lg">Cancel</button>
-                    <button type="submit" class="btn btn-primary rounded-lg">Schedule</button>
+                    <x-ui.button type="button" variant="ghost" onclick="this.closest('dialog').close()">Cancel</x-ui.button>
+                    <x-ui.button type="submit" variant="primary">Schedule</x-ui.button>
                 </div>
             </form>
         </div>
@@ -259,18 +237,18 @@
 
     {{-- Pre-Schedule Modal --}}
     <dialog id="preschedule-modal" class="modal">
-        <div class="modal-box rounded-2xl max-w-lg">
+        <div class="af-modal-box modal-box rounded-2xl border border-base-300/30 shadow-2xl max-w-lg">
             <h3 class="text-lg font-semibold mb-1">Pre-Schedule Sessions</h3>
             <p class="text-xs text-base-content/40 mb-4">Create recurring sessions for specific days of the week.</p>
 
             @if ($errors->hasBag('preschedule'))
-                <div class="alert alert-error text-sm mb-4">
-                    <ul class="list-disc list-inside">
+                <x-ui.alert variant="error" class="mb-4">
+                    <ul class="list-disc list-inside text-sm">
                         @foreach ($errors->getBag('preschedule')->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
-                </div>
+                </x-ui.alert>
             @endif
 
             <form method="POST" action="{{ route('teacher.sessions.bulk-store', $class) }}" class="space-y-5">
@@ -292,60 +270,52 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div class="form-control">
-                        <label class="label"><span class="label-text font-medium">Modality</span></label>
-                        <select name="modality" class="select select-bordered rounded-lg w-full" required>
+                    <x-form.field name="modality" label="Modality">
+                        <select name="modality" class="af-input" required>
                             <option value="Onsite">Onsite</option>
                             <option value="Online">Online</option>
                         </select>
-                    </div>
-                    <div class="form-control">
-                        <label class="label"><span class="label-text font-medium">Location</span></label>
-                        <input type="text" name="location" class="input input-bordered rounded-lg w-full" placeholder="Room or URL">
-                    </div>
+                    </x-form.field>
+                    <x-form.field name="location" label="Location">
+                        <input type="text" name="location" class="af-input" placeholder="Room or URL">
+                    </x-form.field>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div class="form-control">
-                        <label class="label"><span class="label-text font-medium">Start Time</span></label>
-                        <input type="time" name="start_time" class="input input-bordered rounded-lg w-full" required>
-                    </div>
-                    <div class="form-control">
-                        <label class="label"><span class="label-text font-medium">End Time</span></label>
-                        <input type="time" name="end_time" class="input input-bordered rounded-lg w-full" required>
-                    </div>
+                    <x-form.field name="start_time" label="Start Time">
+                        <input type="time" name="start_time" class="af-input" required>
+                    </x-form.field>
+                    <x-form.field name="end_time" label="End Time">
+                        <input type="time" name="end_time" class="af-input" required>
+                    </x-form.field>
                 </div>
 
-                <div class="form-control">
-                    <label class="label"><span class="label-text font-medium">Grace Period (minutes)</span></label>
-                    <input type="number" name="grace_period_minutes" class="input input-bordered rounded-lg w-full" value="15" min="1" max="60">
-                </div>
+                <x-form.field name="grace_period_minutes" label="Grace Period (minutes)">
+                    <input type="number" name="grace_period_minutes" class="af-input" value="15" min="1" max="60">
+                </x-form.field>
 
-                <div class="border-t border-base-300/30 pt-4 space-y-3">
+                <div class="border-t af-divider pt-4 space-y-3">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="form-control">
-                            <label class="label"><span class="label-text font-medium">Repeat Every</span></label>
-                            <select name="interval_weeks" class="select select-bordered rounded-lg w-full" required>
+                        <x-form.field name="interval_weeks" label="Repeat Every">
+                            <select name="interval_weeks" class="af-input" required>
                                 <option value="1">Every week</option>
                                 <option value="2">Every 2 weeks</option>
                                 <option value="3">Every 3 weeks</option>
                                 <option value="4">Every 4 weeks</option>
                             </select>
-                        </div>
-                        <div class="form-control">
-                            <label class="label"><span class="label-text font-medium">Starting From</span></label>
-                            <input type="date" name="start_date" class="input input-bordered rounded-lg w-full" required>
-                        </div>
+                        </x-form.field>
+                        <x-form.field name="start_date" label="Starting From">
+                            <input type="date" name="start_date" class="af-input" required>
+                        </x-form.field>
                     </div>
-                    <div class="form-control">
-                        <label class="label"><span class="label-text font-medium">Until</span></label>
-                        <input type="date" name="end_date" class="input input-bordered rounded-lg w-full" required>
-                    </div>
+                    <x-form.field name="end_date" label="Until">
+                        <input type="date" name="end_date" class="af-input" required>
+                    </x-form.field>
                 </div>
 
                 <div class="modal-action">
-                    <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost rounded-lg">Cancel</button>
-                    <button type="submit" class="btn btn-primary rounded-lg">Schedule Sessions</button>
+                    <x-ui.button type="button" variant="ghost" onclick="this.closest('dialog').close()">Cancel</x-ui.button>
+                    <x-ui.button type="submit" variant="primary">Schedule Sessions</x-ui.button>
                 </div>
             </form>
         </div>
@@ -482,14 +452,14 @@
     {{-- Archive Class Modal --}}
     @if ($class->isActive())
     <dialog id="archive-class-modal" class="modal">
-        <div class="modal-box rounded-2xl max-w-sm">
+        <div class="af-modal-box modal-box rounded-2xl border border-base-300/30 shadow-2xl max-w-sm">
             <h3 class="text-lg font-bold">Archive Class</h3>
             <p class="text-sm text-base-content/60 mt-2">Are you sure you want to archive <strong>{{ $class->name }}</strong>? Students will no longer be able to attend sessions.</p>
             <div class="modal-action">
-                <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost rounded-xl">Cancel</button>
+                <x-ui.button type="button" variant="ghost" onclick="this.closest('dialog').close()">Cancel</x-ui.button>
                 <form method="POST" action="{{ route('teacher.classes.archive', $class) }}">
                     @csrf
-                    <button type="submit" class="btn btn-error rounded-xl">Archive</button>
+                    <x-ui.button type="submit" variant="danger">Archive</x-ui.button>
                 </form>
             </div>
         </div>
@@ -498,15 +468,15 @@
 
     {{-- Unenroll Student Modal --}}
     <dialog id="unenroll-student-modal" class="modal">
-        <div class="modal-box rounded-2xl max-w-sm">
+        <div class="af-modal-box modal-box rounded-2xl border border-base-300/30 shadow-2xl max-w-sm">
             <h3 class="text-lg font-bold">Remove Student</h3>
             <p class="text-sm text-base-content/60 mt-2">Are you sure you want to remove <strong id="unenroll-student-name"></strong> from this class?</p>
             <div class="modal-action">
-                <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost rounded-xl">Cancel</button>
+                <x-ui.button type="button" variant="ghost" onclick="this.closest('dialog').close()">Cancel</x-ui.button>
                 <form method="POST" id="unenroll-form" action="">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-error rounded-xl">Remove</button>
+                    <x-ui.button type="submit" variant="danger">Remove</x-ui.button>
                 </form>
             </div>
         </div>

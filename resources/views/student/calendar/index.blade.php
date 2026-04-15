@@ -19,7 +19,7 @@
                 </div>
 
                 {{-- Calendar Grid --}}
-                <div id="calendar-container" class="bg-base-100 border border-base-300/50 rounded-2xl p-5">
+                <div id="calendar-container" class="af-card p-5">
                     <div class="flex items-center justify-between mb-5">
                         <button id="prev-month" type="button" class="btn btn-ghost btn-sm btn-square rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -38,7 +38,7 @@
                 </div>
 
                 {{-- Day Detail --}}
-                <div id="day-detail" class="hidden bg-base-100 border border-base-300/50 rounded-2xl p-5">
+                <div id="day-detail" class="hidden af-card p-5">
                     <h3 id="day-detail-title" class="font-bold text-sm mb-3"></h3>
                     <div id="day-detail-content" class="space-y-2"></div>
                 </div>

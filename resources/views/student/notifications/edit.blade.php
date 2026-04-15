@@ -11,13 +11,10 @@
                 </div>
 
                 @if (session('success'))
-                    <div class="alert alert-success rounded-2xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <span>{{ session('success') }}</span>
-                    </div>
+                    <x-alert type="success" :message="session('success')" />
                 @endif
 
-                <form method="POST" action="{{ route('student.notifications.update') }}" class="bg-base-100 border border-base-300/50 rounded-2xl divide-y divide-base-300/50">
+                <form method="POST" action="{{ route('student.notifications.update') }}" class="af-card !p-0 divide-y af-divider">
                     @csrf
                     @method('PATCH')
 
@@ -62,7 +59,7 @@
                     </div>
 
                     <div class="p-5">
-                        <button type="submit" class="btn btn-primary btn-sm rounded-xl">Save Preferences</button>
+                        <x-ui.button type="submit" variant="primary" size="sm">Save Preferences</x-ui.button>
                     </div>
                 </form>
             </div>
