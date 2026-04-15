@@ -37,7 +37,7 @@
                             <h2 class="font-semibold text-sm">Your Requests</h2>
                             <span class="text-xs text-base-content/40">{{ $excuseRequests->total() }} total</span>
                         </div>
-                        <div class="divide-y af-divider">
+                        <div class="divide-y divide-base-content/6">
                             @foreach ($excuseRequests as $request)
                                 @php
                                     $statusVariant = match ($request->status->value) {

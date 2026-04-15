@@ -114,7 +114,7 @@
                         <div class="px-5 py-4 border-b af-divider">
                             <h2 class="font-semibold text-sm">Attendance Progress</h2>
                         </div>
-                        <div class="divide-y af-divider">
+                        <div class="divide-y divide-base-content/6">
                             @foreach ($session->attendanceRecords as $record)
                                 @php
                                     $rVariant = match ($record->status->value) {
@@ -259,7 +259,7 @@
                             <div class="px-5 py-4 border-b border-base-300/30">
                                 <h2 class="font-semibold text-sm">Attendance Progress</h2>
                             </div>
-                            <div class="divide-y divide-base-300/30">${buildRowsHtml(data.records)}</div>
+                            <div class="divide-y divide-base-content/6">${buildRowsHtml(data.records)}</div>
                         </div>
                     `;
                 } else {
@@ -356,7 +356,7 @@
                                     <div class="px-5 py-4 border-b border-base-300/30">
                                         <h2 class="font-semibold text-sm">Attendance Progress</h2>
                                     </div>
-                                    <div class="divide-y divide-base-300/30">${buildRowsHtml2(data.records)}</div>
+                                    <div class="divide-y divide-base-content/6">${buildRowsHtml2(data.records)}</div>
                                 </div>
                             `;
                         }

@@ -93,7 +93,7 @@
                             description="No sessions yet."
                         />
                     @else
-                        <div class="divide-y af-divider">
+                        <div class="divide-y divide-base-content/6">
                             @foreach ($sessions as $session)
                                 @php
                                     $record = $records->get($session->id);

@@ -54,7 +54,7 @@
                         <h2 class="font-semibold text-sm">Registered Users</h2>
                         <span class="text-xs text-base-content/40">{{ $users->total() }}</span>
                     </div>
-                    <div class="divide-y af-divider">
+                    <div class="divide-y divide-base-content/6">
                         @forelse ($users as $registeredUser)
                             @php
                                 $roleVariant = match ($registeredUser->role->value) {
@@ -107,7 +107,7 @@
                         <h2 class="font-semibold text-sm">Pending Invitations</h2>
                         <span id="invitations-count" class="text-xs text-base-content/40">{{ $invitations->count() }}</span>
                     </div>
-                    <div id="invitations-list" class="divide-y af-divider">
+                    <div id="invitations-list" class="divide-y divide-base-content/6">
                         @forelse ($invitations as $invitation)
                             @php
                                 $invRoleVariant = match ($invitation->role->value) {

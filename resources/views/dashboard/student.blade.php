@@ -120,7 +120,7 @@
                     @if ($upcomingSessions->isEmpty())
                         <x-ui.empty-state title="No upcoming sessions" description="Check back later for new sessions." icon='<rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' />
                     @else
-                        <div class="divide-y divide-base-300/30">
+                        <div class="divide-y divide-base-content/6">
                             @foreach ($upcomingSessions as $upcoming)
                                 <div class="flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-base-content/[.03] transition-colors">
                                     <div class="flex items-center gap-3 min-w-0">
@@ -145,7 +145,7 @@
                     @if ($recentRecords->isEmpty())
                         <x-ui.empty-state title="No attendance records" description="Your records will appear here." icon='<path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2m-6 9 2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' />
                     @else
-                        <div class="divide-y divide-base-300/30">
+                        <div class="divide-y divide-base-content/6">
                             @foreach ($recentRecords as $record)
                                 @php
                                     $rVariant = match ($record->status) {

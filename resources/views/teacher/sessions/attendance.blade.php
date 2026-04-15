@@ -47,7 +47,7 @@
                         <h2 class="font-semibold text-sm">Attendance Roster</h2>
                         <span class="text-xs text-base-content/40">{{ $enrolledStudents->count() }} students</span>
                     </div>
-                    <div class="divide-y af-divider">
+                    <div class="divide-y divide-base-content/6">
                         @foreach ($enrolledStudents as $student)
                             @php
                                 $record = $recordsByStudent->get($student->id);

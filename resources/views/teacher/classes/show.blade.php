@@ -109,7 +109,7 @@
                             description="No students enrolled yet."
                         />
                     @else
-                        <div class="divide-y af-divider">
+                        <div class="divide-y divide-base-content/6">
                             @foreach ($class->students as $student)
                                 <div class="flex items-center justify-between gap-3 px-5 py-3 hover:bg-base-content/[.03] transition-colors">
                                     <a href="{{ route('profile.show', $student) }}" class="flex items-center gap-3 min-w-0 group">
@@ -162,7 +162,7 @@
                             description="Schedule your first session to get started."
                         />
                     @else
-                        <div class="divide-y af-divider">
+                        <div class="divide-y divide-base-content/6">
                             @foreach ($class->sessions->sortBy('start_time') as $session)
                                 @php
                                     $sVariant = match ($session->status->value) {
