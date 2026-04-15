@@ -330,13 +330,12 @@ All roles can manage their profile by clicking their name/avatar at the bottom o
 | Password | Leave blank to keep your current password |
 | Avatar | Upload a square profile photo |
 | Profile Banner | Upload a wide banner image for your profile page |
-| About Me | Short free-text bio |
 | Guardian Name | (Students) Name of parent/guardian |
 | Guardian Email | (Students) Email address for absence notifications |
 
 ### Viewing Another User's Profile
 
-Click a user's name anywhere in the system to visit their public profile page, which shows their name, role, avatar, banner, and bio.
+Click a user's name anywhere in the system to visit their public profile page, which shows their name, role, avatar, and banner.
 
 ---
 
