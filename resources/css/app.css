@@ -144,24 +144,31 @@
 /* ── Card base style ──────────────────────────────────────────────────── */
 .af-card {
     border-radius: 1.25rem;
-    border: 1px solid oklch(from var(--color-base-300) l c h / 0.5);
+    border: 1px solid oklch(from var(--color-primary) l c h / 0.12);
     background-color: var(--color-base-100);
-    transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+    box-shadow: 0 1px 3px oklch(from var(--color-primary) l c h / 0.04),
+               0 0 0 1px oklch(from var(--color-primary) l c h / 0.04),
+               0 0 12px -4px oklch(from var(--color-primary) l c h / 0.08);
+    transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease;
 }
 .af-card-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px -8px oklch(from var(--color-primary) l c h / 0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 48px -12px oklch(from var(--color-primary) l c h / 0.18),
+               0 0 0 1px oklch(from var(--color-primary) l c h / 0.1),
+               0 0 20px -4px oklch(from var(--color-primary) l c h / 0.15);
     border-color: oklch(from var(--color-primary) l c h / 0.25);
 }
 
 /* ── Gradient shimmer on hero cards ───────────────────────────────────── */
 .af-hero-shimmer {
-    background-image: radial-gradient(circle at 20% 50%, oklch(from var(--color-primary) l c h / 0.06) 0%, transparent 50%),
-                       radial-gradient(circle at 80% 50%, oklch(from var(--color-secondary) l c h / 0.06) 0%, transparent 50%);
+    background-image: radial-gradient(circle at 15% 50%, oklch(from var(--color-primary) l c h / 0.08) 0%, transparent 50%),
+                       radial-gradient(circle at 85% 50%, oklch(from var(--color-secondary) l c h / 0.07) 0%, transparent 50%),
+                       radial-gradient(circle at 50% 100%, oklch(from var(--color-accent) l c h / 0.04) 0%, transparent 40%);
 }
 [data-theme="dark"] .af-hero-shimmer {
-    background-image: radial-gradient(circle at 20% 50%, oklch(from var(--color-primary) l c h / 0.1) 0%, transparent 50%),
-                       radial-gradient(circle at 80% 50%, oklch(from var(--color-secondary) l c h / 0.1) 0%, transparent 50%);
+    background-image: radial-gradient(circle at 15% 50%, oklch(from var(--color-primary) l c h / 0.12) 0%, transparent 50%),
+                       radial-gradient(circle at 85% 50%, oklch(from var(--color-secondary) l c h / 0.1) 0%, transparent 50%),
+                       radial-gradient(circle at 50% 100%, oklch(from var(--color-accent) l c h / 0.06) 0%, transparent 40%);
 }
 
 /* ── Dot grid pattern ─────────────────────────────────────────────────── */
@@ -184,13 +191,13 @@
     white-space: nowrap;
     transition: background-color .15s ease;
 }
-.af-pill-primary { color: var(--color-primary); background: oklch(from var(--color-primary) l c h / 0.1); border-color: oklch(from var(--color-primary) l c h / 0.2); }
-.af-pill-secondary { color: var(--color-secondary); background: oklch(from var(--color-secondary) l c h / 0.1); border-color: oklch(from var(--color-secondary) l c h / 0.2); }
-.af-pill-accent { color: var(--color-accent); background: oklch(from var(--color-accent) l c h / 0.1); border-color: oklch(from var(--color-accent) l c h / 0.2); }
-.af-pill-success { color: var(--color-success); background: oklch(from var(--color-success) l c h / 0.1); border-color: oklch(from var(--color-success) l c h / 0.2); }
-.af-pill-warning { color: var(--color-warning); background: oklch(from var(--color-warning) l c h / 0.1); border-color: oklch(from var(--color-warning) l c h / 0.2); }
-.af-pill-error { color: var(--color-error); background: oklch(from var(--color-error) l c h / 0.1); border-color: oklch(from var(--color-error) l c h / 0.2); }
-.af-pill-info { color: var(--color-info); background: oklch(from var(--color-info) l c h / 0.1); border-color: oklch(from var(--color-info) l c h / 0.2); }
+.af-pill-primary { color: var(--color-primary); background: oklch(from var(--color-primary) l c h / 0.1); border-color: oklch(from var(--color-primary) l c h / 0.2); box-shadow: 0 1px 6px -2px oklch(from var(--color-primary) l c h / 0.25); }
+.af-pill-secondary { color: var(--color-secondary); background: oklch(from var(--color-secondary) l c h / 0.1); border-color: oklch(from var(--color-secondary) l c h / 0.2); box-shadow: 0 1px 6px -2px oklch(from var(--color-secondary) l c h / 0.25); }
+.af-pill-accent { color: var(--color-accent); background: oklch(from var(--color-accent) l c h / 0.1); border-color: oklch(from var(--color-accent) l c h / 0.2); box-shadow: 0 1px 6px -2px oklch(from var(--color-accent) l c h / 0.25); }
+.af-pill-success { color: var(--color-success); background: oklch(from var(--color-success) l c h / 0.1); border-color: oklch(from var(--color-success) l c h / 0.2); box-shadow: 0 1px 6px -2px oklch(from var(--color-success) l c h / 0.25); }
+.af-pill-warning { color: var(--color-warning); background: oklch(from var(--color-warning) l c h / 0.1); border-color: oklch(from var(--color-warning) l c h / 0.2); box-shadow: 0 1px 6px -2px oklch(from var(--color-warning) l c h / 0.25); }
+.af-pill-error { color: var(--color-error); background: oklch(from var(--color-error) l c h / 0.1); border-color: oklch(from var(--color-error) l c h / 0.2); box-shadow: 0 1px 6px -2px oklch(from var(--color-error) l c h / 0.25); }
+.af-pill-info { color: var(--color-info); background: oklch(from var(--color-info) l c h / 0.1); border-color: oklch(from var(--color-info) l c h / 0.2); box-shadow: 0 1px 6px -2px oklch(from var(--color-info) l c h / 0.25); }
 .af-pill-neutral { color: var(--color-base-content); background: oklch(from var(--color-base-content) l c h / 0.06); border-color: oklch(from var(--color-base-content) l c h / 0.12); opacity: .7; }
 
 /* ── Button enhancements ──────────────────────────────────────────────── */
@@ -226,19 +233,21 @@
     background: linear-gradient(135deg, oklch(0.58 0.25 275), oklch(0.48 0.25 275));
     color: var(--color-primary-content);
     border: none;
+    box-shadow: 0 4px 14px -3px oklch(from var(--color-primary) l c h / 0.35);
 }
 .af-btn-primary:hover {
     background: linear-gradient(135deg, oklch(0.6 0.26 275), oklch(0.5 0.26 275));
-    box-shadow: 0 8px 24px -4px oklch(from var(--color-primary) l c h / 0.4);
+    box-shadow: 0 8px 28px -4px oklch(from var(--color-primary) l c h / 0.5);
 }
 .af-btn-secondary {
     background: linear-gradient(135deg, oklch(0.62 0.18 195), oklch(0.52 0.2 195));
     color: var(--color-secondary-content);
     border: none;
+    box-shadow: 0 4px 14px -3px oklch(from var(--color-secondary) l c h / 0.35);
 }
 .af-btn-secondary:hover {
     background: linear-gradient(135deg, oklch(0.65 0.19 195), oklch(0.54 0.21 195));
-    box-shadow: 0 8px 24px -4px oklch(from var(--color-secondary) l c h / 0.4);
+    box-shadow: 0 8px 28px -4px oklch(from var(--color-secondary) l c h / 0.5);
 }
 .af-btn-ghost {
     background: transparent;
@@ -252,33 +261,39 @@
     color: var(--color-primary);
     border: 1px solid oklch(from var(--color-primary) l c h / 0.2);
 }
-.af-btn-outline:hover { background: oklch(from var(--color-primary) l c h / 0.12); }
+.af-btn-outline:hover {
+    background: oklch(from var(--color-primary) l c h / 0.12);
+    box-shadow: 0 4px 16px -4px oklch(from var(--color-primary) l c h / 0.25);
+}
 .af-btn-danger {
     background: linear-gradient(135deg, oklch(0.6 0.22 25), oklch(0.5 0.24 25));
     color: var(--color-error-content);
     border: none;
+    box-shadow: 0 4px 14px -3px oklch(from var(--color-error) l c h / 0.3);
 }
 .af-btn-danger:hover {
     background: linear-gradient(135deg, oklch(0.63 0.23 25), oklch(0.52 0.25 25));
-    box-shadow: 0 8px 24px -4px oklch(from var(--color-error) l c h / 0.4);
+    box-shadow: 0 8px 28px -4px oklch(from var(--color-error) l c h / 0.5);
 }
 .af-btn-warning {
     background: linear-gradient(135deg, oklch(0.78 0.17 75), oklch(0.68 0.19 75));
     color: var(--color-warning-content);
     border: none;
+    box-shadow: 0 4px 14px -3px oklch(from var(--color-warning) l c h / 0.3);
 }
 .af-btn-warning:hover {
     background: linear-gradient(135deg, oklch(0.8 0.17 75), oklch(0.7 0.19 75));
-    box-shadow: 0 8px 24px -4px oklch(from var(--color-warning) l c h / 0.4);
+    box-shadow: 0 8px 28px -4px oklch(from var(--color-warning) l c h / 0.5);
 }
 .af-btn-success {
     background: linear-gradient(135deg, oklch(0.65 0.19 155), oklch(0.55 0.2 155));
     color: var(--color-success-content);
     border: none;
+    box-shadow: 0 4px 14px -3px oklch(from var(--color-success) l c h / 0.3);
 }
 .af-btn-success:hover {
     background: linear-gradient(135deg, oklch(0.68 0.19 155), oklch(0.58 0.2 155));
-    box-shadow: 0 8px 24px -4px oklch(from var(--color-success) l c h / 0.4);
+    box-shadow: 0 8px 28px -4px oklch(from var(--color-success) l c h / 0.5);
 }
 .af-btn-sm { padding: 0.375rem 0.875rem; font-size: 0.8125rem; }
 .af-btn-xs { padding: 0.25rem 0.625rem; font-size: 0.75rem; }
@@ -302,7 +317,8 @@
 }
 .af-input:focus {
     border-color: oklch(from var(--color-primary) l c h / 0.5);
-    box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.12);
+    box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.12),
+               0 4px 12px -4px oklch(from var(--color-primary) l c h / 0.15);
 }
 .af-input-error {
     border-color: oklch(from var(--color-error) l c h / 0.5);
@@ -329,12 +345,13 @@
 }
 .af-select:focus {
     border-color: oklch(from var(--color-primary) l c h / 0.5);
-    box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.12);
+    box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.12),
+               0 4px 12px -4px oklch(from var(--color-primary) l c h / 0.15);
 }
 
 /* ── Section dividers ─────────────────────────────────────────────────── */
 .af-divider {
-    border-color: oklch(from var(--color-base-300) l c h / 0.3);
+    border-color: oklch(from var(--color-base-300) l c h / 0.15);
 }
 
 /* ── Scrollbar styling ────────────────────────────────────────────────── */
@@ -477,7 +494,8 @@
     }
 
     .af-card {
-        box-shadow: 0 1px 3px oklch(0 0 0 / 0.2);
+        box-shadow: 0 1px 3px oklch(0 0 0 / 0.2),
+                   0 0 0 1px oklch(from var(--color-primary) l c h / 0.06);
     }
 
     /* Brighter gradients for dark mode buttons */
@@ -531,12 +549,14 @@
 dialog[open] .modal-box,
 dialog[open] .af-modal-box {
     animation: af-modal-in .25s cubic-bezier(.16,1,.3,1) both;
+    box-shadow: 0 24px 64px -16px oklch(from var(--color-primary) l c h / 0.15),
+               0 0 0 1px oklch(from var(--color-base-300) l c h / 0.3);
 }
 
 /* ── Modal backdrop ───────────────────────────────────────────────────── */
 dialog.modal::backdrop {
-    background: oklch(0 0 0 / 0.5);
-    backdrop-filter: blur(4px);
+    background: oklch(0.12 0.02 275 / 0.55);
+    backdrop-filter: blur(6px) saturate(1.3);
 }
 
 /* ── Print reset ──────────────────────────────────────────────────────── */
