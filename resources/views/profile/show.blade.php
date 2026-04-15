@@ -1,13 +1,8 @@
 <x-layouts.app :title="$profileUser->name">
-    <style>
-        @keyframes d-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-        .d { animation: d-up .45s cubic-bezier(.16,1,.3,1) both; }
-        .d1 { animation-delay: .00s; } .d2 { animation-delay: .07s; } .d3 { animation-delay: .14s; }
-    </style>
     <div class="flex min-h-screen bg-base-200">
         <x-nav.sidebar active="profile" />
 
-        <main class="flex-1 min-w-0 pt-14 lg:pt-0">
+        <main class="flex-1 min-w-0 lg:min-h-screen pt-14 lg:pt-0">
 
             {{-- Banner --}}
             <div class="d d1 relative h-40 md:h-52 bg-base-300 overflow-hidden">
@@ -50,7 +45,7 @@
                     <div>
                         <div class="flex flex-wrap items-center gap-2">
                             <h1 class="text-2xl font-black tracking-tight">{{ $profileUser->name }}</h1>
-                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold text-primary bg-primary/10 border-primary/20">{{ $profileUser->role->value }}</span>
+                            <x-ui.badge variant="primary" size="xs">{{ $profileUser->role->value }}</x-ui.badge>
                         </div>
                         <p class="text-sm text-base-content/50 mt-0.5">{{ $profileUser->email }}</p>
                     </div>

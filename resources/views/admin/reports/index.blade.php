@@ -13,44 +13,42 @@
                 </div>
 
                 {{-- Date Range & Export --}}
-                <div class="bg-base-100 border border-base-300/50 rounded-2xl p-6">
+                <div class="af-card p-5">
                     <h2 class="text-lg font-bold mb-4">Export Report</h2>
                     <form class="flex flex-wrap items-end gap-4">
                         <div>
                             <label class="label"><span class="label-text text-xs font-semibold">From</span></label>
                             <input type="date" name="from" value="{{ request('from', now()->subMonth()->format('Y-m-d')) }}"
-                                class="input input-bordered input-sm rounded-xl" />
+                                class="af-input" />
                         </div>
                         <div>
                             <label class="label"><span class="label-text text-xs font-semibold">To</span></label>
                             <input type="date" name="to" value="{{ request('to', now()->format('Y-m-d')) }}"
-                                class="input input-bordered input-sm rounded-xl" />
+                                class="af-input" />
                         </div>
                         <div class="flex gap-2">
-                            <a id="csv-link" href="{{ route('admin.reports.export.csv', ['from' => request('from', now()->subMonth()->format('Y-m-d')), 'to' => request('to', now()->format('Y-m-d'))]) }}"
-                               class="btn btn-sm btn-outline rounded-xl gap-1.5">
+                            <x-ui.button :href="route('admin.reports.export.csv', ['from' => request('from', now()->subMonth()->format('Y-m-d')), 'to' => request('to', now()->format('Y-m-d'))])" variant="outline" size="sm" id="csv-link">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" stroke="currentColor" stroke-width="1.8"/><path d="M14 2v6h6" stroke="currentColor" stroke-width="1.8"/></svg>
                                 CSV
-                            </a>
-                            <a id="pdf-link" href="{{ route('admin.reports.export.pdf', ['from' => request('from', now()->subMonth()->format('Y-m-d')), 'to' => request('to', now()->format('Y-m-d'))]) }}"
-                               class="btn btn-sm btn-primary rounded-xl gap-1.5">
+                            </x-ui.button>
+                            <x-ui.button :href="route('admin.reports.export.pdf', ['from' => request('from', now()->subMonth()->format('Y-m-d')), 'to' => request('to', now()->format('Y-m-d'))])" variant="primary" size="sm" id="pdf-link">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" stroke="currentColor" stroke-width="1.8"/><path d="M14 2v6h6" stroke="currentColor" stroke-width="1.8"/></svg>
                                 PDF
-                            </a>
+                            </x-ui.button>
                         </div>
                     </form>
                 </div>
 
                 {{-- Class Attendance Overview --}}
-                <div class="bg-base-100 border border-base-300/50 rounded-2xl overflow-hidden">
-                    <div class="p-5 border-b border-base-300/50">
+                <div class="af-card overflow-hidden !p-0">
+                    <div class="p-5 border-b af-divider">
                         <h2 class="text-lg font-bold">Class Attendance Overview</h2>
                         <p class="text-sm text-base-content/50 mt-0.5">Attendance rates across all active classes</p>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="table table-sm">
                             <thead>
-                                <tr class="border-b border-base-300/50">
+                                <tr class="border-b af-divider">
                                     <th class="text-xs font-bold uppercase tracking-wider text-base-content/40">#</th>
                                     <th class="text-xs font-bold uppercase tracking-wider text-base-content/40">Class</th>
                                     <th class="text-xs font-bold uppercase tracking-wider text-base-content/40">Teacher</th>
@@ -61,7 +59,7 @@
                             </thead>
                             <tbody>
                                 @forelse ($classesRanked as $index => $class)
-                                    <tr class="border-b border-base-200/50 hover:bg-base-200/30">
+                                    <tr class="border-b af-divider hover:bg-base-content/[.03]">
                                         <td class="text-sm text-base-content/50">{{ $index + 1 }}</td>
                                         <td class="font-semibold text-sm">{{ $class->name }}</td>
                                         <td class="text-sm text-base-content/70">{{ $class->teacher?->name ?? 'N/A' }}</td>

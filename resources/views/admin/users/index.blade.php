@@ -1,12 +1,4 @@
 <x-layouts.app title="Manage Users">
-    <style>
-        @keyframes d-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-        .d { animation: d-up .45s cubic-bezier(.16,1,.3,1) both; }
-        .d1 { animation-delay: .00s; } .d2 { animation-delay: .07s; } .d3 { animation-delay: .14s; }
-        .d4 { animation-delay: .21s; }
-        @keyframes modal-in { from { opacity: 0; transform: scale(.96) translateY(8px); } to { opacity: 1; transform: none; } }
-        #user-modal[open] .modal-box { animation: modal-in .25s cubic-bezier(.16,1,.3,1) both; }
-    </style>
     <div class="flex min-h-screen bg-base-200">
         <x-nav.sidebar active="users" />
 
@@ -42,41 +34,41 @@
                             <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.8"/>
                             <path d="m21 21-4.3-4.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
                         </svg>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or email..." class="w-full rounded-xl border border-base-300/70 bg-base-100 pl-10 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or email..." class="af-input pl-10!">
                     </div>
-                    <select name="role" onchange="this.form.submit()" class="rounded-xl border border-base-300/70 bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40">
+                    <select name="role" onchange="this.form.submit()" class="af-select w-full sm:w-40 shrink-0">
                         <option value="">All Roles</option>
                         <option value="Admin" {{ request('role') === 'Admin' ? 'selected' : '' }}>Admin</option>
                         <option value="Teacher" {{ request('role') === 'Teacher' ? 'selected' : '' }}>Teacher</option>
                         <option value="Student" {{ request('role') === 'Student' ? 'selected' : '' }}>Student</option>
                     </select>
-                    <button type="submit" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-base-100 border border-base-300/70 text-sm font-medium hover:bg-base-200 transition-colors">Search</button>
+                    <x-ui.button type="submit" variant="outline">Search</x-ui.button>
                     @if (request('search') || request('role'))
-                        <a href="{{ route('admin.users.index') }}" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm text-base-content/50 hover:text-base-content transition-colors">Clear</a>
+                        <x-ui.button href="{{ route('admin.users.index') }}" variant="ghost">Clear</x-ui.button>
                     @endif
                 </form>
 
                 {{-- Users list --}}
-                <div class="d d3 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
-                    <div class="px-5 py-4 border-b border-base-300/30 flex items-center justify-between">
+                <div class="d d3 af-card overflow-hidden !p-0">
+                    <div class="px-5 py-4 border-b af-divider flex items-center justify-between">
                         <h2 class="font-semibold text-sm">Registered Users</h2>
                         <span class="text-xs text-base-content/40">{{ $users->total() }}</span>
                     </div>
-                    <div class="divide-y divide-base-300/30">
+                    <div class="divide-y af-divider">
                         @forelse ($users as $registeredUser)
                             @php
-                                $rolePill = match ($registeredUser->role->value) {
-                                    'Admin'   => 'text-primary bg-primary/10 border-primary/20',
-                                    'Teacher' => 'text-secondary bg-secondary/10 border-secondary/20',
-                                    default   => 'text-accent bg-accent/10 border-accent/20',
+                                $roleVariant = match ($registeredUser->role->value) {
+                                    'Admin'   => 'primary',
+                                    'Teacher' => 'secondary',
+                                    default   => 'accent',
                                 };
-                                $statusPill = match ($registeredUser->status->value) {
-                                    'blocked'  => 'text-warning bg-warning/10 border-warning/20',
-                                    'archived' => 'text-error bg-error/10 border-error/20',
+                                $statusVariant = match ($registeredUser->status->value) {
+                                    'blocked'  => 'warning',
+                                    'archived' => 'error',
                                     default    => null,
                                 };
                             @endphp
-                            <button type="button" onclick="openUserModal({{ $registeredUser->id }})" class="w-full flex items-center justify-between gap-3 px-5 py-3 hover:bg-base-200/40 transition-colors group text-left">
+                            <button type="button" onclick="openUserModal({{ $registeredUser->id }})" class="w-full flex items-center justify-between gap-3 px-5 py-3 hover:bg-base-content/[.03] transition-colors group text-left">
                                 <div class="flex items-center gap-3 min-w-0 flex-1">
                                     @if ($registeredUser->avatarUrl)
                                         <img src="{{ $registeredUser->avatarUrl }}" class="size-8 rounded-full object-cover shrink-0" alt="">
@@ -89,9 +81,9 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
-                                    <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold {{ $rolePill }}">{{ $registeredUser->role->value }}</span>
-                                    @if ($statusPill)
-                                        <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold {{ $statusPill }}">{{ ucfirst($registeredUser->status->value) }}</span>
+                                    <x-ui.badge :variant="$roleVariant" size="xs">{{ $registeredUser->role->value }}</x-ui.badge>
+                                    @if ($statusVariant)
+                                        <x-ui.badge :variant="$statusVariant" size="xs">{{ ucfirst($registeredUser->status->value) }}</x-ui.badge>
                                     @endif
                                     <span class="text-xs text-base-content/30 hidden sm:block">{{ $registeredUser->created_at->format('M j, Y') }}</span>
                                 </div>
@@ -103,28 +95,28 @@
                         @endforelse
                     </div>
                     @if ($users->hasPages())
-                        <div class="px-5 py-4 border-t border-base-300/30">
+                        <div class="px-5 py-4 border-t af-divider">
                             {{ $users->links() }}
                         </div>
                     @endif
                 </div>
 
                 {{-- Pending invitations --}}
-                <div id="invitations-section" data-csrf="{{ csrf_token() }}" class="d d4 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
-                    <div class="px-5 py-4 border-b border-base-300/30 flex items-center justify-between">
+                <div id="invitations-section" data-csrf="{{ csrf_token() }}" class="d d4 af-card overflow-hidden !p-0">
+                    <div class="px-5 py-4 border-b af-divider flex items-center justify-between">
                         <h2 class="font-semibold text-sm">Pending Invitations</h2>
                         <span id="invitations-count" class="text-xs text-base-content/40">{{ $invitations->count() }}</span>
                     </div>
-                    <div id="invitations-list" class="divide-y divide-base-300/30">
+                    <div id="invitations-list" class="divide-y af-divider">
                         @forelse ($invitations as $invitation)
                             @php
-                                $invRolePill = match ($invitation->role->value) {
-                                    'Admin'   => 'text-primary bg-primary/10 border-primary/20',
-                                    'Teacher' => 'text-secondary bg-secondary/10 border-secondary/20',
-                                    default   => 'text-accent bg-accent/10 border-accent/20',
+                                $invRoleVariant = match ($invitation->role->value) {
+                                    'Admin'   => 'primary',
+                                    'Teacher' => 'secondary',
+                                    default   => 'accent',
                                 };
                             @endphp
-                            <div data-invitation-id="{{ $invitation->id }}" class="flex items-center justify-between gap-3 px-5 py-3 hover:bg-base-200/40 transition-colors">
+                            <div data-invitation-id="{{ $invitation->id }}" class="flex items-center justify-between gap-3 px-5 py-3 hover:bg-base-content/[.03] transition-colors">
                                 <div class="min-w-0 flex-1">
                                     <p class="text-sm font-medium truncate">{{ $invitation->name ?? $invitation->email }}</p>
                                     @if ($invitation->name)
@@ -134,7 +126,7 @@
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
-                                    <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold {{ $invRolePill }}">{{ $invitation->role->value }}</span>
+                                    <x-ui.badge :variant="$invRoleVariant" size="xs">{{ $invitation->role->value }}</x-ui.badge>
                                     <span class="text-xs text-base-content/30 hidden sm:block">Expires {{ $invitation->expires_at->format('M j, Y') }}</span>
                                     <form method="POST" action="{{ route('admin.invitations.invalidate', $invitation) }}" onsubmit="return confirm('Invalidate this invitation?')">
                                         @csrf
@@ -159,7 +151,7 @@
 
     {{-- ─── User Management Modal ─────────────────────────────────────────── --}}
     <dialog id="user-modal" class="modal">
-        <div class="modal-box w-full max-w-lg rounded-3xl p-0 overflow-hidden">
+        <div class="af-modal-box modal-box w-full max-w-lg rounded-3xl p-0 overflow-hidden">
             {{-- Loading state --}}
             <div id="um-loading" class="flex items-center justify-center py-20">
                 <span class="loading loading-spinner loading-md text-primary"></span>
@@ -168,7 +160,7 @@
             {{-- Content (hidden until loaded) --}}
             <div id="um-content" class="hidden">
                 {{-- Header --}}
-                <div class="flex items-center justify-between px-6 py-5 border-b border-base-300/40">
+                <div class="flex items-center justify-between px-6 py-5 border-b af-divider">
                     <div class="flex items-center gap-3 min-w-0">
                         <div id="um-avatar" class="size-10 rounded-full bg-base-200 flex items-center justify-center text-sm font-bold text-base-content/40 shrink-0"></div>
                         <div class="min-w-0">
@@ -225,7 +217,7 @@
                     <p id="um-confirm-desc" class="text-xs text-base-content/50"></p>
                     <form id="um-confirm-form" method="POST">
                         @csrf
-                        <textarea name="reason" rows="2" class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40" maxlength="500" placeholder="Reason (optional)..."></textarea>
+                        <textarea name="reason" rows="2" class="af-input" maxlength="500" placeholder="Reason (optional)..."></textarea>
                         <div class="flex gap-2 mt-2">
                             <button type="button" onclick="document.getElementById('um-action-confirm').classList.add('hidden')" class="flex-1 inline-flex justify-center items-center px-3 py-2 rounded-xl bg-base-200 text-base-content/60 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors">Cancel</button>
                             <button id="um-confirm-btn" type="submit" class="flex-1 inline-flex justify-center items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90">Confirm</button>
@@ -242,11 +234,11 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5">Full Name</label>
-                                <input type="text" name="name" id="um-input-name" class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40" required>
+                                <input type="text" name="name" id="um-input-name" class="af-input" required>
                             </div>
                             <div>
                                 <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5">Email</label>
-                                <input type="email" name="email" id="um-input-email" class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40" required>
+                                <input type="email" name="email" id="um-input-email" class="af-input" required>
                             </div>
                         </div>
                         <div id="um-guardian-fields" class="hidden mt-3 rounded-xl bg-base-200/50 border border-base-300/40 px-4 py-3 space-y-3">
@@ -254,11 +246,11 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5">Guardian Name</label>
-                                    <input type="text" name="guardian_name" id="um-input-guardian-name" class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40" placeholder="Parent or guardian's name">
+                                    <input type="text" name="guardian_name" id="um-input-guardian-name" class="af-input" placeholder="Parent or guardian's name">
                                 </div>
                                 <div>
                                     <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5">Guardian Email</label>
-                                    <input type="email" name="guardian_email" id="um-input-guardian-email" class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40" placeholder="parent@example.com">
+                                    <input type="email" name="guardian_email" id="um-input-guardian-email" class="af-input" placeholder="parent@example.com">
                                 </div>
                             </div>
                         </div>
@@ -292,9 +284,9 @@
 
     {{-- ─── Invite Users Modal ────────────────────────────────────────────── --}}
     <dialog id="invite-modal" class="modal">
-        <div class="modal-box w-full max-w-2xl rounded-3xl p-0 overflow-visible">
+        <div class="af-modal-box modal-box w-full max-w-2xl rounded-3xl p-0 overflow-visible">
             {{-- Modal header --}}
-            <div class="flex items-center justify-between px-6 py-5 border-b border-base-300/40">
+            <div class="flex items-center justify-between px-6 py-5 border-b af-divider">
                 <div>
                     <h3 id="modal-title" class="text-lg font-black tracking-tight">Invite User</h3>
                     <p class="text-sm text-base-content/50 mt-0.5">Send an invitation email to a new user.</p>
@@ -334,7 +326,7 @@
                                         id="name-0"
                                         name="invitees[0][name]"
                                         value="{{ old('invitees.0.name') }}"
-                                        class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 {{ $errors->has('invitees.0.name') ? 'border-error' : '' }}"
+                                        class="af-input {{ $errors->has('invitees.0.name') ? 'af-input-error' : '' }}"
                                         placeholder="Their name"
                                         autofocus
                                     >
@@ -346,7 +338,7 @@
                                         id="email-0"
                                         name="invitees[0][email]"
                                         value="{{ old('invitees.0.email') }}"
-                                        class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 {{ $errors->has('invitees.0.email') ? 'border-error' : '' }}"
+                                        class="af-input {{ $errors->has('invitees.0.email') ? 'af-input-error' : '' }}"
                                         placeholder="email@example.com"
                                         required
                                     >
@@ -356,7 +348,7 @@
                                     <select
                                         id="role-0"
                                         name="invitees[0][role]"
-                                        class="w-full rounded-xl border border-base-300/70 bg-base-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 {{ $errors->has('invitees.0.role') ? 'border-error' : '' }}"
+                                        class="af-input {{ $errors->has('invitees.0.role') ? 'af-input-error' : '' }}"
                                         required
                                     >
                                         <option value="" disabled {{ old('invitees.0.role') ? '' : 'selected' }}>Select role</option>
@@ -388,7 +380,7 @@
                     Add another invitee
                 </button>
 
-                <div class="flex items-center justify-end gap-3 pt-1 border-t border-base-300/30">
+                <div class="flex items-center justify-end gap-3 pt-1 border-t af-divider">
                     <form method="dialog" class="inline">
                         <button class="inline-flex items-center px-4 py-2.5 rounded-xl bg-base-200 text-base-content/60 border border-base-300/50 text-sm font-medium hover:bg-base-300/50 transition-colors">
                             Cancel

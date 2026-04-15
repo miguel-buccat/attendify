@@ -10,7 +10,7 @@
                 @endif
             </div>
 
-            <div class="bg-base-100 rounded-2xl border border-base-300/50 p-6">
+            <div class="af-card p-6">
                 @if (session('attendance_success'))
                     <div class="text-center space-y-3">
                         <div class="size-16 rounded-full bg-success/10 flex items-center justify-center mx-auto">
@@ -31,17 +31,13 @@
 
                     <form method="POST" action="{{ route('attend.store', [$session->id, $token]) }}" class="space-y-4">
                         @csrf
-                        <div>
-                            <label for="email" class="block text-sm font-medium mb-1.5">Email Address</label>
+                        <x-form.field name="email" label="Email Address" required>
                             <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus
-                                class="input input-bordered w-full rounded-xl @error('email') input-error @enderror"
+                                class="af-input @error('email') af-input-error @enderror"
                                 placeholder="your@email.com">
-                            @error('email')
-                                <p class="text-error text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        </x-form.field>
 
-                        <button type="submit" class="btn btn-primary w-full rounded-xl">Record Attendance</button>
+                        <x-ui.button type="submit" variant="primary" class="w-full">Record Attendance</x-ui.button>
                     </form>
                 @endif
             </div>

@@ -1,16 +1,4 @@
 <x-layouts.app title="System Setup — Attendify">
-    <style>
-        @keyframes rise-up { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
-        @keyframes blob-drift {
-            0%,100% { transform: translate(0,0) scale(1); }
-            40%      { transform: translate(-14px,10px) scale(1.06); }
-            70%      { transform: translate(10px,-8px) scale(.96); }
-        }
-        .r { animation: rise-up .55s cubic-bezier(.16,1,.3,1) both; }
-        .r1 { animation-delay: .00s; } .r2 { animation-delay: .10s; } .r3 { animation-delay: .20s; }
-        .blob-a { animation: blob-drift 11s ease-in-out infinite; }
-        .blob-b { animation: blob-drift 14s ease-in-out infinite reverse; animation-delay: 3s; }
-    </style>
 
     <main class="relative min-h-screen flex flex-col bg-base-200 overflow-hidden">
         {{-- Background blobs --}}
@@ -52,9 +40,9 @@
                 @endif
 
                 {{-- Progress stepper --}}
-                <div class="r r2 flex items-center gap-0 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden">
+                <div class="r r2 flex items-center gap-0 af-card !p-0 overflow-hidden">
                     {{-- Step 1 --}}
-                    <div class="flex-1 flex items-center gap-3 px-5 py-4 {{ ! $hasAdmin ? 'bg-primary/5 border-r border-primary/15' : 'border-r border-base-300/30' }}">
+                    <div class="flex-1 flex items-center gap-3 px-5 py-4 {{ ! $hasAdmin ? 'bg-primary/5 border-r border-primary/15' : 'border-r af-divider' }}">
                         <div class="size-8 rounded-full {{ ! $hasAdmin ? 'bg-primary text-primary-content shadow-md shadow-primary/30' : ($hasAdmin ? 'bg-success/15 text-success' : 'bg-base-200 text-base-content/30') }} flex items-center justify-center text-xs font-black shrink-0 transition-all">
                             @if ($hasAdmin)
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3.5"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -80,10 +68,10 @@
                 </div>
 
                 {{-- Form card --}}
-                <div class="r r3 rounded-2xl border border-base-300/50 bg-base-100 overflow-hidden shadow-sm">
+                <div class="r r3 af-card !p-0 overflow-hidden shadow-sm">
                     @if (! $hasAdmin)
                         {{-- Step 1 header --}}
-                        <div class="px-6 py-5 border-b border-base-300/30 flex items-center gap-3">
+                        <div class="px-6 py-5 border-b af-divider flex items-center gap-3">
                             <div class="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4.5 text-primary"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </div>
@@ -102,17 +90,16 @@
                                 <x-form.field label="Confirm Password" name="password_confirmation" type="password" required />
 
                                 <div class="pt-5">
-                                    <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-content shadow-lg shadow-primary/25 hover:opacity-90 active:scale-[.98] transition-all">
+                                    <x-ui.button type="submit" variant="primary" class="w-full py-3 shadow-lg shadow-primary/25">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         Create Admin Account
-                                    </button>
+                                    </x-ui.button>
                                 </div>
                             </form>
                         </div>
 
                     @else
-                        {{-- Step 2 header --}}
-                        <div class="px-6 py-5 border-b border-base-300/30 flex items-center gap-3">
+                        <div class="px-6 py-5 border-b af-divider flex items-center gap-3">
                             <div class="size-9 rounded-xl bg-secondary/10 flex items-center justify-center shrink-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4.5 text-secondary"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 22V12h6v10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </div>
@@ -138,7 +125,7 @@
                                     <label class="text-[11px] font-bold uppercase tracking-[.2em] text-base-content/35 block mb-1.5">
                                         Timezone <span class="text-error">*</span>
                                     </label>
-                                    <select name="timezone" class="w-full rounded-xl border {{ $errors->has('timezone') ? 'border-error' : 'border-base-300/70' }} bg-base-100 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40" required>
+                                    <select name="timezone" class="af-input @error('timezone') af-input-error @enderror" required>
                                         @foreach (timezone_identifiers_list() as $tz)
                                             <option value="{{ $tz }}" @selected(old('timezone', $siteSettings->get('timezone', 'Asia/Manila')) === $tz)>
                                                 {{ $tz }} (UTC{{ (new DateTimeZone($tz))->getOffset(new DateTime) >= 0 ? '+' : '' }}{{ gmdate('H:i', abs((new DateTimeZone($tz))->getOffset(new DateTime))) }})
@@ -177,7 +164,7 @@
                                         </div>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4 text-base-content/30 transition-transform duration-200 group-open:rotate-180 shrink-0"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                     </summary>
-                                    <div class="px-4 pb-4 pt-3 space-y-4 border-t border-base-300/30">
+                                    <div class="px-4 pb-4 pt-3 space-y-4 border-t af-divider">
                                         <x-form.field
                                             label="Vision Statement"
                                             name="vision"
@@ -194,10 +181,10 @@
                                 </details>
 
                                 <div class="pt-2">
-                                    <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-content shadow-lg shadow-primary/25 hover:opacity-90 active:scale-[.98] transition-all">
+                                    <x-ui.button type="submit" variant="primary" class="w-full py-3 shadow-lg shadow-primary/25">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4.5"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         Finish Setup &amp; Launch
-                                    </button>
+                                    </x-ui.button>
                                 </div>
                             </form>
                         </div>
