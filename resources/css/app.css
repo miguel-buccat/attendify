@@ -351,7 +351,10 @@
 
 /* ── Section dividers ─────────────────────────────────────────────────── */
 .af-divider {
-    border-color: oklch(from var(--color-base-300) l c h / 0.15);
+    border-color: oklch(from var(--color-base-content) l c h / 0.08);
+}
+.af-divider > :not([hidden]) ~ :not([hidden]) {
+    border-color: oklch(from var(--color-base-content) l c h / 0.08);
 }
 
 /* ── Scrollbar styling ────────────────────────────────────────────────── */

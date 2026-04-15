@@ -18,7 +18,7 @@
                     @endif
                 </div>
 
-                <div class="af-card !p-0 overflow-hidden divide-y af-divider">
+                <div class="af-card !p-0 overflow-hidden divide-y divide-base-content/6">
                     @forelse ($notifications as $notification)
                         <!-- <a href="{{ $notification->data['url'] ?? '#' }}" -->
                         <a

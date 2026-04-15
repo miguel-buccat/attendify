@@ -86,7 +86,7 @@
                     @if ($upcomingSessions->isEmpty())
                         <x-ui.empty-state title="No upcoming sessions" description="No sessions scheduled yet." icon='<rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' />
                     @else
-                        <div class="divide-y divide-base-300/30">
+                        <div class="divide-y divide-base-content/6">
                             @foreach ($upcomingSessions as $upcoming)
                                 @php
                                     $uVariant = match ($upcoming->status->value) {
@@ -118,7 +118,7 @@
                     @if ($recentSessions->isEmpty())
                         <x-ui.empty-state title="No sessions yet" description="Start one from a class page." icon='<rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' />
                     @else
-                        <div class="divide-y divide-base-300/30">
+                        <div class="divide-y divide-base-content/6">
                             @foreach ($recentSessions as $session)
                                 @php
                                     $sVariant = match ($session->status) {

@@ -170,7 +170,7 @@
                         <div class="px-5 py-4 border-b af-divider">
                             <h2 class="font-semibold text-sm">Account Info</h2>
                         </div>
-                        <div class="divide-y af-divider">
+                        <div class="divide-y divide-base-content/6">
                             <div class="flex items-center justify-between px-5 py-3">
                                 <span class="text-xs font-medium text-base-content/50">Joined</span>
                                 <span class="text-sm">{{ $user->created_at->format('F j, Y') }}</span>

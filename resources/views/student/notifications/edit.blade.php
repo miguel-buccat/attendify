@@ -14,7 +14,7 @@
                     <x-alert type="success" :message="session('success')" />
                 @endif
 
-                <form method="POST" action="{{ route('student.notifications.update') }}" class="af-card !p-0 divide-y af-divider">
+                <form method="POST" action="{{ route('student.notifications.update') }}" class="af-card !p-0 divide-y divide-base-content/6">
                     @csrf
                     @method('PATCH')
 

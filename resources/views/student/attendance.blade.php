@@ -25,7 +25,7 @@
                             <h2 class="font-semibold text-sm">Records</h2>
                             <span class="text-xs text-base-content/40">{{ $records->total() }} total</span>
                         </div>
-                        <div class="divide-y af-divider">
+                        <div class="divide-y divide-base-content/6">
                             @foreach ($records as $record)
                                 @php
                                     $statusVariant = match ($record->status->value) {
