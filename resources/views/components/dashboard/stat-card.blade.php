@@ -41,9 +41,27 @@
         'accent'    => 'border-accent/25',
         default     => 'border-primary/25',
     };
+    $leftBorder = match ($color) {
+        'success'   => 'border-l-success',
+        'warning'   => 'border-l-warning',
+        'error'     => 'border-l-error',
+        'info'      => 'border-l-info',
+        'secondary' => 'border-l-secondary',
+        'accent'    => 'border-l-accent',
+        default     => 'border-l-primary',
+    };
+    $glowShadow = match ($color) {
+        'success'   => 'hover:shadow-success/15',
+        'warning'   => 'hover:shadow-warning/15',
+        'error'     => 'hover:shadow-error/15',
+        'info'      => 'hover:shadow-info/15',
+        'secondary' => 'hover:shadow-secondary/15',
+        'accent'    => 'hover:shadow-accent/15',
+        default     => 'hover:shadow-primary/15',
+    };
 @endphp
 
-@php $classes = "group relative overflow-hidden rounded-2xl border {$borderColor} bg-base-100 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"; @endphp
+@php $classes = "group relative overflow-hidden rounded-2xl border border-l-[3px] {$borderColor} {$leftBorder} bg-base-100 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl {$glowShadow}"; @endphp
 
 @if ($href)
     <a href="{{ $href }}" class="block {{ $classes }}">
@@ -60,8 +78,8 @@
     @endif
     <div class="relative z-10 flex flex-col gap-3">
         @if ($icon)
-            <div class="inline-flex items-center justify-center size-10 rounded-xl {{ $iconBg }} ring-1">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 {{ $textColor }}" aria-hidden="true">
+            <div class="inline-flex items-center justify-center size-10 rounded-xl {{ $iconBg }} ring-1 shadow-md shadow-current/10">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-5 {{ $textColor }} drop-shadow-[0_0_4px_currentColor]" style="filter: drop-shadow(0 0 4px currentColor) drop-shadow(0 0 1px currentColor);" aria-hidden="true">
                     {!! $icon !!}
                 </svg>
             </div>

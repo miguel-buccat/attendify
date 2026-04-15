@@ -4,7 +4,7 @@
     <div class="px-5 pt-5 pb-4 border-b af-divider flex items-center justify-between shrink-0">
         <h3 class="font-semibold text-sm">{{ $title }}</h3>
         <div class="flex items-center gap-1.5">
-            <div class="size-2 rounded-full bg-primary af-pulse"></div>
+            <div class="size-2 rounded-full bg-success af-pulse shadow-sm shadow-success/40"></div>
             <span class="text-[10px] font-medium text-base-content/30 uppercase tracking-wider">Live</span>
         </div>
     </div>
