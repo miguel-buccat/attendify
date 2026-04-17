@@ -24,7 +24,7 @@
                             <p class="text-xs text-base-content/50 mt-0.5">Get notified when a teacher starts a class session</p>
                         </div>
                         <input type="hidden" name="session_started" value="0">
-                        <input type="checkbox" name="session_started" value="1" class="toggle toggle-primary toggle-sm"
+                        <input type="checkbox" name="session_started" value="1" class="af-toggle"
                             @checked($preferences['session_started'] ?? true) />
                     </div>
 
@@ -34,7 +34,7 @@
                             <p class="text-xs text-base-content/50 mt-0.5">Receive a weekly email summary of your attendance</p>
                         </div>
                         <input type="hidden" name="weekly_summary" value="0">
-                        <input type="checkbox" name="weekly_summary" value="1" class="toggle toggle-primary toggle-sm"
+                        <input type="checkbox" name="weekly_summary" value="1" class="af-toggle"
                             @checked($preferences['weekly_summary'] ?? true) />
                     </div>
 
@@ -44,7 +44,7 @@
                             <p class="text-xs text-base-content/50 mt-0.5">Get notified when you're marked absent</p>
                         </div>
                         <input type="hidden" name="absence_alert" value="0">
-                        <input type="checkbox" name="absence_alert" value="1" class="toggle toggle-primary toggle-sm"
+                        <input type="checkbox" name="absence_alert" value="1" class="af-toggle"
                             @checked($preferences['absence_alert'] ?? true) />
                     </div>
 
@@ -54,7 +54,7 @@
                             <p class="text-xs text-base-content/50 mt-0.5">Get notified when your excuse request is reviewed</p>
                         </div>
                         <input type="hidden" name="excuse_updates" value="0">
-                        <input type="checkbox" name="excuse_updates" value="1" class="toggle toggle-primary toggle-sm"
+                        <input type="checkbox" name="excuse_updates" value="1" class="af-toggle"
                             @checked($preferences['excuse_updates'] ?? true) />
                     </div>
 

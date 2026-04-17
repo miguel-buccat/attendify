@@ -349,6 +349,42 @@
                0 4px 12px -4px oklch(from var(--color-primary) l c h / 0.15);
 }
 
+/* ── Toggle switch ────────────────────────────────────────────────────── */
+.af-toggle {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    width: 2.75rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    background: oklch(from var(--color-base-content) l c h / 0.15);
+    cursor: pointer;
+    transition: background .2s ease, box-shadow .2s ease;
+    flex-shrink: 0;
+}
+.af-toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 9999px;
+    background: white;
+    box-shadow: 0 1px 3px 0 oklch(0 0 0 / 0.25);
+    transition: transform .2s ease;
+}
+.af-toggle:checked {
+    background: var(--color-primary);
+}
+.af-toggle:checked::after {
+    transform: translateX(1.25rem);
+}
+.af-toggle:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.25);
+}
+
 /* ── Section dividers ─────────────────────────────────────────────────── */
 .af-divider {
     border-color: oklch(from var(--color-base-content) l c h / 0.08);
