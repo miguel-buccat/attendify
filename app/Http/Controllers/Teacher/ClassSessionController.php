@@ -57,7 +57,7 @@ class ClassSessionController extends Controller
         $startTime = $validated['start_time'];
         $endTime = $validated['end_time'];
         $gracePeriod = (int) ($validated['grace_period_minutes'] ?? 15);
-        $intervalWeeks = (int) $validated['interval_weeks'];
+        $intervalWeeks = (int) ($validated['interval_weeks'] ?? 1);
         $startDate = Carbon::parse($validated['start_date']);
         $endDate = Carbon::parse($validated['end_date']);
         $recurrenceGroupId = (string) Str::uuid();

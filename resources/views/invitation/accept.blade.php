@@ -25,11 +25,17 @@
                 id="name"
                 name="name"
                 value="{{ old('name', $invitation->name) }}"
-                class="af-input @error('name') af-input-error @enderror"
+                class="af-input @error('name') af-input-error @enderror {{ $invitation->name ? 'bg-base-200 text-base-content/60 cursor-not-allowed' : '' }}"
                 placeholder="Your full name"
                 required
-                autofocus
+                @if ($invitation->name) readonly disabled @else autofocus @endif
             >
+            @if ($invitation->name)
+                <p class="text-xs text-base-content/40 mt-1 flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-3 shrink-0"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 16v-4m0-4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    Your name was set by the administrator.
+                </p>
+            @endif
         </x-form.field>
 
         <x-form.field

@@ -19,7 +19,13 @@ class ExcuseRequestController extends Controller
             ->orderByDesc('created_at')
             ->paginate(20);
 
-        return view('student.excuses.index', compact('excuseRequests'));
+        $classes = auth()->user()->enrolledClasses()
+            ->with('teacher:id,name')
+            ->active()
+            ->orderBy('name')
+            ->get();
+
+        return view('student.excuses.index', compact('excuseRequests', 'classes'));
     }
 
     public function create(): View

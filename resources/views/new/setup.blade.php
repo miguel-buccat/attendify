@@ -165,18 +165,12 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4 text-base-content/30 transition-transform duration-200 group-open:rotate-180 shrink-0"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                     </summary>
                                     <div class="px-4 pb-4 pt-3 space-y-4 border-t af-divider">
-                                        <x-form.field
-                                            label="Vision Statement"
-                                            name="vision"
-                                            :value="$siteSettings->get('vision')"
-                                            placeholder="We envision..."
-                                        />
-                                        <x-form.field
-                                            label="Mission Statement"
-                                            name="mission"
-                                            :value="$siteSettings->get('mission')"
-                                            placeholder="Our mission is..."
-                                        />
+                                        <x-form.field label="Vision Statement" name="vision">
+                                            <textarea name="vision" id="vision" rows="3" class="af-input @error('vision') af-input-error @enderror" maxlength="1000" placeholder="We envision...">{{ old('vision', $siteSettings->get('vision')) }}</textarea>
+                                        </x-form.field>
+                                        <x-form.field label="Mission Statement" name="mission">
+                                            <textarea name="mission" id="mission" rows="3" class="af-input @error('mission') af-input-error @enderror" maxlength="1000" placeholder="Our mission is...">{{ old('mission', $siteSettings->get('mission')) }}</textarea>
+                                        </x-form.field>
                                     </div>
                                 </details>
 

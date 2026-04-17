@@ -26,7 +26,7 @@ class BulkScheduleSessionRequest extends FormRequest
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
             'grace_period_minutes' => ['nullable', 'integer', 'min:1', 'max:60'],
-            'interval_weeks' => ['required', 'integer', 'min:1', 'max:4'],
+            'interval_weeks' => ['sometimes', 'integer', 'min:1', 'max:4'],
             'start_date' => ['required', 'date', 'after_or_equal:today'],
             'end_date' => ['required', 'date', 'after:start_date'],
         ];
