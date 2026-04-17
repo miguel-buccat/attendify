@@ -91,13 +91,67 @@ test('old avatar is deleted when a new one is uploaded', function () {
     $user->refresh();
     $firstPath = $user->avatar_path;
 
-    // Second upload (png — different extension so paths differ)
+    // Second upload (png — different extension)
     $second = UploadedFile::fake()->image('second.png');
     $this->actingAs($user)->patch(route('profile.update'), ['avatar' => $second]);
     $user->refresh();
 
     Storage::disk('public')->assertMissing($firstPath);
     Storage::disk('public')->assertExists($user->avatar_path);
+    expect($user->avatar_path)->not->toBe($firstPath);
+});
+
+test('avatar can be replaced with same extension', function () {
+    Storage::fake('public');
+
+    $user = User::factory()->create();
+
+    // First upload (png)
+    $first = UploadedFile::fake()->image('first.png');
+    $this->actingAs($user)->patch(route('profile.update'), ['avatar' => $first]);
+    $user->refresh();
+    $firstPath = $user->avatar_path;
+
+    // Advance time so the timestamp differs
+    $this->travel(1)->seconds();
+
+    // Second upload (png — same extension)
+    $second = UploadedFile::fake()->image('second.png');
+    $this->actingAs($user)
+        ->patch(route('profile.update'), ['avatar' => $second])
+        ->assertRedirect();
+    $user->refresh();
+
+    expect($user->avatar_path)->not->toBeNull()
+        ->and($user->avatar_path)->not->toBe($firstPath);
+    Storage::disk('public')->assertMissing($firstPath);
+    Storage::disk('public')->assertExists($user->avatar_path);
+});
+
+test('banner can be replaced with same extension', function () {
+    Storage::fake('public');
+
+    $user = User::factory()->create();
+
+    // First upload
+    $first = UploadedFile::fake()->image('first.jpg', 1200, 400);
+    $this->actingAs($user)->patch(route('profile.update'), ['banner' => $first]);
+    $user->refresh();
+    $firstPath = $user->banner_path;
+
+    $this->travel(1)->seconds();
+
+    // Second upload — same extension
+    $second = UploadedFile::fake()->image('second.jpg', 1200, 400);
+    $this->actingAs($user)
+        ->patch(route('profile.update'), ['banner' => $second])
+        ->assertRedirect();
+    $user->refresh();
+
+    expect($user->banner_path)->not->toBeNull()
+        ->and($user->banner_path)->not->toBe($firstPath);
+    Storage::disk('public')->assertMissing($firstPath);
+    Storage::disk('public')->assertExists($user->banner_path);
 });
 
 test('validation rejects avatar that is too large', function () {

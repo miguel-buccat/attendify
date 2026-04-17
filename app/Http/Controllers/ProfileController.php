@@ -32,7 +32,7 @@ class ProfileController extends Controller
             $ext = $request->file('avatar')->getClientOriginalExtension();
             $data['avatar_path'] = $request->file('avatar')->storeAs(
                 'avatars',
-                $user->id.'.'.$ext,
+                $user->id.'_'.now()->timestamp.'.'.$ext,
                 'public'
             );
         }
@@ -44,7 +44,7 @@ class ProfileController extends Controller
             $ext = $request->file('banner')->getClientOriginalExtension();
             $data['banner_path'] = $request->file('banner')->storeAs(
                 'banners',
-                $user->id.'.'.$ext,
+                $user->id.'_'.now()->timestamp.'.'.$ext,
                 'public'
             );
         }
