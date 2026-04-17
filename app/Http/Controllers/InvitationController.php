@@ -42,7 +42,7 @@ class InvitationController extends Controller
         }
 
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => $invitation->name ? ['sometimes', 'string', 'max:255'] : ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
 
@@ -58,7 +58,7 @@ class InvitationController extends Controller
         }
 
         $user = User::create([
-            'name' => $validated['name'],
+            'name' => $validated['name'] ?? $invitation->name,
             'email' => $invitation->email,
             'password' => Hash::make($validated['password']),
             'role' => $invitation->role,

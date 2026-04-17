@@ -15,7 +15,9 @@
         <label for="{{ $fieldId }}" class="block text-[13px] font-semibold text-base-content/70">{{ $label }} @if ($required)<span class="text-error/70">*</span>@endif</label>
     @endif
 
-    @if ($type === 'file')
+    @if ($slot->isNotEmpty())
+        {{ $slot }}
+    @elseif ($type === 'file')
         <input
             type="file"
             id="{{ $fieldId }}"

@@ -191,11 +191,18 @@
     {{-- Create Session Modal --}}
     @if ($class->isActive())
     <dialog id="create-session-modal" class="modal">
-        <div class="af-modal-box modal-box rounded-2xl border border-base-300/30 shadow-2xl">
-            <h3 class="text-lg font-semibold mb-4">Schedule New Session</h3>
+        <div class="af-modal-box modal-box rounded-2xl border border-base-300/30 shadow-2xl max-w-md">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-bold tracking-tight">Schedule New Session</h3>
+                <form method="dialog">
+                    <button class="af-btn af-btn-ghost af-btn-icon af-btn-sm rounded-xl text-base-content/40 hover:text-base-content/70">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </button>
+                </form>
+            </div>
 
             @if ($errors->any())
-                <x-ui.alert variant="error" class="mb-2">
+                <x-ui.alert variant="error" class="mb-4">
                     <ul class="list-disc list-inside text-sm">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -206,27 +213,30 @@
 
             <form method="POST" action="{{ route('teacher.sessions.store', $class) }}" class="space-y-4">
                 @csrf
-                <x-form.field name="modality" label="Modality">
-                    <select name="modality" class="af-input" required>
-                        <option value="Onsite">Onsite</option>
-                        <option value="Online">Online</option>
-                    </select>
-                </x-form.field>
-                <x-form.field name="location" label="Location">
-                    <input type="text" name="location" class="af-input" placeholder="Room or platform URL">
-                </x-form.field>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <x-form.field name="start_time" label="Start Time">
-                        <input type="datetime-local" name="start_time" class="af-input" required>
+                    <x-form.field name="modality" label="Modality" required>
+                        <select name="modality" class="af-input" required>
+                            <option value="Onsite" @selected(old('modality') === 'Onsite')>Onsite</option>
+                            <option value="Online" @selected(old('modality') === 'Online')>Online</option>
+                        </select>
                     </x-form.field>
-                    <x-form.field name="end_time" label="End Time">
-                        <input type="datetime-local" name="end_time" class="af-input" required>
+                    <x-form.field name="location" label="Location">
+                        <input type="text" name="location" value="{{ old('location') }}" class="af-input" placeholder="Room number or meeting URL">
+                    </x-form.field>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <x-form.field name="start_time" label="Start Date & Time" required>
+                        <input type="datetime-local" name="start_time" value="{{ old('start_time') }}" class="af-input" required>
+                    </x-form.field>
+                    <x-form.field name="end_time" label="End Date & Time" required>
+                        <input type="datetime-local" name="end_time" value="{{ old('end_time') }}" class="af-input" required>
                     </x-form.field>
                 </div>
                 <x-form.field name="grace_period_minutes" label="Grace Period (minutes)">
-                    <input type="number" name="grace_period_minutes" class="af-input" value="15" min="1" max="60">
+                    <input type="number" name="grace_period_minutes" class="af-input" value="{{ old('grace_period_minutes', 15) }}" min="1" max="60">
+                    <p class="text-xs text-base-content/35 mt-1">Extra minutes students can still scan the QR code after the session starts.</p>
                 </x-form.field>
-                <div class="modal-action">
+                <div class="flex justify-end gap-2 pt-1">
                     <x-ui.button type="button" variant="ghost" onclick="this.closest('dialog').close()">Cancel</x-ui.button>
                     <x-ui.button type="submit" variant="primary">Schedule</x-ui.button>
                 </div>
@@ -238,8 +248,15 @@
     {{-- Pre-Schedule Modal --}}
     <dialog id="preschedule-modal" class="modal">
         <div class="af-modal-box modal-box rounded-2xl border border-base-300/30 shadow-2xl max-w-lg">
-            <h3 class="text-lg font-semibold mb-1">Pre-Schedule Sessions</h3>
-            <p class="text-xs text-base-content/40 mb-4">Create recurring sessions for specific days of the week.</p>
+            <div class="flex items-center justify-between mb-1">
+                <h3 class="text-base font-bold tracking-tight">Pre-Schedule Sessions</h3>
+                <form method="dialog">
+                    <button class="af-btn af-btn-ghost af-btn-icon af-btn-sm rounded-xl text-base-content/40 hover:text-base-content/70">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </button>
+                </form>
+            </div>
+            <p class="text-xs text-base-content/40 mb-4">Sessions will be created weekly for every day you select, within your chosen date range.</p>
 
             @if ($errors->hasBag('preschedule'))
                 <x-ui.alert variant="error" class="mb-4">
@@ -253,67 +270,64 @@
 
             <form method="POST" action="{{ route('teacher.sessions.bulk-store', $class) }}" class="space-y-5">
                 @csrf
+                <input type="hidden" name="interval_weeks" value="1">
 
                 {{-- Day checkboxes --}}
                 <div>
-                    <label class="label pb-2"><span class="label-text font-medium">Days</span></label>
+                    <p class="text-[13px] font-semibold text-base-content/70 mb-1.5">Days of the Week <span class="text-error/70">*</span></p>
                     <div class="flex flex-wrap gap-2">
                         @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] as $day)
                             <label class="cursor-pointer">
-                                <input type="checkbox" name="days[]" value="{{ $day }}" class="peer hidden">
+                                <input type="checkbox" name="days[]" value="{{ $day }}" class="peer hidden" @checked(is_array(old('days')) && in_array($day, old('days')))>
                                 <span class="inline-flex items-center px-3.5 py-2 rounded-xl border border-base-300/50 bg-base-200/50 text-sm font-medium text-base-content/50 transition-all select-none peer-checked:bg-primary peer-checked:text-primary-content peer-checked:border-primary peer-checked:shadow-sm hover:bg-base-300/50 peer-checked:hover:bg-primary/90">
                                     {{ $day }}
                                 </span>
                             </label>
                         @endforeach
                     </div>
+                    <p class="text-xs text-base-content/35 mt-1.5">Sessions repeat every week on the selected days.</p>
                 </div>
 
+                {{-- Date Range --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <x-form.field name="modality" label="Modality">
+                    <x-form.field name="start_date" label="Starting From" required>
+                        <input type="date" name="start_date" value="{{ old('start_date') }}" class="af-input @error('start_date', 'preschedule') af-input-error @enderror" required>
+                    </x-form.field>
+                    <x-form.field name="end_date" label="Until" required>
+                        <input type="date" name="end_date" value="{{ old('end_date') }}" class="af-input @error('end_date', 'preschedule') af-input-error @enderror" required>
+                    </x-form.field>
+                </div>
+
+                {{-- Session Time --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <x-form.field name="start_time" label="Session Start Time" required>
+                        <input type="time" name="start_time" value="{{ old('start_time') }}" class="af-input @error('start_time', 'preschedule') af-input-error @enderror" required>
+                    </x-form.field>
+                    <x-form.field name="end_time" label="Session End Time" required>
+                        <input type="time" name="end_time" value="{{ old('end_time') }}" class="af-input @error('end_time', 'preschedule') af-input-error @enderror" required>
+                    </x-form.field>
+                </div>
+
+                {{-- Modality + Location --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <x-form.field name="modality" label="Modality" required>
                         <select name="modality" class="af-input" required>
-                            <option value="Onsite">Onsite</option>
-                            <option value="Online">Online</option>
+                            <option value="Onsite" @selected(old('modality') === 'Onsite')>Onsite</option>
+                            <option value="Online" @selected(old('modality') === 'Online')>Online</option>
                         </select>
                     </x-form.field>
                     <x-form.field name="location" label="Location">
-                        <input type="text" name="location" class="af-input" placeholder="Room or URL">
+                        <input type="text" name="location" value="{{ old('location') }}" class="af-input" placeholder="Room number or meeting URL">
                     </x-form.field>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <x-form.field name="start_time" label="Start Time">
-                        <input type="time" name="start_time" class="af-input" required>
-                    </x-form.field>
-                    <x-form.field name="end_time" label="End Time">
-                        <input type="time" name="end_time" class="af-input" required>
-                    </x-form.field>
-                </div>
-
+                {{-- Grace Period --}}
                 <x-form.field name="grace_period_minutes" label="Grace Period (minutes)">
-                    <input type="number" name="grace_period_minutes" class="af-input" value="15" min="1" max="60">
+                    <input type="number" name="grace_period_minutes" class="af-input" value="{{ old('grace_period_minutes', 15) }}" min="1" max="60">
+                    <p class="text-xs text-base-content/35 mt-1">Extra minutes students can still scan the QR code after the session starts. Default is 15 minutes.</p>
                 </x-form.field>
 
-                <div class="border-t af-divider pt-4 space-y-3">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <x-form.field name="interval_weeks" label="Repeat Every">
-                            <select name="interval_weeks" class="af-input" required>
-                                <option value="1">Every week</option>
-                                <option value="2">Every 2 weeks</option>
-                                <option value="3">Every 3 weeks</option>
-                                <option value="4">Every 4 weeks</option>
-                            </select>
-                        </x-form.field>
-                        <x-form.field name="start_date" label="Starting From">
-                            <input type="date" name="start_date" class="af-input" required>
-                        </x-form.field>
-                    </div>
-                    <x-form.field name="end_date" label="Until">
-                        <input type="date" name="end_date" class="af-input" required>
-                    </x-form.field>
-                </div>
-
-                <div class="modal-action">
+                <div class="flex justify-end gap-2 pt-1">
                     <x-ui.button type="button" variant="ghost" onclick="this.closest('dialog').close()">Cancel</x-ui.button>
                     <x-ui.button type="submit" variant="primary">Schedule Sessions</x-ui.button>
                 </div>

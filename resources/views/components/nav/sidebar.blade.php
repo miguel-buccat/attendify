@@ -358,10 +358,17 @@
     </div>
 </aside>
 
-{{-- ─── Mobile floating Scan QR button (students only) ──────────────────── --}}
+{{-- ─── Floating Scan QR button (students only) ──────────────────────────── --}}
 @if ($role === 'Student')
-    <a href="{{ route('student.scan.index') }}" class="lg:hidden fixed bottom-6 right-6 z-30 af-btn af-btn-primary size-14 rounded-full shadow-xl shadow-primary/25" aria-label="Scan QR Code">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-6" aria-hidden="true">
+    <a href="{{ route('student.scan.index') }}"
+       class="lg:hidden fixed bottom-6 right-6 z-30
+              flex items-center justify-center
+              size-14 rounded-full
+              bg-primary text-primary-content
+              shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/40
+              transition-all duration-200 hover:scale-105 active:scale-95"
+       aria-label="Scan QR Code">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-6 shrink-0" aria-hidden="true">
             <path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M3 17v2a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M7 12h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>

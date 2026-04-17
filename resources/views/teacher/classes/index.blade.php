@@ -11,7 +11,7 @@
                         <h1 class="text-2xl md:text-3xl font-black tracking-tight">My Classes</h1>
                         <p class="mt-1 text-sm text-base-content/50">Manage your classes and enroll students.</p>
                     </div>
-                    <x-ui.button href="{{ route('teacher.classes.create') }}" variant="primary" class="shrink-0 self-start sm:self-auto">
+                    <x-ui.button variant="primary" class="shrink-0 self-start sm:self-auto" onclick="document.getElementById('create-class-modal').showModal()">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                         New Class
                     </x-ui.button>
@@ -30,7 +30,7 @@
                             title="No classes yet"
                             description="Create your first class to get started."
                         >
-                            <x-ui.button href="{{ route('teacher.classes.create') }}" variant="outline" size="sm">Create a Class</x-ui.button>
+                            <x-ui.button variant="outline" size="sm" onclick="document.getElementById('create-class-modal').showModal()">Create a Class</x-ui.button>
                         </x-ui.empty-state>
                     </div>
                 @else
@@ -69,4 +69,54 @@
             </div>
         </main>
     </div>
+
+    {{-- Create Class Modal --}}
+    <dialog id="create-class-modal" class="modal">
+        <div class="af-modal-box modal-box rounded-2xl border border-base-300/30 shadow-2xl max-w-md">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-base font-bold tracking-tight">Create New Class</h3>
+                <form method="dialog">
+                    <button class="af-btn af-btn-ghost af-btn-icon af-btn-sm rounded-xl text-base-content/40 hover:text-base-content/70">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="size-4"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </button>
+                </form>
+            </div>
+
+            @if ($errors->any())
+                <x-ui.alert variant="error" class="mb-4">
+                    <ul class="list-disc list-inside text-sm">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </x-ui.alert>
+            @endif
+
+            <form method="POST" action="{{ route('teacher.classes.store') }}" class="space-y-4">
+                @csrf
+
+                <x-form.field name="name" label="Class Name" required>
+                    <input id="create-class-name" type="text" name="name" value="{{ old('name') }}" class="af-input @error('name') af-input-error @enderror" placeholder="e.g. ICT 101" required autofocus>
+                </x-form.field>
+
+                <x-form.field name="section" label="Section">
+                    <input type="text" name="section" value="{{ old('section') }}" class="af-input @error('section') af-input-error @enderror" placeholder="e.g. Section A">
+                </x-form.field>
+
+                <x-form.field name="description" label="Description">
+                    <textarea name="description" rows="3" class="af-input @error('description') af-input-error @enderror" placeholder="Optional class description">{{ old('description') }}</textarea>
+                </x-form.field>
+
+                <div class="flex justify-end gap-2 pt-1">
+                    <x-ui.button type="button" variant="ghost" onclick="this.closest('dialog').close()">Cancel</x-ui.button>
+                    <x-ui.button type="submit" variant="primary">Create Class</x-ui.button>
+                </div>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
+
+    @if ($errors->any())
+        <script>document.getElementById('create-class-modal')?.showModal();</script>
+    @endif
 </x-layouts.app>
